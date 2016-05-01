@@ -1,0 +1,330 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{861D16E9-A4F2-4AE9-BFA8-7CC0BCF35982}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>S5GUIEditor</RootNamespace>
+    <AssemblyName>S5WidgetCreator</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>artwork.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevIL.NET2, Version=1.1.2619.31671, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Desktop\devilnet\DevIL.NET2.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Credits.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Credits.Designer.cs">
+      <DependentUpon>Credits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BitmapFont.cs" />
+    <Compile Include="ColorChooser\ColorChangedEventArgs.cs" />
+    <Compile Include="ColorChooser\ColorChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ColorChooser\ColorHandler.cs" />
+    <Compile Include="ColorChooser\ColorWheel.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSettings.cs" />
+    <Compile Include="ImageCache.cs" />
+    <Compile Include="Options\BaseWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\BaseWidgetOptions.Designer.cs">
+      <DependentUpon>BaseWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\ButtonWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\ButtonWidgetOptions.Designer.cs">
+      <DependentUpon>ButtonWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\CustomWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\CustomWidgetOptions.Designer.cs">
+      <DependentUpon>CustomWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\GfxButtonWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\GfxButtonWidgetOptions.Designer.cs">
+      <DependentUpon>GfxButtonWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\ProgressBarWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\ProgressBarWidgetOptions.Designer.cs">
+      <DependentUpon>ProgressBarWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\PureTooltipWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\PureTooltipWidgetOptions.Designer.cs">
+      <DependentUpon>PureTooltipWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\S5StringOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\S5StringOptions.Designer.cs">
+      <DependentUpon>S5StringOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\S5WritingOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\S5WritingOptions.Designer.cs">
+      <DependentUpon>S5WritingOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\StaticTextWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\StaticTextWidgetOptions.Designer.cs">
+      <DependentUpon>StaticTextWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\StaticWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\StaticWidgetOptions.Designer.cs">
+      <DependentUpon>StaticWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\TextButtonWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\TextButtonWidgetOptions.Designer.cs">
+      <DependentUpon>TextButtonWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\TextureOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\TextureOptions.Designer.cs">
+      <DependentUpon>TextureOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\TooltipOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\TooltipOptions.Designer.cs">
+      <DependentUpon>TooltipOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\UpdateWidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\UpdateWidgetOptions.Designer.cs">
+      <DependentUpon>UpdateWidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\WidgetOptions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Options\WidgetOptions.Designer.cs">
+      <DependentUpon>WidgetOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TexturePicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TexturePicker.Designer.cs">
+      <DependentUpon>TexturePicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Widget.cs" />
+    <Compile Include="WidgetComponents.cs" />
+    <EmbeddedResource Include="Credits.resx">
+      <DependentUpon>Credits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorChooser\ColorChooser.resx">
+      <DependentUpon>ColorChooser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\BaseWidgetOptions.resx">
+      <DependentUpon>BaseWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\ButtonWidgetOptions.resx">
+      <DependentUpon>ButtonWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\CustomWidgetOptions.resx">
+      <DependentUpon>CustomWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\GfxButtonWidgetOptions.resx">
+      <DependentUpon>GfxButtonWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\ProgressBarWidgetOptions.resx">
+      <DependentUpon>ProgressBarWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\PureTooltipWidgetOptions.resx">
+      <DependentUpon>PureTooltipWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\S5StringOptions.resx">
+      <DependentUpon>S5StringOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\S5WritingOptions.resx">
+      <DependentUpon>S5WritingOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\StaticTextWidgetOptions.resx">
+      <DependentUpon>StaticTextWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\StaticWidgetOptions.resx">
+      <DependentUpon>StaticWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\TextButtonWidgetOptions.resx">
+      <DependentUpon>TextButtonWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\TextureOptions.resx">
+      <DependentUpon>TextureOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\TooltipOptions.resx">
+      <DependentUpon>TooltipOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Options\UpdateWidgetOptions.resx">
+      <DependentUpon>UpdateWidgetOptions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="TexturePicker.resx">
+      <DependentUpon>TexturePicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="resources\Thumbs.db" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\trbg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Helper\bbaTool.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Helper\DevIL.dll" />
+    <EmbeddedResource Include="Helper\DevIL%40NET2.dll" />
+    <EmbeddedResource Include="Helper\ILU.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="artwork.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\credits.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\creditsdone2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\creditsdone3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\creditsdone4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\folder_open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\box.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\folder2.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
