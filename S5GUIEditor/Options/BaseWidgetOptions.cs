@@ -40,29 +40,29 @@ namespace S5GUIEditor.Options
 
         private void tBXPos_TextChanged(object sender, EventArgs e)
         {
-            int x = 0;
-            int.TryParse(tBXPos.Text, out x);
+            float x = 0;
+            float.TryParse(tBXPos.Text, out x);
             activeWidget.PositionAndSize = new RectangleF(new PointF(x, activeWidget.PositionAndSize.Y), activeWidget.PositionAndSize.Size);
         }
 
         private void tbYPos_TextChanged(object sender, EventArgs e)
         {
-            int y = 0;
-            int.TryParse(tbYPos.Text, out y);
+            float y = 0;
+            float.TryParse(tbYPos.Text, out y);
             activeWidget.PositionAndSize = new RectangleF(new PointF(activeWidget.PositionAndSize.X, y), activeWidget.PositionAndSize.Size);
         }
 
         private void tbWidth_TextChanged(object sender, EventArgs e)
         {
-            int w = 0;
-            int.TryParse(tbWidth.Text, out w);
+            float w = 0;
+            float.TryParse(tbWidth.Text, out w);
             activeWidget.PositionAndSize = new RectangleF(activeWidget.PositionAndSize.Location, new SizeF(w, activeWidget.PositionAndSize.Height));
         }
 
         private void tbHeight_TextChanged(object sender, EventArgs e)
         {
-            int h = 0;
-            int.TryParse(tbHeight.Text, out h);
+            float h = 0;
+            float.TryParse(tbHeight.Text, out h);
             activeWidget.PositionAndSize = new RectangleF(activeWidget.PositionAndSize.Location, new SizeF(activeWidget.PositionAndSize.Width, h));
         }
 
