@@ -176,6 +176,40 @@ namespace S5GUIEditor
             }
             return widgetElement;
         }
+        private string GetNextInParent()
+        {
+            if (ParentNode == null)
+                return "nil";
+            int i = ParentNode.SubWidgets.IndexOf(this);
+            if (i >= 0 && (i + 1) < ParentNode.SubWidgets.Count)
+                return $"\"{ParentNode.SubWidgets[i + 1].Name}\"";
+            return "nil";
+        }
+        protected virtual string GetLuaCreator(string parent, string befo)
+        {
+            throw new InvalidOperationException("cannot create base widget");
+        }
+        public string GetLua()
+        {
+            return GetLuaAssert() + GetLuaData(false);
+        }
+        internal virtual string GetLuaAssert()
+        {
+            return $"assert(XGUIEng.GetWidgetID(\"{Name}\")==0, \"{Name} already exists\")\n";
+        }
+        internal virtual string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = GetLuaCreator(ParentNode.Name, ignorebef ? "nil" : GetNextInParent());
+            if (ParentNode == null)
+                throw new InvalidOperationException("no parent widget found");
+            s += $"CppLogic.UI.WidgetSetPositionAndSize({escapedname}, {PositionAndSize.X}, {PositionAndSize.Y}, {PositionAndSize.Width}, {PositionAndSize.Height})\n";
+            s += $"XGUIEng.ShowWidget({escapedname}, {(IsShown ? "1" : "0")})\n";
+            s += $"CppLogic.UI.WidgetSetBaseData({escapedname}, {ZPriority}, {ForceToHandleMouseEventsFlag.ToString().ToLower()}, {ForceToNeverBeFoundFlag.ToString().ToLower()})\n";
+            if (Group.Length > 0)
+                s += $"CppLogic.UI.WidgetSetGroup({escapedname}, \"{Group}\")\n";
+            return s;
+        }
         public virtual void DrawWidget(Graphics g, float zoom, PointF origin)
         {
 
@@ -239,6 +273,24 @@ namespace S5GUIEditor
             xe.Add(subwidgets);
             return xe;
         }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            return $"CppLogic.UI.ContainerWidgetCreateContainerWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
+        }
+        internal override string GetLuaAssert()
+        {
+            string r = base.GetLuaAssert();
+            foreach (Widget w in SubWidgets)
+                r += w.GetLuaAssert();
+            return r;
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string s = base.GetLuaData(ignorebef);
+            foreach (Widget w in SubWidgets)
+                s += w.GetLuaData(true);
+            return s;
+        }
 
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
         {
@@ -288,6 +340,10 @@ namespace S5GUIEditor
             xe.Add(new XElement("CurrentRootWidget", this.SubWidgets.Count < 1 ? "" : this.SubWidgets[0].Name));
             return xe;
         }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            throw new InvalidOperationException("cannot create root widget");
+        }
 
     }
 
@@ -310,6 +366,17 @@ namespace S5GUIEditor
             XElement xe = base.GetXml();
             xe.Add(new XElement("BackgroundMaterial", Background.ToXml()));
             return xe;
+        }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            return $"CppLogic.UI.ContainerWidgetCreateStaticWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = base.GetLuaData(ignorebef);
+            s += Background.ToLua(escapedname, 0);
+            return s;
         }
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
         {
@@ -385,6 +452,30 @@ namespace S5GUIEditor
             xe.Add(this.Update.ToXml());
             return xe;
         }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            throw new InvalidOperationException("cannot create base button widget");
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = base.GetLuaData(ignorebef);
+            s += $"XGUIEng.DisableButton({escapedname}, {(Disabled ? "1" : "0")})\n";
+            s += $"XGUIEng.HighLightButton({escapedname}, {(HighLighted ? "1" : "0")})\n";
+            if (LuaCommand.Length > 0 && !LuaCommand.StartsWith("--"))
+                s += $"CppLogic.UI.ButtonOverrideActionFunc({escapedname}, function() {LuaCommand} end)\n";
+            if (ShortCutString.RawString.Length > 0)
+                s += $"CppLogic.UI.ButtonSetShortcutString({escapedname}, \"{ShortCutString.RawString}\", false)\n";
+            else if (ShortCutString.StringTableKey.Length > 0)
+                s += $"CppLogic.UI.ButtonSetShortcutString({escapedname}, \"{ShortCutString.StringTableKey}\", true)\n";
+            s += ButtonNormal.ToLua(escapedname, 0);
+            s += ButtonHover.ToLua(escapedname, 1);
+            s += ButtonPressed.ToLua(escapedname, 2);
+            s += ButtonDisabled.ToLua(escapedname, 3);
+            s += ButtonHighlighted.ToLua(escapedname, 4);
+            s += ToolTipHelper.ToLua(escapedname);
+            return s;
+        }
 
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
         {
@@ -412,6 +503,17 @@ namespace S5GUIEditor
             xe.Add(new XElement("IconMaterial", this.IconMaterial.ToXml()));
             return xe;
         }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            return $"CppLogic.UI.ContainerWidgetCreateGFXButtonWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = base.GetLuaData(ignorebef);
+            // maybe iconmaterial
+            return s;
+        }
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
         {
             base.DrawWidget(g, zoom, origin);
@@ -437,6 +539,17 @@ namespace S5GUIEditor
             XElement xe = base.GetXml();
             xe.Add(new XElement("StringHelper", this.ButtonText.ToXml()));
             return xe;
+        }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            return $"CppLogic.UI.ContainerWidgetCreateTextButtonWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = base.GetLuaData(ignorebef);
+            s += ButtonText.ToLua(escapedname);
+            return s;
         }
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
         {
@@ -487,6 +600,21 @@ namespace S5GUIEditor
                 new XElement("LineDistanceFactor", this.LineDistanceFactor.ToString())
             });
             return xe;
+        }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            return $"CppLogic.UI.ContainerWidgetCreateStaticTextWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = base.GetLuaData(ignorebef);
+            s += Background.ToLua(escapedname, 0);
+            s += Text.ToLua(escapedname);
+            s += Update.ToLua(escapedname);
+            s += $"XGUIEng.SetLinesToPrint({escapedname}, {FirstLineToPrint}, {NumberOfLinesToPrint})\n";
+            s += $"CppLogic.UI.StaticTextWidgetSetLineDistanceFactor({escapedname}, {LineDistanceFactor})\n";
+            return s;
         }
 
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
@@ -550,6 +678,10 @@ namespace S5GUIEditor
             });
             return xe;
         }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            throw new InvalidOperationException("cannot create custom widget");
+        }
     }
 
     public class ProgressBarWidget : Widget
@@ -594,6 +726,19 @@ namespace S5GUIEditor
             });
             return xe;
         }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            return $"CppLogic.UI.ContainerWidgetCreateProgressBarWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = base.GetLuaData(ignorebef);
+            s += Background.ToLua(escapedname, 0);
+            s += $"XGUIEng.SetProgressBarValues({escapedname}, {ProgressBarValue}, {ProgressBarLimit})\n";
+            s += Update.ToLua(escapedname);
+            return s;
+        }
 
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
         {
@@ -627,6 +772,17 @@ namespace S5GUIEditor
             XElement xe = base.GetXml();
             xe.Add(new XElement("ToolTipHelper", this.Tooltip.ToXml()));
             return xe;
+        }
+        protected override string GetLuaCreator(string parent, string befo)
+        {
+            return $"CppLogic.UI.ContainerWidgetCreatePureTooltipWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
+        }
+        internal override string GetLuaData(bool ignorebef)
+        {
+            string escapedname = $"\"{Name}\"";
+            string s = base.GetLuaData(ignorebef);
+            s += Tooltip.ToLua(escapedname);
+            return s;
         }
     }
 

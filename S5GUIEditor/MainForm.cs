@@ -506,6 +506,20 @@ namespace S5GUIEditor
 
         }
 
+        private void luaExportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Widget toCopy = treeViewWidgets.SelectedNode.Tag as Widget;
+            try
+            {
+                string l = toCopy.GetLua();
+                Clipboard.SetData(DataFormats.StringFormat, l);
+            }
+            catch (InvalidOperationException er)
+            {
+                MessageBox.Show(er.Message, "error:");
+            }
+        }
+
         private void tsmiPaste_Click(object sender, EventArgs e)
         {
             ContainerWidget toInsertInto = treeViewWidgets.SelectedNode.Tag as ContainerWidget;
@@ -1019,9 +1033,8 @@ namespace S5GUIEditor
 
 
 
+
         //oem
         #endregion
-
-
     }
 }

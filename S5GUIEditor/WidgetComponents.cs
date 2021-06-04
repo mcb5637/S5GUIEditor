@@ -76,6 +76,13 @@ namespace S5GUIEditor
                 new XElement("UpdateManualFlag", this.UpdateManualFlag.ToString())
             };
         }
+        public string ToLua(string escapedname)
+        {
+            string s = $"CppLogic.UI.WidgetSetUpdateManualFlag({escapedname}, {UpdateManualFlag.ToString().ToLower()})\n";
+            if (LuaUpdateCommand.Length > 0 && !LuaUpdateCommand.StartsWith("--"))
+                s += $"CppLogic.UI.WidgetOverrideUpdateFunc({escapedname}, function() {LuaUpdateCommand} end)\n";
+            return s;
+        }
     }
 
     public class Tooltip
@@ -113,6 +120,17 @@ namespace S5GUIEditor
                     new XElement("LuaCommand", this.LuaUpdateCommand)
                 )
             };
+        }
+        public string ToLua(string escapedname)
+        {
+            string s = $"CppLogic.UI.WidgetSetTooltipData({escapedname}, \"{TargetWidget}\", {ControlTargetWidgetDisplayState.ToString().ToLower()}, {EnabledFlag.ToString().ToLower()})\n";
+            if (LuaUpdateCommand.Length > 0 && !LuaUpdateCommand.StartsWith("--"))
+                s += $"CppLogic.UI.WidgetOverrideTooltipFunc({escapedname}, function() {LuaUpdateCommand} end)\n";
+            if (Text.RawString.Length > 0)
+                s += $"CppLogic.UI.WidgetSetTooltipString({escapedname}, \"{Text.RawString}\", false)\n";
+            else if (Text.StringTableKey.Length > 0)
+                s += $"CppLogic.UI.WidgetSetTooltipString({escapedname}, \"{Text.StringTableKey}\", true)\n";
+            return s;
         }
     }
 
@@ -184,6 +202,14 @@ namespace S5GUIEditor
                 new XElement("Color", XmlConverter.FromColor(this.RGBA))
             };
         }
+        public string ToLua(string escapedname, int i)
+        {
+            string s = $"CppLogic.UI.WidgetMaterialSetTextureCoordinates({escapedname}, {i}, {TexturePosAndSize.X}, {TexturePosAndSize.Y}, {TexturePosAndSize.Width}, {TexturePosAndSize.Height})\n";
+            if (TexturePath.Length > 0)
+                s += $"XGUIEng.SetMaterialTexture({escapedname}, {i}, \"{TexturePath.Replace("\\", "\\\\")}\")\n";
+            s += $"XGUIEng.SetMaterialColor({escapedname}, {i}, {RGBA.R}, {RGBA.G}, {RGBA.B}, {RGBA.A})\n";
+            return s;
+        }
         public void DrawTexture(Graphics g, RectangleF posAndSize)
         {
             if (this.TextureImage == null)
@@ -227,6 +253,13 @@ namespace S5GUIEditor
                 new XElement("StringTableKey", this.StringTableKey),
                 new XElement("RawString", this.RawString)
             };
+        }
+        public string ToLua(string escapedname)
+        {
+            if (StringTableKey.Length > 0)
+                return $"XGUIEng.SetTextKeyName({escapedname}, \"{StringTableKey}\")\n";
+            else
+                return $"XGUIEng.SetText({escapedname}, \"{RawString}\", 1)\n";
         }
     }
 
@@ -302,6 +335,18 @@ namespace S5GUIEditor
                 new XElement("StringFrameDistance", this.StringFrameDistance.ToString()),
                 new XElement("Color", XmlConverter.FromColor(this.RGBA))
             };
+        }
+        public string ToLua(string escapedname)
+        {
+            string font = FontPath;
+            if (!font.StartsWith("data"))
+                font = "data\\" + font;
+            font = font.Replace("\\", "\\\\");
+            string s = $"CppLogic.UI.WidgetSetFont({escapedname}, \"{font}\")\n";
+            s += $"CppLogic.UI.WidgetSetStringFrameDistance({escapedname}, {StringFrameDistance})\n";
+            s += Text.ToLua(escapedname);
+            s += $"XGUIEng.SetTextColor({escapedname}, {RGBA.R}, {RGBA.G}, {RGBA.B}, {RGBA.A})\n";
+            return s; 
         }
 
         public void DrawString(Graphics g, RectangleF posAndSize, float zoom)
