@@ -680,7 +680,8 @@ namespace S5GUIEditor
         }
         protected override string GetLuaCreator(string parent, string befo)
         {
-            throw new InvalidOperationException("cannot create custom widget");
+            MessageBox.Show($"Warning: CustomWidget {Name} of type {CustomClassName} in export, make sure this works properly.\nLook at the CppLogic.UI.ContainerWidgetCreateCustomWidgetChild documentation for more info.", "CustomWidget export");
+            return $"CppLogic.UI.ContainerWidgetCreateCustomWidgetChild(\"{parent}\", \"{Name}\", \"{CustomClassName}\", {befo}, {IntegerUserVariable0DefaultValue}, {IntegerUserVariable1DefaultValue}, {IntegerUserVariable2DefaultValue}, {IntegerUserVariable3DefaultValue}, {IntegerUserVariable4DefaultValue}, {IntegerUserVariable5DefaultValue}, \"{StringUserVariable0DefaultValue}\", \"{StringUserVariable1DefaultValue}\")\n";
         }
     }
 
