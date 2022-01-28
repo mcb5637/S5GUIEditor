@@ -123,7 +123,12 @@ namespace S5GUIEditor
         }
         public string ToLua(string escapedname)
         {
-            string s = $"CppLogic.UI.WidgetSetTooltipData({escapedname}, \"{TargetWidget}\", {ControlTargetWidgetDisplayState.ToString().ToLower()}, {EnabledFlag.ToString().ToLower()})\n";
+            string twid;
+            if (TargetWidget.Length == 0)
+                twid = "nil";
+            else
+                twid = $"\"{TargetWidget}\"";
+            string s = $"CppLogic.UI.WidgetSetTooltipData({escapedname}, {twid}, {ControlTargetWidgetDisplayState.ToString().ToLower()}, {EnabledFlag.ToString().ToLower()})\n";
             if (LuaUpdateCommand.Length > 0 && !LuaUpdateCommand.StartsWith("--"))
                 s += $"CppLogic.UI.WidgetOverrideTooltipFunc({escapedname}, function() {LuaUpdateCommand} end)\n";
             if (Text.RawString.Length > 0)

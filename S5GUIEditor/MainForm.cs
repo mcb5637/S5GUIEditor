@@ -108,6 +108,8 @@ namespace S5GUIEditor
             }
             else
                 GlobalSettings.DataPath = (string)workingDir.GetValue("WorkingDirectory") + "\\";
+
+            Text += typeof(MainForm).Assembly.GetName().Version;
         }
 
         private bool SetWorkingDirectory()

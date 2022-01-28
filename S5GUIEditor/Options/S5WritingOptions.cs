@@ -31,6 +31,7 @@ namespace S5GUIEditor.Options
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.InitialDirectory = GlobalSettings.DataPath + "menu\\fonts\\";
+            ofd.Filter = ".met|*.met|All|*.*";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string filename = ofd.FileName;

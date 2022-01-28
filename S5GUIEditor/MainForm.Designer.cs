@@ -45,6 +45,7 @@
             this.tsmiPaste = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiRename = new System.Windows.Forms.ToolStripMenuItem();
+            this.luaExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -83,7 +84,6 @@
             this.progressBarWidgetOptions = new S5GUIEditor.Options.ProgressBarWidgetOptions();
             this.pureTooltipWidgetOptions = new S5GUIEditor.Options.PureTooltipWidgetOptions();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.luaExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsTree.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -120,7 +120,7 @@
             this.tsmiCopy,
             this.tsmiDelete});
             this.cmsTree.Name = "cmsTree";
-            this.cmsTree.Size = new System.Drawing.Size(181, 158);
+            this.cmsTree.Size = new System.Drawing.Size(156, 136);
             // 
             // tsmiAdd
             // 
@@ -128,7 +128,7 @@
             this.tsmiNew,
             this.tsmiPaste});
             this.tsmiAdd.Name = "tsmiAdd";
-            this.tsmiAdd.Size = new System.Drawing.Size(180, 22);
+            this.tsmiAdd.Size = new System.Drawing.Size(155, 22);
             this.tsmiAdd.Text = "Add Subwidget";
             // 
             // tsmiNew
@@ -220,28 +220,35 @@
             // tsmiOptions
             // 
             this.tsmiOptions.Name = "tsmiOptions";
-            this.tsmiOptions.Size = new System.Drawing.Size(180, 22);
+            this.tsmiOptions.Size = new System.Drawing.Size(155, 22);
             this.tsmiOptions.Text = "Options";
             this.tsmiOptions.Click += new System.EventHandler(this.tsmiOptions_Click);
             // 
             // tsmiRename
             // 
             this.tsmiRename.Name = "tsmiRename";
-            this.tsmiRename.Size = new System.Drawing.Size(180, 22);
+            this.tsmiRename.Size = new System.Drawing.Size(155, 22);
             this.tsmiRename.Text = "Rename";
             this.tsmiRename.Click += new System.EventHandler(this.tsmiRename_Click);
+            // 
+            // luaExportToolStripMenuItem
+            // 
+            this.luaExportToolStripMenuItem.Name = "luaExportToolStripMenuItem";
+            this.luaExportToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.luaExportToolStripMenuItem.Text = "Lua export";
+            this.luaExportToolStripMenuItem.Click += new System.EventHandler(this.luaExportToolStripMenuItem_Click);
             // 
             // tsmiCopy
             // 
             this.tsmiCopy.Name = "tsmiCopy";
-            this.tsmiCopy.Size = new System.Drawing.Size(180, 22);
+            this.tsmiCopy.Size = new System.Drawing.Size(155, 22);
             this.tsmiCopy.Text = "Copy";
             this.tsmiCopy.Click += new System.EventHandler(this.tsmiCopy_Click);
             // 
             // tsmiDelete
             // 
             this.tsmiDelete.Name = "tsmiDelete";
-            this.tsmiDelete.Size = new System.Drawing.Size(180, 22);
+            this.tsmiDelete.Size = new System.Drawing.Size(155, 22);
             this.tsmiDelete.Text = "Delete";
             this.tsmiDelete.Click += new System.EventHandler(this.tsmiDelete_Click);
             // 
@@ -274,21 +281,21 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -583,13 +590,6 @@
             this.pureTooltipWidgetOptions.TabIndex = 15;
             this.pureTooltipWidgetOptions.Visible = false;
             // 
-            // luaExportToolStripMenuItem
-            // 
-            this.luaExportToolStripMenuItem.Name = "luaExportToolStripMenuItem";
-            this.luaExportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.luaExportToolStripMenuItem.Text = "Lua export";
-            this.luaExportToolStripMenuItem.Click += new System.EventHandler(this.luaExportToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -602,7 +602,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Settlers HoK GUI Editor";
+            this.Text = "Settlers HoK GUI Editor ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.cmsTree.ResumeLayout(false);
