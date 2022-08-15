@@ -474,6 +474,7 @@ namespace S5GUIEditor
             s += ButtonDisabled.ToLua(escapedname, 3);
             s += ButtonHighlighted.ToLua(escapedname, 4);
             s += ToolTipHelper.ToLua(escapedname);
+            s += Update.ToLua(escapedname);
             return s;
         }
 
