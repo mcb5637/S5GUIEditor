@@ -110,6 +110,17 @@ namespace S5GUIEditor
                 GlobalSettings.DataPath = (string)workingDir.GetValue("WorkingDirectory") + "\\";
 
             Text += typeof(MainForm).Assembly.GetName().Version;
+
+            // auto load last opened
+            if (workingDir != null)
+            {
+                string lastOpenedFile = workingDir.GetValue("LastOpenedFile") as string;
+                if (File.Exists(lastOpenedFile))
+                {
+                    GlobalSettings.LastLoadPath = Path.GetDirectoryName(lastOpenedFile);
+                    LoadGuiXml(lastOpenedFile);
+                }
+            }
         }
 
         private bool SetWorkingDirectory()
@@ -129,14 +140,25 @@ namespace S5GUIEditor
 
         private void UnpackS5Data()
         {
+            if (GlobalSettings.DataPath == null)
+            {
+                MessageBox.Show("Please set your Working Directory first.");
+                return;
+            }
+
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Blue Byte\\The Settlers - Heritage of Kings");
-            //if (rk == null)
-            //{
-            //    MessageBox.Show("Settlers V HoK not found!");
-            //    this.Close();
-            //    return;
-            //}
-            string s5InstallPath = rk.GetValue("InstallPath") as string;
+            string s5InstallPath;
+
+            if (rk != null && (rk.GetValue("InstallPath") as string) != null)
+            {
+                s5InstallPath = rk.GetValue("InstallPath") as string;
+            }
+            else
+            {
+                if (!ManualPathSelectionForUnpackingS5Data(out s5InstallPath))
+                    return;
+            }
+
             foreach (string folder in new string[] { "graphics\\textures\\gui", "menu", "text" })
             {
                 foreach (string bbaFile in new string[] { "\\base\\data.bba", "\\extra2\\bba\\patch.bba", "\\extra2\\bba\\data.bba", "\\extra2\\bba\\patche2.bba" })
@@ -152,6 +174,65 @@ namespace S5GUIEditor
                     Process proc = Process.Start(psi);
                     proc.WaitForExit();
                 }
+            }
+
+            if (Directory.Exists(s5InstallPath + "\\base\\shr"))
+            {
+                // history edition
+                foreach (string source in new string[] { "\\base\\shr\\", "\\extra2\\shr\\" })
+                {
+                    foreach (string folder in new string[] { "graphics\\textures\\gui", "menu", "text" })
+                    {
+                        string sourceFolder = s5InstallPath + source + folder;
+                        string dstFolder = GlobalSettings.DataPath + folder;
+                        if (Directory.Exists(sourceFolder))
+                            CopyFilesRecursively(sourceFolder, dstFolder);
+                    }
+                }
+
+            }
+        }
+
+        // https://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
+        private void CopyFilesRecursively(string sourcePath, string targetPath)
+        {
+            //Now Create all of the directories
+            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+            {
+                Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
+            }
+
+            //Copy all the files & Replaces any files with the same name
+            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            {
+                File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
+            }
+        }
+
+        private bool ManualPathSelectionForUnpackingS5Data(out string outS5InstallPath)
+        {
+            // manual game detection
+            outS5InstallPath = "";
+
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            MessageBox.Show("No installation found. Please selected the main folder manually.");
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                bool pathOk = Directory.Exists(fbd.SelectedPath + "\\base") && Directory.Exists(fbd.SelectedPath + "\\bin");
+                if (!pathOk)
+                {
+                    // manual folder did not contain game
+                    MessageBox.Show("The selected folder seems invalid.");
+                    return false;
+                }
+
+                outS5InstallPath = fbd.SelectedPath;
+                return true;
+            }
+            else
+            {
+                // user dismissed file browser dialog
+                return false;
             }
         }
 
@@ -201,7 +282,7 @@ namespace S5GUIEditor
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(MessageBox.Show("Do you really want to quit?", "Settlers HoK GUI Editor", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+            if (MessageBox.Show("Do you really want to quit?", "Settlers HoK GUI Editor", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
             {
                 e.Cancel = true;
                 return;
@@ -221,18 +302,34 @@ namespace S5GUIEditor
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = GlobalSettings.DataPath;
+            ofd.InitialDirectory = GlobalSettings.DataPath; // working directory
+            if (GlobalSettings.LastLoadPath != null)
+                ofd.InitialDirectory = GlobalSettings.LastLoadPath; // last opened
             ofd.Filter = "S5 GUI File (*.xml)|*.xml";
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                XDocument xd = XDocument.Load(ofd.FileName);
-                XElement root = xd.Element("root");
-                treeViewWidgets.Nodes.Clear();
-                baseWidget = new SpecialBonusBaseShitWidget(root, null);
-                firstWidget = baseWidget.SubWidgets[0] as ContainerWidget;
-                treeViewWidgets.Nodes.Add(baseWidget.SubWidgets[0].TreeNode);
-                pBGameView.Invalidate();
+                LoadGuiXml(ofd.FileName);
+
+                RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\bobby\\Settlers HoK GUI Editor", writable: true);
+                if (rk == null)
+                    rk = Registry.CurrentUser.CreateSubKey("SOFTWARE\\bobby\\Settlers HoK GUI Editor");
+                if (rk != null)
+                {
+                    rk.SetValue("LastOpenedFile", ofd.FileName);
+                    GlobalSettings.LastLoadPath = Path.GetDirectoryName(ofd.FileName);
+                }
             }
+        }
+
+        private void LoadGuiXml(string xmlPath)
+        {
+            XDocument xd = XDocument.Load(xmlPath);
+            XElement root = xd.Element("root");
+            treeViewWidgets.Nodes.Clear();
+            baseWidget = new SpecialBonusBaseShitWidget(root, null);
+            firstWidget = baseWidget.SubWidgets[0] as ContainerWidget;
+            treeViewWidgets.Nodes.Add(baseWidget.SubWidgets[0].TreeNode);
+            pBGameView.Invalidate();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -696,7 +793,7 @@ namespace S5GUIEditor
                 Graphics g = this.treeViewWidgets.CreateGraphics();
 
                 // Image index of 1 is the non-folder icon
-                
+
                 if (NodeOver.ImageIndex == 1)
                 {
                     #region Standard Node
@@ -899,18 +996,18 @@ namespace S5GUIEditor
             int RightPos = this.treeViewWidgets.Width - 4;
 
             Point[] LeftTriangle = new Point[5]{
-												   new Point(LeftPos, NodeOver.Bounds.Top - 4),
-												   new Point(LeftPos, NodeOver.Bounds.Top + 4),
-												   new Point(LeftPos + 4, NodeOver.Bounds.Y),
-												   new Point(LeftPos + 4, NodeOver.Bounds.Top - 1),
-												   new Point(LeftPos, NodeOver.Bounds.Top - 5)};
+                                                   new Point(LeftPos, NodeOver.Bounds.Top - 4),
+                                                   new Point(LeftPos, NodeOver.Bounds.Top + 4),
+                                                   new Point(LeftPos + 4, NodeOver.Bounds.Y),
+                                                   new Point(LeftPos + 4, NodeOver.Bounds.Top - 1),
+                                                   new Point(LeftPos, NodeOver.Bounds.Top - 5)};
 
             Point[] RightTriangle = new Point[5]{
-													new Point(RightPos, NodeOver.Bounds.Top - 4),
-													new Point(RightPos, NodeOver.Bounds.Top + 4),
-													new Point(RightPos - 4, NodeOver.Bounds.Y),
-													new Point(RightPos - 4, NodeOver.Bounds.Top - 1),
-													new Point(RightPos, NodeOver.Bounds.Top - 5)};
+                                                    new Point(RightPos, NodeOver.Bounds.Top - 4),
+                                                    new Point(RightPos, NodeOver.Bounds.Top + 4),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Y),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Top - 1),
+                                                    new Point(RightPos, NodeOver.Bounds.Top - 5)};
 
 
             g.FillPolygon(System.Drawing.Brushes.Black, LeftTriangle);
@@ -933,18 +1030,18 @@ namespace S5GUIEditor
             RightPos = this.treeViewWidgets.Width - 4;
 
             Point[] LeftTriangle = new Point[5]{
-												   new Point(LeftPos, NodeOver.Bounds.Bottom - 4),
-												   new Point(LeftPos, NodeOver.Bounds.Bottom + 4),
-												   new Point(LeftPos + 4, NodeOver.Bounds.Bottom),
-												   new Point(LeftPos + 4, NodeOver.Bounds.Bottom - 1),
-												   new Point(LeftPos, NodeOver.Bounds.Bottom - 5)};
+                                                   new Point(LeftPos, NodeOver.Bounds.Bottom - 4),
+                                                   new Point(LeftPos, NodeOver.Bounds.Bottom + 4),
+                                                   new Point(LeftPos + 4, NodeOver.Bounds.Bottom),
+                                                   new Point(LeftPos + 4, NodeOver.Bounds.Bottom - 1),
+                                                   new Point(LeftPos, NodeOver.Bounds.Bottom - 5)};
 
             Point[] RightTriangle = new Point[5]{
-													new Point(RightPos, NodeOver.Bounds.Bottom - 4),
-													new Point(RightPos, NodeOver.Bounds.Bottom + 4),
-													new Point(RightPos - 4, NodeOver.Bounds.Bottom),
-													new Point(RightPos - 4, NodeOver.Bounds.Bottom - 1),
-													new Point(RightPos, NodeOver.Bounds.Bottom - 5)};
+                                                    new Point(RightPos, NodeOver.Bounds.Bottom - 4),
+                                                    new Point(RightPos, NodeOver.Bounds.Bottom + 4),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Bottom),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Bottom - 1),
+                                                    new Point(RightPos, NodeOver.Bounds.Bottom - 5)};
 
 
             g.FillPolygon(System.Drawing.Brushes.Black, LeftTriangle);
@@ -962,18 +1059,18 @@ namespace S5GUIEditor
             RightPos = this.treeViewWidgets.Width - 4;
 
             Point[] LeftTriangle = new Point[5]{
-												   new Point(LeftPos, NodeOver.Bounds.Top - 4),
-												   new Point(LeftPos, NodeOver.Bounds.Top + 4),
-												   new Point(LeftPos + 4, NodeOver.Bounds.Y),
-												   new Point(LeftPos + 4, NodeOver.Bounds.Top - 1),
-												   new Point(LeftPos, NodeOver.Bounds.Top - 5)};
+                                                   new Point(LeftPos, NodeOver.Bounds.Top - 4),
+                                                   new Point(LeftPos, NodeOver.Bounds.Top + 4),
+                                                   new Point(LeftPos + 4, NodeOver.Bounds.Y),
+                                                   new Point(LeftPos + 4, NodeOver.Bounds.Top - 1),
+                                                   new Point(LeftPos, NodeOver.Bounds.Top - 5)};
 
             Point[] RightTriangle = new Point[5]{
-													new Point(RightPos, NodeOver.Bounds.Top - 4),
-													new Point(RightPos, NodeOver.Bounds.Top + 4),
-													new Point(RightPos - 4, NodeOver.Bounds.Y),
-													new Point(RightPos - 4, NodeOver.Bounds.Top - 1),
-													new Point(RightPos, NodeOver.Bounds.Top - 5)};
+                                                    new Point(RightPos, NodeOver.Bounds.Top - 4),
+                                                    new Point(RightPos, NodeOver.Bounds.Top + 4),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Y),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Top - 1),
+                                                    new Point(RightPos, NodeOver.Bounds.Top - 5)};
 
 
             g.FillPolygon(System.Drawing.Brushes.Black, LeftTriangle);
@@ -986,11 +1083,11 @@ namespace S5GUIEditor
             Graphics g = this.treeViewWidgets.CreateGraphics();
             int RightPos = NodeOver.Bounds.Right + 6;
             Point[] RightTriangle = new Point[5]{
-													new Point(RightPos, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) + 4),
-													new Point(RightPos, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) + 4),
-													new Point(RightPos - 4, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2)),
-													new Point(RightPos - 4, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) - 1),
-													new Point(RightPos, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) - 5)};
+                                                    new Point(RightPos, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) + 4),
+                                                    new Point(RightPos, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) + 4),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2)),
+                                                    new Point(RightPos - 4, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) - 1),
+                                                    new Point(RightPos, NodeOver.Bounds.Y + (NodeOver.Bounds.Height / 2) - 5)};
 
             this.Refresh();
             g.FillPolygon(System.Drawing.Brushes.Black, RightTriangle);
