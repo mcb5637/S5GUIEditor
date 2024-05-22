@@ -154,7 +154,7 @@ namespace S5GUIEditor
 
         public virtual XElement GetXml()
         {
-            XElement[] elements = new XElement[] { 
+            XElement[] elements = new XElement[] {
                 new XElement("Name", this.Name),
                 new XElement("Rectangle", XmlConverter.FromRectangleF(this.PositionAndSize)),
                 new XElement("IsShown", this.IsShown.ToString()),
@@ -437,7 +437,7 @@ namespace S5GUIEditor
                 new XElement("ButtonHelper", new XElement[] {
                     new XElement("DisabledFlag", this.Disabled.ToString()),
                     new XElement("HighLightedFlag", this.HighLighted.ToString()),
-                    new XElement("ActionFunction", 
+                    new XElement("ActionFunction",
                         new XElement("LuaCommand", this.LuaCommand)
                     ),
                     new XElement("ShortCutString", this.ShortCutString.ToXml()),
@@ -679,10 +679,122 @@ namespace S5GUIEditor
             });
             return xe;
         }
+
+        public class CustomWidgetOptions
+        {
+            public string IntUserVar0 = "";
+            public string IntUserVar1 = "";
+            public string IntUserVar2 = "";
+            public string IntUserVar3 = "";
+            public string IntUserVar4 = "";
+            public string IntUserVar5 = "";
+            public string StringUserVar0 = "";
+            public string StringUserVar1 = "";
+            public bool SaveForExport = false;
+
+            public string IntVar(int i)
+            {
+                switch (i)
+                {
+                    case 0:
+                        return IntUserVar0;
+                    case 1:
+                        return IntUserVar1;
+                    case 2:
+                        return IntUserVar2;
+                    case 3:
+                        return IntUserVar3;
+                    case 4:
+                        return IntUserVar4;
+                    case 5:
+                        return IntUserVar5;
+                }
+                return "";
+            }
+            public string StringVar(int i)
+            {
+                switch (i)
+                {
+                    case 0:
+                        return StringUserVar0;
+                    case 1:
+                        return StringUserVar1;
+                }
+                return "";
+            }
+        }
+
+        public static Dictionary<string, CustomWidgetOptions> KnownWidgetTypes = new Dictionary<string, CustomWidgetOptions>();
+        static CustomWidget()
+        {
+            KnownWidgetTypes["EGUIX::CStringInputCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "bool alwaysVisible",
+                IntUserVar1 = "bool keepContentOnClose",
+                IntUserVar2 = "int mode, 0->chat, 1->password, 2->cdkey",
+                IntUserVar3 = "bool noConfirmCall",
+                IntUserVar4 = "int bufferSize",
+                StringUserVar0 = "confirm func (inputString, widgetId)",
+                SaveForExport = true,
+            };
+            KnownWidgetTypes["CppLogic::Mod::UI::AutoScrollCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "int spacing",
+                StringUserVar0 = "slider widget",
+                StringUserVar1 = "scrollable widget (optional)",
+                SaveForExport = true,
+            };
+            KnownWidgetTypes["CppLogic::Mod::UI::TextInputCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "int mode 0->normal, 1->password, 2->int, 3->double",
+                IntUserVar1 = "bool fireCancelEvent",
+                StringUserVar0 = "event func (text, widgetid, event) event: 0->confirm, 1->cancel",
+                StringUserVar1 = "font (optional)",
+                SaveForExport = true,
+            };
+            KnownWidgetTypes["CppLogic::Mod::UI::FreeCamCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "int scroll speed",
+                SaveForExport = true,
+            };
+            KnownWidgetTypes["GGUI::C3DOnScreenInformationCustomWidget"] = new CustomWidgetOptions()
+            {
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["GGUI::CShortMessagesWindowControllerCustomWidget"] = new CustomWidgetOptions()
+            {
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["GGUI::CStatisticsRendererCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "bool isMainmenu",
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["GGUI::CMiniMapCustomWidget"] = new CustomWidgetOptions()
+            {
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["EGUIX::CScrollBarButtonCustomWidget "] = new CustomWidgetOptions()
+            {
+                StringUserVar0 = "confirm callback (value, widgetId)",
+                StringUserVar1 = "slider gfx source name",
+                SaveForExport = false,
+            };
+        }
+
+        public static CustomWidgetOptions TryGet(string className)
+        {
+            if (KnownWidgetTypes.TryGetValue(className, out CustomWidgetOptions result))
+                return result;
+            return null;
+        }
+
         protected override string GetLuaCreator(string parent, string befo)
         {
-            MessageBox.Show($"Warning: CustomWidget {Name} of type {CustomClassName} in export, make sure this works properly.\nLook at the CppLogic.UI.ContainerWidgetCreateCustomWidgetChild documentation for more info.", "CustomWidget export");
-            return $"CppLogic.UI.ContainerWidgetCreateCustomWidgetChild(\"{parent}\", \"{Name}\", \"{CustomClassName}\", {befo}, {IntegerUserVariable0DefaultValue}, {IntegerUserVariable1DefaultValue}, {IntegerUserVariable2DefaultValue}, {IntegerUserVariable3DefaultValue}, {IntegerUserVariable4DefaultValue}, {IntegerUserVariable5DefaultValue}, \"{StringUserVariable0DefaultValue}\", \"{StringUserVariable1DefaultValue}\")\n";
+            var o = TryGet(CustomClassName);
+            if (o == null || !o.SaveForExport)
+                MessageBox.Show($"Warning: CustomWidget {Name} of type {CustomClassName} in export, make sure this works properly.\nLook at the CppLogic.UI.ContainerWidgetCreateCustomWidgetChild documentation for more info.", "CustomWidget export");
+            return $"CppLogic.UI.ContainerWidgetCreateCustomWidgetChild(\"{parent}\", \"{Name}\", \"{CustomClassName}\", {befo}, {IntegerUserVariable0DefaultValue}, {IntegerUserVariable1DefaultValue}, {IntegerUserVariable2DefaultValue}, {IntegerUserVariable3DefaultValue}, {IntegerUserVariable4DefaultValue}, {IntegerUserVariable5DefaultValue}, \"{StringUserVariable0DefaultValue.Replace("\\", "\\\\")}\", \"{StringUserVariable1DefaultValue.Replace("\\", "\\\\")}\")\n";
         }
     }
 
@@ -692,14 +804,15 @@ namespace S5GUIEditor
         public WidgetUpdate Update { get; set; }
         public float ProgressBarValue { get; set; }
         public float ProgressBarLimit { get; set; }
-        public float ProgressRatio { 
+        public float ProgressRatio
+        {
             get
-            { 
+            {
                 float progressRatio = this.ProgressBarLimit / this.ProgressBarValue;
                 if (float.IsNaN(progressRatio))
                     progressRatio = 1;
-                return  progressRatio;
-            } 
+                return progressRatio;
+            }
         }
         public ProgressBarWidget(XElement e, ContainerWidget parentNode)
             : base(e, parentNode)

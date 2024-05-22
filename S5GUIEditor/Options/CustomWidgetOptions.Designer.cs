@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.gbOCustom = new System.Windows.Forms.GroupBox();
+            this.tbCustomClassName = new System.Windows.Forms.ComboBox();
+            this.lbStringUserVarEx = new System.Windows.Forms.Label();
+            this.lbIntUserVarEx = new System.Windows.Forms.Label();
             this.tbStringUserVarDefaultValue = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cbStringUserVar = new System.Windows.Forms.ComboBox();
@@ -37,13 +40,15 @@
             this.label3 = new System.Windows.Forms.Label();
             this.cbIntUserVar = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbCustomClassName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.gbOCustom.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbOCustom
             // 
+            this.gbOCustom.Controls.Add(this.tbCustomClassName);
+            this.gbOCustom.Controls.Add(this.lbStringUserVarEx);
+            this.gbOCustom.Controls.Add(this.lbIntUserVarEx);
             this.gbOCustom.Controls.Add(this.tbStringUserVarDefaultValue);
             this.gbOCustom.Controls.Add(this.label4);
             this.gbOCustom.Controls.Add(this.cbStringUserVar);
@@ -52,7 +57,6 @@
             this.gbOCustom.Controls.Add(this.label3);
             this.gbOCustom.Controls.Add(this.cbIntUserVar);
             this.gbOCustom.Controls.Add(this.label2);
-            this.gbOCustom.Controls.Add(this.tbCustomClassName);
             this.gbOCustom.Controls.Add(this.label1);
             this.gbOCustom.Location = new System.Drawing.Point(0, 0);
             this.gbOCustom.Name = "gbOCustom";
@@ -60,6 +64,34 @@
             this.gbOCustom.TabIndex = 3;
             this.gbOCustom.TabStop = false;
             this.gbOCustom.Text = "Custom";
+            // 
+            // tbCustomClassName
+            // 
+            this.tbCustomClassName.FormattingEnabled = true;
+            this.tbCustomClassName.Location = new System.Drawing.Point(128, 27);
+            this.tbCustomClassName.Name = "tbCustomClassName";
+            this.tbCustomClassName.Size = new System.Drawing.Size(278, 21);
+            this.tbCustomClassName.TabIndex = 13;
+            this.tbCustomClassName.SelectedIndexChanged += new System.EventHandler(this.TbCustomClassName_SelectedIndexChanged);
+            this.tbCustomClassName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TbCustomClassName_KeyDown);
+            // 
+            // lbStringUserVarEx
+            // 
+            this.lbStringUserVarEx.AutoSize = true;
+            this.lbStringUserVarEx.Location = new System.Drawing.Point(412, 94);
+            this.lbStringUserVarEx.Name = "lbStringUserVarEx";
+            this.lbStringUserVarEx.Size = new System.Drawing.Size(36, 13);
+            this.lbStringUserVarEx.TabIndex = 12;
+            this.lbStringUserVarEx.Text = "var ex";
+            // 
+            // lbIntUserVarEx
+            // 
+            this.lbIntUserVarEx.AutoSize = true;
+            this.lbIntUserVarEx.Location = new System.Drawing.Point(307, 65);
+            this.lbIntUserVarEx.Name = "lbIntUserVarEx";
+            this.lbIntUserVarEx.Size = new System.Drawing.Size(36, 13);
+            this.lbIntUserVarEx.TabIndex = 11;
+            this.lbIntUserVarEx.Text = "var ex";
             // 
             // tbStringUserVarDefaultValue
             // 
@@ -143,14 +175,6 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "IntegerUserVariable";
             // 
-            // tbCustomClassName
-            // 
-            this.tbCustomClassName.Location = new System.Drawing.Point(128, 27);
-            this.tbCustomClassName.Name = "tbCustomClassName";
-            this.tbCustomClassName.Size = new System.Drawing.Size(278, 20);
-            this.tbCustomClassName.TabIndex = 2;
-            this.tbCustomClassName.TextChanged += new System.EventHandler(this.tbCustomClassName_TextChanged);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -177,7 +201,6 @@
 
         private System.Windows.Forms.GroupBox gbOCustom;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbCustomClassName;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbIntUserVarDefaultValue;
         private System.Windows.Forms.Label label3;
@@ -186,5 +209,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cbStringUserVar;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label lbIntUserVarEx;
+        private System.Windows.Forms.Label lbStringUserVarEx;
+        private System.Windows.Forms.ComboBox tbCustomClassName;
     }
 }

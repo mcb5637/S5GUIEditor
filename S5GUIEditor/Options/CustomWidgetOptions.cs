@@ -14,6 +14,7 @@ namespace S5GUIEditor.Options
         CustomWidget activeWidget;
         int[] intUserVarDefaultValues;
         string[] stringUserVarDefaultValues;
+        bool updating = false;
         public CustomWidgetOptions()
         {
             InitializeComponent();
@@ -21,8 +22,11 @@ namespace S5GUIEditor.Options
 
         public override void LoadOptions(Widget widget)
         {
+            updating = true;
             activeWidget = widget as CustomWidget;
             tbCustomClassName.Text = activeWidget.CustomClassName;
+            tbCustomClassName.Items.Clear();
+            tbCustomClassName.Items.AddRange(CustomWidget.KnownWidgetTypes.Keys.ToArray());
             intUserVarDefaultValues = new int[] {
                 activeWidget.IntegerUserVariable0DefaultValue,
                 activeWidget.IntegerUserVariable1DefaultValue,
@@ -32,7 +36,7 @@ namespace S5GUIEditor.Options
                 activeWidget.IntegerUserVariable5DefaultValue
             };
             stringUserVarDefaultValues = new string[] {
-                
+
                 activeWidget.StringUserVariable0DefaultValue,
                 activeWidget.StringUserVariable1DefaultValue
             };
@@ -40,17 +44,24 @@ namespace S5GUIEditor.Options
             cbStringUserVar.SelectedIndex = 0;
             tbIntUserVarDefaultValue.Text = activeWidget.IntegerUserVariable0DefaultValue.ToString();
             tbStringUserVarDefaultValue.Text = activeWidget.StringUserVariable0DefaultValue;
+            updating = false;
+            UpdateCustomClass();
         }
 
-        private void tbCustomClassName_TextChanged(object sender, EventArgs e)
+        private void TbCustomClassName_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
+            MessageBox.Show("t");
             activeWidget.CustomClassName = tbCustomClassName.Text;
+            UpdateCustomClass();
         }
 
         private void tbIntUserVarDefaultValue_TextChanged(object sender, EventArgs e)
         {
-            int value = 0;
-            int.TryParse(tbIntUserVarDefaultValue.Text, out value);
+            if (updating)
+                return;
+            int.TryParse(tbIntUserVarDefaultValue.Text, out int value);
             int nr = int.Parse(cbIntUserVar.Text);
             switch (nr)
             {
@@ -78,11 +89,16 @@ namespace S5GUIEditor.Options
 
         private void cbIntUserVar_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
             tbIntUserVarDefaultValue.Text = intUserVarDefaultValues[cbIntUserVar.SelectedIndex].ToString();
+            UpdateCustomClass();
         }
 
         private void tbStringUserVarDefaultValue_TextChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
             string value = tbStringUserVarDefaultValue.Text;
             int nr = int.Parse(cbStringUserVar.Text);
             switch (nr)
@@ -99,7 +115,33 @@ namespace S5GUIEditor.Options
 
         private void cbStringUserVar_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (updating)
+                return;
             tbStringUserVarDefaultValue.Text = stringUserVarDefaultValues[cbStringUserVar.SelectedIndex];
+            UpdateCustomClass();
+        }
+
+        private void UpdateCustomClass()
+        {
+            var o = CustomWidget.TryGet(activeWidget.CustomClassName);
+            lbIntUserVarEx.Text = o != null ? o.IntVar(int.Parse(cbIntUserVar.Text)) : "";
+            lbStringUserVarEx.Text = o != null ? o.StringVar(int.Parse(cbStringUserVar.Text)) : "";
+        }
+
+        private void TbCustomClassName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string s = tbCustomClassName.Text;
+
+                if (!tbCustomClassName.Items.Contains(s))
+                {
+                    tbCustomClassName.Items.Add(s);
+                    tbCustomClassName.SelectedItem = s;
+                }
+
+                e.Handled = true;
+            }
         }
     }
 }
