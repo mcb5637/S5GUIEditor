@@ -774,7 +774,7 @@ namespace S5GUIEditor
             {
                 SaveForExport = false,
             };
-            KnownWidgetTypes["EGUIX::CScrollBarButtonCustomWidget "] = new CustomWidgetOptions()
+            KnownWidgetTypes["EGUIX::CScrollBarButtonCustomWidget"] = new CustomWidgetOptions()
             {
                 StringUserVar0 = "confirm callback (value, widgetId)",
                 StringUserVar1 = "slider gfx source name",
