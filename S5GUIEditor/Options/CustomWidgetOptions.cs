@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using AvengersUtd.ColorChooserTest;
 
 namespace S5GUIEditor.Options
 {
@@ -141,6 +142,19 @@ namespace S5GUIEditor.Options
                 }
 
                 e.Handled = true;
+            }
+        }
+
+        private void BtnEncodeColor_Click(object sender, EventArgs e)
+        {
+            ColorChooser ch = new ColorChooser();
+            if (int.TryParse(tbIntUserVarDefaultValue.Text, out int argb))
+                ch.Color = Color.FromArgb(argb);
+            else
+                ch.Color = Color.Black;
+            if (ch.ShowDialog() == DialogResult.OK)
+            {
+                tbIntUserVarDefaultValue.Text = (ch.Color.ToArgb()).ToString();
             }
         }
     }

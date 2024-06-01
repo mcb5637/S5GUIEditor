@@ -746,15 +746,19 @@ namespace S5GUIEditor
             };
             KnownWidgetTypes["CppLogic::Mod::UI::TextInputCustomWidget"] = new CustomWidgetOptions()
             {
-                IntUserVar0 = "int mode 0->normal, 1->password, 2->int, 3->double",
+                IntUserVar0 = "int mode 0->normal, 1->password, 2->int, 3->double, 4->uint, 5->udouble",
                 IntUserVar1 = "bool fireCancelEvent",
+                IntUserVar2 = "argb text color",
+                IntUserVar3 = "argb cursor highlight color",
+                IntUserVar4 = "argb background color",
+                IntUserVar5 = "int scroll delta",
                 StringUserVar0 = "event func (text, widgetid, event) event: 0->confirm, 1->cancel",
                 StringUserVar1 = "font (optional)",
                 SaveForExport = true,
             };
             KnownWidgetTypes["CppLogic::Mod::UI::FreeCamCustomWidget"] = new CustomWidgetOptions()
             {
-                IntUserVar0 = "int scroll speed",
+                IntUserVar0 = "default scroll speed",
                 SaveForExport = true,
             };
             KnownWidgetTypes["GGUI::C3DOnScreenInformationCustomWidget"] = new CustomWidgetOptions()

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.gbOCustom = new System.Windows.Forms.GroupBox();
+            this.btnEncodeColor = new System.Windows.Forms.Button();
             this.tbCustomClassName = new System.Windows.Forms.ComboBox();
             this.lbStringUserVarEx = new System.Windows.Forms.Label();
             this.lbIntUserVarEx = new System.Windows.Forms.Label();
@@ -46,6 +47,7 @@
             // 
             // gbOCustom
             // 
+            this.gbOCustom.Controls.Add(this.btnEncodeColor);
             this.gbOCustom.Controls.Add(this.tbCustomClassName);
             this.gbOCustom.Controls.Add(this.lbStringUserVarEx);
             this.gbOCustom.Controls.Add(this.lbIntUserVarEx);
@@ -64,6 +66,16 @@
             this.gbOCustom.TabIndex = 3;
             this.gbOCustom.TabStop = false;
             this.gbOCustom.Text = "Custom";
+            // 
+            // btnEncodeColor
+            // 
+            this.btnEncodeColor.Location = new System.Drawing.Point(307, 60);
+            this.btnEncodeColor.Name = "btnEncodeColor";
+            this.btnEncodeColor.Size = new System.Drawing.Size(75, 23);
+            this.btnEncodeColor.TabIndex = 14;
+            this.btnEncodeColor.Text = "Color";
+            this.btnEncodeColor.UseVisualStyleBackColor = true;
+            this.btnEncodeColor.Click += new System.EventHandler(this.BtnEncodeColor_Click);
             // 
             // tbCustomClassName
             // 
@@ -87,7 +99,7 @@
             // lbIntUserVarEx
             // 
             this.lbIntUserVarEx.AutoSize = true;
-            this.lbIntUserVarEx.Location = new System.Drawing.Point(307, 65);
+            this.lbIntUserVarEx.Location = new System.Drawing.Point(388, 65);
             this.lbIntUserVarEx.Name = "lbIntUserVarEx";
             this.lbIntUserVarEx.Size = new System.Drawing.Size(36, 13);
             this.lbIntUserVarEx.TabIndex = 11;
@@ -212,5 +224,6 @@
         private System.Windows.Forms.Label lbIntUserVarEx;
         private System.Windows.Forms.Label lbStringUserVarEx;
         private System.Windows.Forms.ComboBox tbCustomClassName;
+        private System.Windows.Forms.Button btnEncodeColor;
     }
 }
