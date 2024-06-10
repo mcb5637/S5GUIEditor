@@ -737,29 +737,15 @@ namespace S5GUIEditor
                 StringUserVar0 = "confirm func (inputString, widgetId)",
                 SaveForExport = true,
             };
-            KnownWidgetTypes["CppLogic::Mod::UI::AutoScrollCustomWidget"] = new CustomWidgetOptions()
+            KnownWidgetTypes["EGUIX::CScrollBarButtonCustomWidget"] = new CustomWidgetOptions()
             {
-                IntUserVar0 = "int spacing",
-                StringUserVar0 = "slider widget",
-                StringUserVar1 = "scrollable widget (optional)",
-                SaveForExport = true,
+                StringUserVar0 = "confirm callback (value, widgetId)",
+                StringUserVar1 = "slider gfx source name",
+                SaveForExport = false,
             };
-            KnownWidgetTypes["CppLogic::Mod::UI::TextInputCustomWidget"] = new CustomWidgetOptions()
+            KnownWidgetTypes["EGUIX::CVideoPlaybackCustomWidget"] = new CustomWidgetOptions()
             {
-                IntUserVar0 = "int mode 0->normal, 1->password, 2->int, 3->double, 4->uint, 5->udouble",
-                IntUserVar1 = "bool fireCancelEvent",
-                IntUserVar2 = "argb text color",
-                IntUserVar3 = "argb cursor highlight color",
-                IntUserVar4 = "argb background color",
-                IntUserVar5 = "int scroll delta",
-                StringUserVar0 = "event func (text, widgetid, event) event: 0->confirm, 1->cancel",
-                StringUserVar1 = "font (optional)",
-                SaveForExport = true,
-            };
-            KnownWidgetTypes["CppLogic::Mod::UI::FreeCamCustomWidget"] = new CustomWidgetOptions()
-            {
-                IntUserVar0 = "default scroll speed",
-                SaveForExport = true,
+                SaveForExport = false,
             };
             KnownWidgetTypes["GGUI::C3DOnScreenInformationCustomWidget"] = new CustomWidgetOptions()
             {
@@ -778,11 +764,49 @@ namespace S5GUIEditor
             {
                 SaveForExport = false,
             };
-            KnownWidgetTypes["EGUIX::CScrollBarButtonCustomWidget"] = new CustomWidgetOptions()
+            KnownWidgetTypes["GGUI::CMiniMapOverlayCustomWidget"] = new CustomWidgetOptions()
             {
-                StringUserVar0 = "confirm callback (value, widgetId)",
-                StringUserVar1 = "slider gfx source name",
                 SaveForExport = false,
+            };
+            KnownWidgetTypes["GGUI::CNetworkInfoCustomWidget"] = new CustomWidgetOptions()
+            {
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["GGUI::CNetworkWindowControllerCustomWidget"] = new CustomWidgetOptions()
+            {
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["GGUI::C3DOnScreenDebugCustomWidget"] = new CustomWidgetOptions()
+            {
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["GGUI::CNotesWindowControllerCustomWidget"] = new CustomWidgetOptions()
+            {
+                SaveForExport = false,
+            };
+            KnownWidgetTypes["CppLogic::Mod::UI::AutoScrollCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "int spacing",
+                StringUserVar0 = "slider widget",
+                StringUserVar1 = "scrollable widget (optional)",
+                SaveForExport = true,
+            };
+            KnownWidgetTypes["CppLogic::Mod::UI::TextInputCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "int mode 0->normal, 1->password, 2->int, 3->double, 4->uint, 5->udouble",
+                IntUserVar1 = "flags 1->fire cancel event, 2->fire validate event",
+                IntUserVar2 = "argb text color (white, if a==0)",
+                IntUserVar3 = "argb cursor highlight color (gray, if a==0)",
+                IntUserVar4 = "argb background color (none, if a==0)",
+                IntUserVar5 = "int scroll delta",
+                StringUserVar0 = "event func (text, widgetid, event) event: 0->confirm, 1->cancel, 2->validate",
+                StringUserVar1 = "font (optional)",
+                SaveForExport = true,
+            };
+            KnownWidgetTypes["CppLogic::Mod::UI::FreeCamCustomWidget"] = new CustomWidgetOptions()
+            {
+                IntUserVar0 = "default scroll speed",
+                SaveForExport = true,
             };
         }
 

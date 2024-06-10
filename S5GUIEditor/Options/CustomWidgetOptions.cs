@@ -53,7 +53,6 @@ namespace S5GUIEditor.Options
         {
             if (updating)
                 return;
-            MessageBox.Show("t");
             activeWidget.CustomClassName = tbCustomClassName.Text;
             UpdateCustomClass();
         }
