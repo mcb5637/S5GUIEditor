@@ -512,7 +512,7 @@ namespace S5GUIEditor
         {
             string escapedname = $"\"{Name}\"";
             string s = base.GetLuaData(ignorebef);
-            // maybe iconmaterial
+            s += IconMaterial.ToLua(escapedname, 10);
             return s;
         }
         public override void DrawWidget(Graphics g, float zoom, PointF origin)
