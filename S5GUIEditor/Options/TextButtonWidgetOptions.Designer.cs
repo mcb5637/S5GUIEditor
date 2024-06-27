@@ -30,11 +30,13 @@
         {
             this.gbOTextButton = new System.Windows.Forms.GroupBox();
             this.s5WritingOptions = new S5GUIEditor.Options.S5WritingOptions();
+            this.CB_Centered = new System.Windows.Forms.CheckBox();
             this.gbOTextButton.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbOTextButton
             // 
+            this.gbOTextButton.Controls.Add(this.CB_Centered);
             this.gbOTextButton.Controls.Add(this.s5WritingOptions);
             this.gbOTextButton.Location = new System.Drawing.Point(0, 0);
             this.gbOTextButton.Name = "gbOTextButton";
@@ -50,6 +52,17 @@
             this.s5WritingOptions.Size = new System.Drawing.Size(525, 170);
             this.s5WritingOptions.TabIndex = 0;
             // 
+            // CB_Centered
+            // 
+            this.CB_Centered.AutoSize = true;
+            this.CB_Centered.Location = new System.Drawing.Point(553, 19);
+            this.CB_Centered.Name = "CB_Centered";
+            this.CB_Centered.Size = new System.Drawing.Size(69, 17);
+            this.CB_Centered.TabIndex = 1;
+            this.CB_Centered.Text = "Centered";
+            this.CB_Centered.UseVisualStyleBackColor = true;
+            this.CB_Centered.CheckedChanged += new System.EventHandler(this.CB_Centered_CheckedChanged);
+            // 
             // TextButtonWidgetOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -58,6 +71,7 @@
             this.Name = "TextButtonWidgetOptions";
             this.Size = new System.Drawing.Size(996, 193);
             this.gbOTextButton.ResumeLayout(false);
+            this.gbOTextButton.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -66,5 +80,6 @@
 
         private System.Windows.Forms.GroupBox gbOTextButton;
         private S5WritingOptions s5WritingOptions;
+        private System.Windows.Forms.CheckBox CB_Centered;
     }
 }

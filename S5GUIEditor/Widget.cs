@@ -191,7 +191,8 @@ namespace S5GUIEditor
         }
         public string GetLua()
         {
-            return GetLuaAssert() + GetLuaData(false);
+            return "if not CppLogic.UI.TextButtonSetCenterText then\n\tfunction CppLogic.UI.TextButtonSetCenterText() end\nend\n"
+                + GetLuaAssert() + GetLuaData(false);
         }
         internal virtual string GetLuaAssert()
         {
@@ -525,20 +526,28 @@ namespace S5GUIEditor
     public class TextButtonWidget : ButtonWidget
     {
         public S5Writing ButtonText { get; set; }
+        public bool CenterText { get; set; }
         public TextButtonWidget(XElement e, ContainerWidget parentNode)
             : base(e, parentNode)
         {
             this.ButtonText = new S5Writing(e.Element("StringHelper"));
+            var ct = e.Element("CenterText");
+            if (ct != null)
+                CenterText = bool.Parse(ct.Value);
+            else
+                CenterText = true;
         }
         public TextButtonWidget(ContainerWidget parentNode, RectangleF positionAndSize)
             : base(parentNode, positionAndSize)
         {
             this.ButtonText = new S5Writing("data\\menu\\fonts\\standard12.met", new S5String("", "@center New Button"), 0f, Color.White);
+            CenterText = true;
         }
         public override XElement GetXml()
         {
             XElement xe = base.GetXml();
             xe.Add(new XElement("StringHelper", this.ButtonText.ToXml()));
+            xe.Add(new XElement("CenterText", CenterText.ToString()));
             return xe;
         }
         protected override string GetLuaCreator(string parent, string befo)
@@ -550,6 +559,7 @@ namespace S5GUIEditor
             string escapedname = $"\"{Name}\"";
             string s = base.GetLuaData(ignorebef);
             s += ButtonText.ToLua(escapedname);
+            s += $"CppLogic.UI.TextButtonSetCenterText(\"{Name}\", {CenterText.ToString().ToLower()})\n";
             return s;
         }
         public override void DrawWidget(Graphics g, float zoom, PointF origin)

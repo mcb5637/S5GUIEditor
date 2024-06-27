@@ -21,6 +21,12 @@ namespace S5GUIEditor.Options
         {
             activeWidget = widget as TextButtonWidget;
             s5WritingOptions.Initialize(activeWidget.ButtonText, "Button Text:");
+            CB_Centered.Checked = activeWidget.CenterText;
+        }
+
+        private void CB_Centered_CheckedChanged(object sender, EventArgs e)
+        {
+            activeWidget.CenterText = CB_Centered.Checked;
         }
     }
 }
