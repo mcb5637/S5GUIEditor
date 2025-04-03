@@ -143,6 +143,7 @@ namespace S5GUIEditor
     {
         public Image TextureImage { get; protected set; }
         protected string texturePath;
+        public bool MirrorX = false, MirrorY = false;
         public string TexturePath
         {
             get { return this.texturePath; }
@@ -197,19 +198,39 @@ namespace S5GUIEditor
         {
             this.TexturePath = e.Element("Texture").Value;
             this.TexturePosAndSize = XmlConverter.ToRectangleF(e.Element("TextureCoordinates"));
+            if (TexturePosAndSize.Width < 0)
+            {
+                TexturePosAndSize = DoMirrorX(TexturePosAndSize);
+                MirrorX = true;
+            }
+            if (TexturePosAndSize.Height < 0)
+            {
+                TexturePosAndSize = DoMirrorY(TexturePosAndSize);
+                MirrorY = true;
+            }
             this.RGBA = XmlConverter.ToColor(e.Element("Color"));
         }
         public XElement[] ToXml()
         {
+            RectangleF r = TexturePosAndSize;
+            if (MirrorX)
+                r = DoMirrorX(r);
+            if (MirrorY)
+                r = DoMirrorY(r);
             return new XElement[] {
                 new XElement("Texture", this.TexturePath),
-                new XElement("TextureCoordinates", XmlConverter.FromRectangleF(this.TexturePosAndSize)),
+                new XElement("TextureCoordinates", XmlConverter.FromRectangleF(r)),
                 new XElement("Color", XmlConverter.FromColor(this.RGBA))
             };
         }
         public string ToLua(string escapedname, int i)
         {
-            string s = $"CppLogic.UI.WidgetMaterialSetTextureCoordinates({escapedname}, {i}, {TexturePosAndSize.X}, {TexturePosAndSize.Y}, {TexturePosAndSize.Width}, {TexturePosAndSize.Height})\n";
+            RectangleF r = TexturePosAndSize;
+            if (MirrorX)
+                r = DoMirrorX(r);
+            if (MirrorY)
+                r = DoMirrorY(r);
+            string s = $"CppLogic.UI.WidgetMaterialSetTextureCoordinates({escapedname}, {i}, {r.X}, {r.Y}, {r.Width}, {r.Height})\n";
             if (TexturePath.Length > 0)
                 s += $"XGUIEng.SetMaterialTexture({escapedname}, {i}, \"{TexturePath.Replace("\\", "\\\\")}\")\n";
             s += $"XGUIEng.SetMaterialColor({escapedname}, {i}, {RGBA.R}, {RGBA.G}, {RGBA.B}, {RGBA.A})\n";
@@ -224,6 +245,10 @@ namespace S5GUIEditor
             else
             {
                 RectangleF srcRect = new RectangleF(this.TexturePosAndSize.X * this.TextureImage.Width, this.TexturePosAndSize.Y * this.TextureImage.Height, this.TexturePosAndSize.Width * this.TextureImage.Width, this.TexturePosAndSize.Height * this.TextureImage.Height);
+                if (MirrorX)
+                    srcRect = DoMirrorX(srcRect);
+                if (MirrorY)
+                    srcRect = DoMirrorY(srcRect);
                 PointF[] para = new PointF[]
                 {
                     new PointF(posAndSize.X,   posAndSize.Y),                       //UL corner
@@ -232,6 +257,19 @@ namespace S5GUIEditor
                 };
                 g.DrawImage(this.TextureImage, para, srcRect, GraphicsUnit.Pixel, this.colorFilter);
             }
+        }
+
+        public static RectangleF DoMirrorX(RectangleF i)
+        {
+            i.X += i.Width;
+            i.Width = -i.Width;
+            return i;
+        }
+        public static RectangleF DoMirrorY(RectangleF i)
+        {
+            i.Y += i.Height;
+            i.Height = -i.Height;
+            return i;
         }
     }
 

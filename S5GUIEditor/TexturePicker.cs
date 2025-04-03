@@ -24,6 +24,8 @@ namespace S5GUIEditor
             bg = new TextureBrush(panel1.BackgroundImage, WrapMode.Tile);
             pickedTexture = texture;
             SetCurrentTexture(texture.TexturePath);
+            CB_MirrorX.Checked = texture.MirrorX;
+            CB_MirrorY.Checked = texture.MirrorY;
         }
 
         private void SetCurrentTexture(string texturePath)
@@ -84,7 +86,9 @@ namespace S5GUIEditor
             Graphics g = e.Graphics;
             g.FillRectangle(bg, new Rectangle(panel1.HorizontalScroll.Value, panel1.VerticalScroll.Value, panel1.Width, panel1.Height));
             if (loadedTexture != null)
+            {
                 loadedTexture.DrawTexture(g, new RectangleF(0, 0, loadedTextureSize.Width, loadedTextureSize.Height));
+            }
         }
 
         private void pbPickedTexture_Paint(object sender, PaintEventArgs e)
@@ -240,6 +244,18 @@ namespace S5GUIEditor
         private void btnTransperent_Click(object sender, EventArgs e)
         {
             pickedTexture.RGBA = Color.Transparent;
+            UpdateGraphics();
+        }
+
+        private void CB_MirrorX_CheckedChanged(object sender, EventArgs e)
+        {
+            pickedTexture.MirrorX = CB_MirrorX.Checked;
+            UpdateGraphics();
+        }
+
+        private void CB_MirrorY_CheckedChanged(object sender, EventArgs e)
+        {
+            pickedTexture.MirrorY = CB_MirrorY.Checked;
             UpdateGraphics();
         }
     }

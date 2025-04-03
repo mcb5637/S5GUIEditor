@@ -59,6 +59,8 @@
             this.btnSetBlack = new System.Windows.Forms.Button();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnTransperent = new System.Windows.Forms.Button();
+            this.CB_MirrorX = new System.Windows.Forms.CheckBox();
+            this.CB_MirrorY = new System.Windows.Forms.CheckBox();
             this.tcCoords.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -372,11 +374,35 @@
             this.btnTransperent.UseVisualStyleBackColor = false;
             this.btnTransperent.Click += new System.EventHandler(this.btnTransperent_Click);
             // 
+            // CB_MirrorX
+            // 
+            this.CB_MirrorX.AutoSize = true;
+            this.CB_MirrorX.Location = new System.Drawing.Point(321, 377);
+            this.CB_MirrorX.Name = "CB_MirrorX";
+            this.CB_MirrorX.Size = new System.Drawing.Size(62, 17);
+            this.CB_MirrorX.TabIndex = 41;
+            this.CB_MirrorX.Text = "Mirror X";
+            this.CB_MirrorX.UseVisualStyleBackColor = true;
+            this.CB_MirrorX.CheckedChanged += new System.EventHandler(this.CB_MirrorX_CheckedChanged);
+            // 
+            // CB_MirrorY
+            // 
+            this.CB_MirrorY.AutoSize = true;
+            this.CB_MirrorY.Location = new System.Drawing.Point(321, 398);
+            this.CB_MirrorY.Name = "CB_MirrorY";
+            this.CB_MirrorY.Size = new System.Drawing.Size(62, 17);
+            this.CB_MirrorY.TabIndex = 42;
+            this.CB_MirrorY.Text = "Mirror Y";
+            this.CB_MirrorY.UseVisualStyleBackColor = true;
+            this.CB_MirrorY.CheckedChanged += new System.EventHandler(this.CB_MirrorY_CheckedChanged);
+            // 
             // TexturePicker
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(854, 439);
+            this.Controls.Add(this.CB_MirrorY);
+            this.Controls.Add(this.CB_MirrorX);
             this.Controls.Add(this.btnTransperent);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.btnSetBlack);
@@ -442,5 +468,7 @@
         private System.Windows.Forms.Button btnSetBlack;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnTransperent;
+        private System.Windows.Forms.CheckBox CB_MirrorX;
+        private System.Windows.Forms.CheckBox CB_MirrorY;
     }
 }
