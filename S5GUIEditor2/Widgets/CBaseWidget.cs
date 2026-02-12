@@ -158,4 +158,6 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     
     internal virtual CToolTipHelper? Tooltip => null;
     internal virtual CMaterial? StaticMaterial => null;
+    internal virtual UpdateFunc? UpdateData => null;
+    internal virtual CWidgetStringHelper? TextRender => null;
 }

@@ -45,4 +45,6 @@ internal class CProgressBarWidget : CStaticWidget
         s += Update.ToLua(escapedname);
         return s;
     }
+
+    internal override UpdateFunc UpdateData => Update;
 }

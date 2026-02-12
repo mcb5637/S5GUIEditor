@@ -23,7 +23,27 @@ internal class Model : INotifyPropertyChanged
     internal CMaterial? EditStaticMaterial => EditWidget?.StaticMaterial;
     internal bool HasEditStaticMaterial => EditStaticMaterial != null;
 
+    internal UpdateFunc? EditUpdate => EditWidget?.UpdateData;
+    internal bool HasEditUpdate => EditUpdate != null;
     
+    internal CProgressBarWidget? EditProgress => EditWidget as CProgressBarWidget;
+    internal bool HasEditProgress => EditProgress != null;
+
+    internal CWidgetStringHelper? EditText => EditWidget?.TextRender;
+    internal bool HasEditText => EditText != null;
+    
+    internal CButtonWidget? EditButton => EditWidget as CButtonWidget;
+    internal bool HasEditButton => EditButton != null;
+    
+    internal CStaticTextWidget? EditStaticText => EditWidget as CStaticTextWidget;
+    internal bool HasEditStaticText => EditStaticText != null;
+
+    internal CTextButtonWidget? EditTextButton => EditWidget as CTextButtonWidget;
+    internal bool HasEditTextButton => EditTextButton != null;
+    
+    internal CCustomWidget? EditCustomWidget => EditWidget as CCustomWidget;
+    internal bool HasEditCustomWidget => EditCustomWidget != null;
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     internal void OnPropertyChanged(string propertyName)
@@ -39,6 +59,20 @@ internal class Model : INotifyPropertyChanged
         OnPropertyChanged(nameof(HasEditTooltip));
         OnPropertyChanged(nameof(EditStaticMaterial));
         OnPropertyChanged(nameof(HasEditStaticMaterial));
+        OnPropertyChanged(nameof(EditUpdate));
+        OnPropertyChanged(nameof(HasEditUpdate));
+        OnPropertyChanged(nameof(EditProgress));
+        OnPropertyChanged(nameof(HasEditProgress));
+        OnPropertyChanged(nameof(EditText));
+        OnPropertyChanged(nameof(HasEditText));
+        OnPropertyChanged(nameof(EditButton));
+        OnPropertyChanged(nameof(HasEditButton));
+        OnPropertyChanged(nameof(EditStaticText));
+        OnPropertyChanged(nameof(HasEditStaticText));
+        OnPropertyChanged(nameof(EditTextButton));
+        OnPropertyChanged(nameof(HasEditTextButton));
+        OnPropertyChanged(nameof(EditCustomWidget));
+        OnPropertyChanged(nameof(HasEditCustomWidget));
         SelectedTabItem = 0;
         OnPropertyChanged(nameof(SelectedTabItem));
     }

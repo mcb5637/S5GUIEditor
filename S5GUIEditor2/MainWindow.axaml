@@ -94,8 +94,120 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="Material" IsVisible="{Binding HasEditStaticMaterial}">
-                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditStaticMaterial}">
+                    <s5GuiEditor2:MaterialControl DataContext="{Binding EditStaticMaterial}"></s5GuiEditor2:MaterialControl>
+                </TabItem>
+                <TabItem Header="Update" IsVisible="{Binding HasEditUpdate}">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditUpdate}">
+                        <TextBlock Text="UpdateFunc" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding UpdateFunction.LuaCommand}" Margin="5"></TextBox>
                         
+                        <CheckBox Grid.Column="0" Grid.Row="1" IsChecked="{Binding UpdateManualFlag, Mode=TwoWay}" Margin="5">
+                            <TextBlock Text="UpdateManual"></TextBlock>
+                        </CheckBox>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Progress" IsVisible="{Binding HasEditProgress}">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditProgress}">
+                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Value</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="0" Value="{Binding ProgressBarValue}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Limit</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="1" Value="{Binding ProgressBarLimit}" Margin="5"></NumericUpDown>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Text" IsVisible="{Binding HasEditText}">
+                    <StackPanel>
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditText}">
+                            <TextBlock Text="Font" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                            <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Font.FontName}" Margin="5"></TextBox>
+
+                            <TextBlock Grid.Column="0" Grid.Row="2"  Text="RawText" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                            <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding String.RawString}" Margin="5"></TextBox>
+                            <TextBlock Grid.Column="0" Grid.Row="3"  Text="StringTableKey" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                            <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding String.StringTableKey}" Margin="5"></TextBox>
+
+                            <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">FrameDistance</TextBlock>
+                            <NumericUpDown Grid.Column="1" Grid.Row="1" Value="{Binding StringFrameDistance}" Margin="5"></NumericUpDown>
+
+                            <TextBlock Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">TextColor</TextBlock>
+                            <ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Color}"></ColorPicker>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" IsVisible="{Binding HasEditStaticText}">
+                            <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">FirstLineToPrint</TextBlock>
+                            <NumericUpDown Grid.Column="1" Grid.Row="0" Value="{Binding EditStaticText.FirstLineToPrint}" Margin="5"></NumericUpDown>
+                            <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">NumberOfLinesToPrint</TextBlock>
+                            <NumericUpDown Grid.Column="1" Grid.Row="1" Value="{Binding EditStaticText.NumberOfLinesToPrint}" Margin="5"></NumericUpDown>
+                            <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">LineDistanceFactor</TextBlock>
+                            <NumericUpDown Grid.Column="1" Grid.Row="2" Value="{Binding EditStaticText.LineDistanceFactor}" Margin="5"></NumericUpDown>
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" IsVisible="{Binding HasEditTextButton}">
+                            <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding EditTextButton.CppLogicCenterText, Mode=TwoWay}" Margin="5">
+                                <TextBlock Text="CenterText"></TextBlock>
+                            </CheckBox>
+                        </Grid>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Button" IsVisible="{Binding HasEditButton}">
+                    <ScrollViewer>
+                        <StackPanel DataContext="{Binding EditButton}">
+                            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                <TextBlock Text="ActionFunction" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ButtonHelper.ActionFunction.LuaCommand}" Margin="5"></TextBox>
+                                
+                                <TextBlock Grid.Column="0" Grid.Row="1"  Text="ShortcutRawText" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding ButtonHelper.ShortCutString.RawString}" Margin="5"></TextBox>
+                                <TextBlock Grid.Column="0" Grid.Row="2"  Text="ShortcutTableKey" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding ButtonHelper.ShortCutString.StringTableKey}" Margin="5"></TextBox>
+
+                                <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding ButtonHelper.DisabledFlag, Mode=TwoWay}" Margin="5">
+                                    <TextBlock Text="Disabled"></TextBlock>
+                                </CheckBox>
+                                <CheckBox Grid.Column="1" Grid.Row="3" IsChecked="{Binding ButtonHelper.HighLightedFlag, Mode=TwoWay}" Margin="5">
+                                    <TextBlock Text="Highlighted"></TextBlock>
+                                </CheckBox>
+                            </Grid>
+                            <TextBlock Text="Normal Material:" VerticalAlignment="Center" Margin="5"></TextBlock>
+                            <s5GuiEditor2:MaterialControl DataContext="{Binding MaterialsNormal}"></s5GuiEditor2:MaterialControl>
+                            <TextBlock Text="Hovered Material:" VerticalAlignment="Center" Margin="5"></TextBlock>
+                            <s5GuiEditor2:MaterialControl DataContext="{Binding MaterialsHover}"></s5GuiEditor2:MaterialControl>
+                            <TextBlock Text="Pressed Material:" VerticalAlignment="Center" Margin="5"></TextBlock>
+                            <s5GuiEditor2:MaterialControl DataContext="{Binding MaterialsPressed}"></s5GuiEditor2:MaterialControl>
+                            <TextBlock Text="Disabled Material:" VerticalAlignment="Center" Margin="5"></TextBlock>
+                            <s5GuiEditor2:MaterialControl DataContext="{Binding MaterialsDisabled}"></s5GuiEditor2:MaterialControl>
+                            <TextBlock Text="Highlighted Material:" VerticalAlignment="Center" Margin="5"></TextBlock>
+                            <s5GuiEditor2:MaterialControl DataContext="{Binding MaterialsHighlighted}"></s5GuiEditor2:MaterialControl>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem Header="CustomWidget" IsVisible="{Binding HasEditCustomWidget}">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditCustomWidget}">
+                        <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Class</TextBlock>
+                        <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding SelectableTypes}" SelectedItem="{Binding SelectedType, Mode=TwoWay}" Margin="5">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ClassName}"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        
+                        <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 0</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="1" Value="{Binding IntegerUserVariable0DefaultValue}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 1</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="2" Value="{Binding IntegerUserVariable1DefaultValue}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 2</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="3" Value="{Binding IntegerUserVariable2DefaultValue}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 3</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="4" Value="{Binding IntegerUserVariable3DefaultValue}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 4</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="5" Value="{Binding IntegerUserVariable4DefaultValue}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="0" Grid.Row="6" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 5</TextBlock>
+                        <NumericUpDown Grid.Column="1" Grid.Row="6" Value="{Binding IntegerUserVariable5DefaultValue}" Margin="5"></NumericUpDown>
+                        
+                        <TextBlock Grid.Column="0" Grid.Row="7"  Text="string Value 0" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding StringUserVariable0DefaultValue}" Margin="5"></TextBox>
+                        <TextBlock Grid.Column="2" Grid.Row="7"  Text="{Binding SelectedTypeStringDesc0}" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBlock Grid.Column="0" Grid.Row="8"  Text="string Value 1" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding StringUserVariable1DefaultValue}" Margin="5"></TextBox>
+                        <TextBlock Grid.Column="2" Grid.Row="8"  Text="{Binding SelectedTypeStringDesc1}" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
                     </Grid>
                 </TabItem>
             </TabControl>

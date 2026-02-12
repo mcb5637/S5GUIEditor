@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:widgets="clr-namespace:S5GUIEditor2.Widgets"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="S5GUIEditor2.MaterialControl"
+             x:DataType="widgets:CMaterial">
+    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+        <TextBlock Text="Texture" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Texture}" Margin="5"></TextBox>
+        
+        
+        <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">X</TextBlock>
+        <NumericUpDown Grid.Column="1" Grid.Row="1" Value="{Binding TextureCoordinates.X}" Margin="5"></NumericUpDown>
+        <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Y</TextBlock>
+        <NumericUpDown Grid.Column="1" Grid.Row="2" Value="{Binding TextureCoordinates.Y}" Margin="5"></NumericUpDown>
+        <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Width</TextBlock>
+        <NumericUpDown Grid.Column="3" Grid.Row="1" Value="{Binding TextureCoordinates.Width}" Margin="5"></NumericUpDown>
+        <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Height</TextBlock>
+        <NumericUpDown Grid.Column="3" Grid.Row="2" Value="{Binding TextureCoordinates.Height}" Margin="5"></NumericUpDown>
+        
+        <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Color</TextBlock>
+        <ColorPicker Grid.Column="1" Grid.Row="3" Color="{Binding Color}"></ColorPicker>
+    </Grid>
+</UserControl>

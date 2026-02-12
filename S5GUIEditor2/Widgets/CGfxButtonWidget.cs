@@ -42,4 +42,7 @@ internal class CGfxButtonWidget : CButtonWidget
         s += IconMaterial.ToLua(escapedname, 10);
         return s;
     }
+
+    internal override UpdateFunc UpdateData => Update;
+    internal override CMaterial StaticMaterial => IconMaterial;
 }

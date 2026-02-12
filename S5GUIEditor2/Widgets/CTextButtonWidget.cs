@@ -46,4 +46,7 @@ internal class CTextButtonWidget : CButtonWidget
         s += $"CppLogic.UI.TextButtonSetCenterText(\"{Name}\", {CppLogicCenterText.ToString().ToLower()})\n";
         return s;
     }
+
+    internal override UpdateFunc UpdateData => Update;
+    internal override CWidgetStringHelper TextRender => StringHelper;
 }

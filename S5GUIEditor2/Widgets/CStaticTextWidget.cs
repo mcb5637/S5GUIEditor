@@ -54,4 +54,7 @@ internal class CStaticTextWidget : CStaticWidget
         s += $"CppLogic.UI.StaticTextWidgetSetLineDistanceFactor({escapedname}, {LineDistanceFactor})\n";
         return s;
     }
+
+    internal override UpdateFunc UpdateData => Update;
+    internal override CWidgetStringHelper TextRender => StringHelper;
 }

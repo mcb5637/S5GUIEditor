@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -53,17 +54,19 @@ internal class CCustomWidget : CBaseWidget
     
     internal class CustomWidgetOptions
     {
-        public string IntUserVar0 = "";
-        public string IntUserVar1 = "";
-        public string IntUserVar2 = "";
-        public string IntUserVar3 = "";
-        public string IntUserVar4 = "";
-        public string IntUserVar5 = "";
-        public string StringUserVar0 = "";
-        public string StringUserVar1 = "";
-        public bool SaveForExport = false;
+        // ReSharper disable once MemberHidesStaticFromOuterClass
+        internal required string ClassName { get; init; }
+        internal string IntUserVar0  { get; init; }= "";
+        internal string IntUserVar1  { get; init; }= "";
+        internal string IntUserVar2  { get; init; }= "";
+        internal string IntUserVar3  { get; init; }= "";
+        internal string IntUserVar4  { get; init; }= "";
+        internal string IntUserVar5  { get; init; }= "";
+        internal string StringUserVar0  { get; init; }= "";
+        internal string StringUserVar1  { get; init; }= "";
+        internal bool SaveForExport = false;
 
-        public string IntVar(int i)
+        internal string IntVar(int i)
         {
             switch (i)
             {
@@ -82,7 +85,7 @@ internal class CCustomWidget : CBaseWidget
             }
             return "";
         }
-        public string StringVar(int i)
+        internal string StringVar(int i)
         {
             switch (i)
             {
@@ -95,11 +98,11 @@ internal class CCustomWidget : CBaseWidget
         }
     }
 
-    private static Dictionary<string, CustomWidgetOptions> KnownWidgetTypes = new();
-    static CCustomWidget()
-    {
-        KnownWidgetTypes["EGUIX::CStringInputCustomWidget"] = new CustomWidgetOptions()
+    private static List<CustomWidgetOptions> KnownWidgetTypes =
+    [
+        new()
         {
+            ClassName = "EGUIX::CStringInputCustomWidget",
             IntUserVar0 = "bool alwaysVisible",
             IntUserVar1 = "bool keepContentOnClose",
             IntUserVar2 = "int mode, 0->chat, 1->password, 2->cdkey",
@@ -107,63 +110,81 @@ internal class CCustomWidget : CBaseWidget
             IntUserVar4 = "int bufferSize",
             StringUserVar0 = "confirm func (inputString, widgetId)",
             SaveForExport = true,
-        };
-        KnownWidgetTypes["EGUIX::CScrollBarButtonCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "EGUIX::CScrollBarButtonCustomWidget",
             StringUserVar0 = "confirm callback (value, widgetId)",
             StringUserVar1 = "slider gfx source name",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["EGUIX::CVideoPlaybackCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "EGUIX::CVideoPlaybackCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::C3DOnScreenInformationCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::C3DOnScreenInformationCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::CShortMessagesWindowControllerCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::CShortMessagesWindowControllerCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::CStatisticsRendererCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::CStatisticsRendererCustomWidget",
             IntUserVar0 = "bool isMainmenu",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::CMiniMapCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::CMiniMapCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::CMiniMapOverlayCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::CMiniMapOverlayCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::CNetworkInfoCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::CNetworkInfoCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::CNetworkWindowControllerCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::CNetworkWindowControllerCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::C3DOnScreenDebugCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::C3DOnScreenDebugCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["GGUI::CNotesWindowControllerCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::CNotesWindowControllerCustomWidget",
             SaveForExport = false,
-        };
-        KnownWidgetTypes["CppLogic::Mod::UI::AutoScrollCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "GGUI::C3DViewCustomWidget",
+            SaveForExport = false,
+        },
+        new()
+        {
+            ClassName = "CppLogic::Mod::UI::AutoScrollCustomWidget",
             IntUserVar0 = "int spacing",
-            StringUserVar0 = "slider widget",
-            StringUserVar1 = "scrollable widget (optional)",
+            StringUserVar0 = "slider widget (optional)",
+            StringUserVar1 = "scrollable widget",
             SaveForExport = true,
-        };
-        KnownWidgetTypes["CppLogic::Mod::UI::TextInputCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "CppLogic::Mod::UI::TextInputCustomWidget",
             IntUserVar0 = "int mode 0->normal, 1->password, 2->int, 3->double, 4->uint, 5->udouble",
             IntUserVar1 = "flags 1->fire cancel event, 2->fire validate event",
             IntUserVar2 = "argb text color (white, if a==0)",
@@ -173,18 +194,14 @@ internal class CCustomWidget : CBaseWidget
             StringUserVar0 = "event func (text, widgetid, event) event: 0->confirm, 1->cancel, 2->validate",
             StringUserVar1 = "font (optional)",
             SaveForExport = true,
-        };
-        KnownWidgetTypes["CppLogic::Mod::UI::FreeCamCustomWidget"] = new CustomWidgetOptions()
+        },
+        new()
         {
+            ClassName = "CppLogic::Mod::UI::FreeCamCustomWidget",
             IntUserVar0 = "default scroll speed",
             SaveForExport = true,
-        };
-    }
-
-    internal static CustomWidgetOptions? TryGet(string className)
-    {
-        return KnownWidgetTypes.GetValueOrDefault(className);
-    }
+        },
+    ];
 
     internal override string GetLuaCreator(string parent, string befo)
     {
@@ -193,4 +210,15 @@ internal class CCustomWidget : CBaseWidget
         //    MessageBox.Show($"Warning: CustomWidget {Name} of type {CustomClassName} in export, make sure this works properly.\nLook at the CppLogic.UI.ContainerWidgetCreateCustomWidgetChild documentation for more info.", "CustomWidget export");
         return $"CppLogic.UI.ContainerWidgetCreateCustomWidgetChild(\"{parent}\", \"{Name}\", \"{CustomClassName}\", {befo}, {IntegerUserVariable0DefaultValue}, {IntegerUserVariable1DefaultValue}, {IntegerUserVariable2DefaultValue}, {IntegerUserVariable3DefaultValue}, {IntegerUserVariable4DefaultValue}, {IntegerUserVariable5DefaultValue}, \"{StringUserVariable0DefaultValue.Replace("\\", @"\\")}\", \"{StringUserVariable1DefaultValue.Replace("\\", @"\\")}\")\n";
     }
+
+    internal static List<CustomWidgetOptions> SelectableTypes => KnownWidgetTypes;
+
+    internal CustomWidgetOptions? SelectedType
+    {
+        get => KnownWidgetTypes.FirstOrDefault(x => x.ClassName == CustomClassName);
+        set => CustomClassName = value?.ClassName ?? KnownWidgetTypes.First().ClassName;
+    }
+
+    internal string SelectedTypeStringDesc0 => SelectedType?.StringUserVar0 ?? "";
+    internal string SelectedTypeStringDesc1 => SelectedType?.StringUserVar1 ?? "";
 }
