@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
-using DevIL;
 using System.Reflection;
 using S5GUIEditor.Options;
 using Microsoft.Win32;
@@ -93,7 +92,6 @@ namespace S5GUIEditor
             UnpackHelperFiles();
 
             Environment.CurrentDirectory = tmpPath;
-            GlobalSettings.DevILAssembly = Assembly.LoadFile(tmpPath + "\\DevIL.NET2.dll");
 
             Credits c = new Credits();
             c.ShowDialog();
@@ -107,7 +105,7 @@ namespace S5GUIEditor
                     UnpackS5Data();
             }
             else
-                GlobalSettings.DataPath = (string)workingDir.GetValue("WorkingDirectory") + "\\";
+                GlobalSettings.DataPath = (string)workingDir.GetValue("WorkingDirectory") + "/";
 
             Text += typeof(MainForm).Assembly.GetName().Version;
 
@@ -131,7 +129,7 @@ namespace S5GUIEditor
             {
                 RegistryKey workingDir = Registry.CurrentUser.CreateSubKey("SOFTWARE\\bobby\\Settlers HoK GUI Editor");
                 workingDir.SetValue("WorkingDirectory", fbd.SelectedPath);
-                GlobalSettings.DataPath = fbd.SelectedPath + "\\";
+                GlobalSettings.DataPath = fbd.SelectedPath + "/";
                 return true;
             }
             else
@@ -159,9 +157,9 @@ namespace S5GUIEditor
                     return;
             }
 
-            foreach (string folder in new string[] { "graphics\\textures\\gui", "menu", "text" })
+            foreach (string folder in new string[] { "graphics/textures/gui", "menu", "text" })
             {
-                foreach (string bbaFile in new string[] { "\\base\\data.bba", "\\extra2\\bba\\patch.bba", "\\extra2\\bba\\data.bba", "\\extra2\\bba\\patche2.bba" })
+                foreach (string bbaFile in new string[] { "/base/data.bba", "/extra2/bba/patch.bba", "/extra2/bba/data.bba", "/extra2/bba/patche2.bba" })
                 {
                     string path = s5InstallPath + bbaFile;
                     if (!File.Exists(path))
@@ -176,12 +174,12 @@ namespace S5GUIEditor
                 }
             }
 
-            if (Directory.Exists(s5InstallPath + "\\base\\shr"))
+            if (Directory.Exists(s5InstallPath + "/base/shr"))
             {
                 // history edition
-                foreach (string source in new string[] { "\\base\\shr\\", "\\extra2\\shr\\" })
+                foreach (string source in new string[] { "/base/shr/", "/extra2/shr/" })
                 {
-                    foreach (string folder in new string[] { "graphics\\textures\\gui", "menu", "text" })
+                    foreach (string folder in new string[] { "graphics/textures/gui", "menu", "text" })
                     {
                         string sourceFolder = s5InstallPath + source + folder;
                         string dstFolder = GlobalSettings.DataPath + folder;
@@ -218,7 +216,7 @@ namespace S5GUIEditor
             MessageBox.Show("No installation found. Please selected the main folder manually.");
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                bool pathOk = Directory.Exists(fbd.SelectedPath + "\\base") && Directory.Exists(fbd.SelectedPath + "\\bin");
+                bool pathOk = Directory.Exists(fbd.SelectedPath + "/base") && Directory.Exists(fbd.SelectedPath + "/bin");
                 if (!pathOk)
                 {
                     // manual folder did not contain game

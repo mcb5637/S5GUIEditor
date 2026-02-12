@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <FrameworkPathOverride>/usr/lib/mono/4.8-api</FrameworkPathOverride>
+    <EnableFrameworkPathOverride>true</EnableFrameworkPathOverride>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>S5GUIEditor</RootNamespace>
     <AssemblyName>S5WidgetCreator</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -274,8 +278,6 @@
     <None Include="resources\bg.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Helper\DevIL.dll" />
-    <EmbeddedResource Include="Helper\DevIL%40NET2.dll" />
     <EmbeddedResource Include="Helper\ILU.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +318,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\folder2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Helper\DevIL.dll" />
+    <Content Include="Helper\DevIL@NET2.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

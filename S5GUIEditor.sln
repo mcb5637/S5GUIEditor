@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S5GUIEditor", "S5GUIEditor\S5GUIEditor.csproj", "{861D16E9-A4F2-4AE9-BFA8-7CC0BCF35982}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S5GUIEditor2", "S5GUIEditor2\S5GUIEditor2.csproj", "{5196B19B-1AF1-42F6-8F67-03971B947689}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{861D16E9-A4F2-4AE9-BFA8-7CC0BCF35982}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{861D16E9-A4F2-4AE9-BFA8-7CC0BCF35982}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{861D16E9-A4F2-4AE9-BFA8-7CC0BCF35982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5196B19B-1AF1-42F6-8F67-03971B947689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5196B19B-1AF1-42F6-8F67-03971B947689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5196B19B-1AF1-42F6-8F67-03971B947689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5196B19B-1AF1-42F6-8F67-03971B947689}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

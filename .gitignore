@@ -5,3 +5,6 @@
 /.vs
 /S5GUIEditor/bin
 /S5GUIEditor/obj
+/.idea
+S5GUIEditor2/bin
+S5GUIEditor2/obj

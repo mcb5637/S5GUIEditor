@@ -10,7 +10,6 @@ namespace S5GUIEditor
 {
     public static class GlobalSettings
     {
-        public static Assembly DevILAssembly;
         public static string DataPath;
         public static string LastLoadPath;
         public static Font TextFont = new Font(FontFamily.GenericSansSerif, 12);

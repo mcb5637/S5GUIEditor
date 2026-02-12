@@ -14,20 +14,10 @@ namespace S5GUIEditor
         /// </summary>
         [STAThread]
         static void Main()
-        {   
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-
+        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
-        }
-
-        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            if (GlobalSettings.DevILAssembly.FullName == args.Name)
-                return GlobalSettings.DevILAssembly;
-            else
-                return null;
         }
     }
 

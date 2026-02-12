@@ -1,0 +1,104 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:s5GuiEditor2="clr-namespace:S5GUIEditor2"
+        xmlns:widgets="clr-namespace:S5GUIEditor2.Widgets"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="S5GUIEditor2.MainWindow"
+        x:DataType="s5GuiEditor2:Model"
+        Title="S5GUIEditor">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Open" Click="Menu_LoadXml"></MenuItem>
+                <MenuItem Header="Save" Click="Menu_Save"></MenuItem>
+                <MenuItem Header="New" Click="Menu_New"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="*" DockPanel.Dock="Bottom">
+            <TreeView ItemsSource="{Binding CurrentWidget}" SelectedItems="{Binding SelectedWidgets}"
+                      SelectionChanged="OnSelectionChanged" SelectionMode="Multiple" Margin="5">
+                <TreeView.ItemTemplate>
+                    <TreeDataTemplate DataType="widgets:CBaseWidget" ItemsSource="{Binding ChildWidgets}">
+                        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto">
+                            <CheckBox IsChecked="{Binding Visible}" Margin="5">
+                            </CheckBox>
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Copy" Click="Widget_Copy"></MenuItem>
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </Grid>
+                    </TreeDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+            <TabControl Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding SelectedTabItem}" Margin="5">
+                <TabItem Header="View">
+                
+                </TabItem>
+                <TabItem Header="Widget" IsVisible="{Binding HasEditWidget}">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" DataContext="{Binding EditWidget}">
+                        <TextBlock Text="Name" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="5"></TextBox>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Type" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding ClassDisplayName}" IsEnabled="False" Margin="5"></TextBox>
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="Group" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Group}" Margin="5"></TextBox>
+                        
+                        <CheckBox Grid.Column="0" Grid.Row="3" IsChecked="{Binding IsShown, Mode=TwoWay}" Margin="5">
+                            <TextBlock Text="IsShown"></TextBlock>
+                        </CheckBox>
+                        <CheckBox Grid.Column="1" Grid.Row="3" IsChecked="{Binding ForceToHandleMouseEventsFlag, Mode=TwoWay}" Margin="5">
+                            <TextBlock Text="ForceToHandleMouseEvents"></TextBlock>
+                        </CheckBox>
+                        <CheckBox Grid.Column="2" Grid.Row="3" IsChecked="{Binding ForceToNeverBeFoundFlag, Mode=TwoWay}" Margin="5">
+                            <TextBlock Text="ForceToNeverBeFound"></TextBlock>
+                        </CheckBox>
+                        
+                        
+                        <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">X</TextBlock>
+                        <NumericUpDown Grid.Column="3" Grid.Row="0" Value="{Binding PositionAndSize.X}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Y</TextBlock>
+                        <NumericUpDown Grid.Column="3" Grid.Row="1" Value="{Binding PositionAndSize.Y}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="4" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Width</TextBlock>
+                        <NumericUpDown Grid.Column="5" Grid.Row="0" Value="{Binding PositionAndSize.Width}" Margin="5"></NumericUpDown>
+                        <TextBlock Grid.Column="4" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Height</TextBlock>
+                        <NumericUpDown Grid.Column="5" Grid.Row="1" Value="{Binding PositionAndSize.Height}" Margin="5"></NumericUpDown>
+                        
+                        
+                        <TextBlock Grid.Column="4" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">ZPriority</TextBlock>
+                        <NumericUpDown Grid.Column="5" Grid.Row="2" Value="{Binding ZPriority}" Margin="5"></NumericUpDown>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Tooltip" IsVisible="{Binding HasEditTooltip}">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditTooltip}">
+                        <TextBlock Text="TargetWidget" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding TargetWidget}" Margin="5"></TextBox>
+                        <TextBlock Grid.Column="0" Grid.Row="1"  Text="UpdateFunction" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding UpdateFunction.LuaCommand}" Margin="5"></TextBox>
+                        
+                        <TextBlock Grid.Column="0" Grid.Row="2"  Text="RawText" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding ToolTipString.RawString}" Margin="5"></TextBox>
+                        <TextBlock Grid.Column="0" Grid.Row="3"  Text="StringTableKey" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding ToolTipString.StringTableKey}" Margin="5"></TextBox>
+                        
+                        <CheckBox Grid.Column="0" Grid.Row="4" IsChecked="{Binding ToolTipEnabledFlag, Mode=TwoWay}" Margin="5">
+                            <TextBlock Text="Enabled"></TextBlock>
+                        </CheckBox>
+                        <CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding ControlTargetWidgetDisplayState, Mode=TwoWay}" Margin="5">
+                            <TextBlock Text="ControlTargetWidgetDisplayState"></TextBlock>
+                        </CheckBox>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Material" IsVisible="{Binding HasEditStaticMaterial}">
+                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditStaticMaterial}">
+                        
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </DockPanel>
+</Window>

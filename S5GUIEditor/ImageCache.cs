@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.IO;
-using DevIL;
 
 namespace S5GUIEditor
 {
@@ -18,7 +17,7 @@ namespace S5GUIEditor
 
         public static Image LoadImage(string path)
         {
-            path = Path.GetFullPath(path);
+            path = Path.GetFullPath(path.Replace('\\', '/'));
             if (cache.ContainsKey(path))
                 return cache[path];
             else if (File.Exists(path))
