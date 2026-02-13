@@ -1,12 +1,17 @@
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using S5GUIEditor2.Widgets;
 
 namespace S5GUIEditor2;
 
 internal class Model : INotifyPropertyChanged
 {
+    private const string SettingsJson = "settings.json";
+    internal Settings Settings { get; } = ReadSettings();
     
     internal ObservableCollection<CBaseWidget> CurrentWidget { get; set; } = [];
 
@@ -75,5 +80,25 @@ internal class Model : INotifyPropertyChanged
         OnPropertyChanged(nameof(HasEditCustomWidget));
         SelectedTabItem = 0;
         OnPropertyChanged(nameof(SelectedTabItem));
+    }
+
+    internal void StoreSettings()
+    {
+        var s = JsonSerializer.Serialize(Settings, SourceGenerationContext.Default.Settings);
+        File.WriteAllText(SettingsJson, s);
+    }
+
+    private static Settings ReadSettings()
+    {
+        try
+        {
+            var s = File.ReadAllText(SettingsJson);
+            return JsonSerializer.Deserialize<Settings>(s, SourceGenerationContext.Default.Settings) ?? new Settings();
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine(e);
+            return new Settings();
+        }
     }
 }

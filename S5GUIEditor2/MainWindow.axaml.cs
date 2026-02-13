@@ -14,13 +14,15 @@ internal partial class MainWindow : Window
 {
     public MainWindow()
     {
+        M = new Model();
+        ImageCache.Instance = new ImageCache() { S = M.Settings };
         InitializeComponent();
         Menu_New(null, null);
         DataContext = M;
         LoadXml("/home/mcb/Games/s5/drive_c/dedk/merged_e2_bbas/menu/projects/ingame.xml");
     }
 
-    private Model M = new();
+    private readonly Model M;
 
     private void LoadXml(string xmlPath)
     {
@@ -80,5 +82,25 @@ internal partial class MainWindow : Window
     private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         M.OnSelectionChanged();
+    }
+
+    private async void Menu_SetWorkspace(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var r = await StorageProvider.OpenFolderPickerAsync(new()
+            {
+                Title = "Select Workspace",
+            });
+            if (r.Count == 0)
+                return;
+            M.Settings.WorkspacePath = r[0].Path.AbsolutePath;
+            M.StoreSettings();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
     }
 }

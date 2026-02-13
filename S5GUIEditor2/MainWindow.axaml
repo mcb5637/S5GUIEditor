@@ -15,6 +15,9 @@
                 <MenuItem Header="Save" Click="Menu_Save"></MenuItem>
                 <MenuItem Header="New" Click="Menu_New"></MenuItem>
             </MenuItem>
+            <MenuItem Header="Settings">
+                <MenuItem Header="Set Workspace" Click="Menu_SetWorkspace"></MenuItem>
+            </MenuItem>
         </Menu>
         <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="*" DockPanel.Dock="Bottom">
             <TreeView ItemsSource="{Binding CurrentWidget}" SelectedItems="{Binding SelectedWidgets}"
