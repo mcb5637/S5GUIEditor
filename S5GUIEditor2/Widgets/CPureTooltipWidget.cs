@@ -12,9 +12,9 @@ internal class CPureTooltipWidget : CBaseWidget
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
+        base.FromXml(e, c);
         ToolTipHelper = CToolTipHelper.FromXml(e?.Element("ToolTipHelper"));
     }
 

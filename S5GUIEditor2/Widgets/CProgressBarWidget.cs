@@ -6,6 +6,11 @@ internal class CProgressBarWidget : CStaticWidget
 {
     internal new const string ClassName = "EGUIX::CProgressBarWidget";
     internal new const uint ClassId = 0x72633416;
+
+    internal CProgressBarWidget(ImageCache c) : base(c)
+    {
+    }
+
     internal UpdateFunc Update { get; set; } = new();
     internal float ProgressBarValue { get; set; } = 1.0f;
     internal float ProgressBarLimit { get; set; } = 1.0f;
@@ -15,9 +20,9 @@ internal class CProgressBarWidget : CStaticWidget
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
+        base.FromXml(e, c);
         Update = UpdateFunc.FromXml(e);
         ProgressBarValue = e?.Element("ProgressBarValue")?.Value.TryParseFloat() ?? 0.0f;
         ProgressBarLimit = e?.Element("ProgressBarLimit")?.Value.TryParseFloat() ?? 0.0f;

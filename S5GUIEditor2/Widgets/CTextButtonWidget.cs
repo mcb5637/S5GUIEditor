@@ -6,6 +6,11 @@ internal class CTextButtonWidget : CButtonWidget
 {
     internal new const string ClassName = "EGUIX::CTextButtonWidget";
     internal new const uint ClassId = 0x5DD085A6;
+
+    internal CTextButtonWidget(ImageCache c) : base(c)
+    {
+    }
+
     internal CWidgetStringHelper StringHelper { get; set; } = new();
     internal bool CppLogicCenterText { get; set; }
     internal UpdateFunc Update { get; set; } = new();
@@ -15,9 +20,9 @@ internal class CTextButtonWidget : CButtonWidget
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
+        base.FromXml(e, c);
         StringHelper = CWidgetStringHelper.FromXml(e?.Element("StringHelper"));
         CppLogicCenterText = e?.Element("CenterText")?.Value.TryParseBool() ?? true;
         Update = UpdateFunc.FromXml(e);

@@ -23,9 +23,9 @@ internal class CCustomWidget : CBaseWidget
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
+        base.FromXml(e, c);
         CustomClassName = e?.Element("CustomClassName")?.Value ?? "";
         IntegerUserVariable0DefaultValue = e?.Element("IntegerUserVariable0DefaultValue")?.Value.TryParseInt() ?? 0;
         IntegerUserVariable1DefaultValue = e?.Element("IntegerUserVariable1DefaultValue")?.Value.TryParseInt() ?? 0;

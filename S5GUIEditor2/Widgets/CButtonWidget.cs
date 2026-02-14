@@ -9,28 +9,37 @@ internal class CButtonWidget : CBaseWidget
     internal new const string ClassName = "EGUIX::CButtonWidget";
     internal new const uint ClassId = 0xFE028496;
     internal CButtonHelper ButtonHelper { get; set; } = new();
-    internal CMaterial MaterialsNormal { get; set; } = new();
-    internal CMaterial MaterialsHover { get; set; } = new();
-    internal CMaterial MaterialsPressed { get; set; } = new();
-    internal CMaterial MaterialsDisabled { get; set; } = new();
-    internal CMaterial MaterialsHighlighted { get; set; } = new();
+    internal CMaterial MaterialsNormal { get; set; }
+    internal CMaterial MaterialsHover { get; set; }
+    internal CMaterial MaterialsPressed { get; set; }
+    internal CMaterial MaterialsDisabled { get; set; }
+    internal CMaterial MaterialsHighlighted { get; set; }
     internal CToolTipHelper ToolTipHelper { get; set; } = new();
+
+    internal CButtonWidget(ImageCache c)
+    {
+        MaterialsNormal = new CMaterial() { Cache = c };
+        MaterialsHover = new CMaterial() { Cache = c };
+        MaterialsPressed = new CMaterial() { Cache = c };
+        MaterialsDisabled = new CMaterial() { Cache = c };
+        MaterialsHighlighted = new CMaterial() { Cache = c };
+    }
     
     internal override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
+        base.FromXml(e, c);
         ButtonHelper = CButtonHelper.FromXml(e?.Element("ButtonHelper"));
         var m = e?.Elements("Materials").ToArray() ?? [];
-        MaterialsNormal = CMaterial.FromXml(m[0]);
-        MaterialsHover = CMaterial.FromXml(m[1]);
-        MaterialsPressed = CMaterial.FromXml(m[2]);
-        MaterialsDisabled = CMaterial.FromXml(m[3]);
-        MaterialsHighlighted = CMaterial.FromXml(m[4]);
+        MaterialsNormal = CMaterial.FromXml(m[0], c);
+        MaterialsHover = CMaterial.FromXml(m[1], c);
+        MaterialsPressed = CMaterial.FromXml(m[2], c);
+        MaterialsDisabled = CMaterial.FromXml(m[3], c);
+        MaterialsHighlighted = CMaterial.FromXml(m[4], c);
         ToolTipHelper = CToolTipHelper.FromXml(e?.Element("ToolTipHelper"));
     }
 

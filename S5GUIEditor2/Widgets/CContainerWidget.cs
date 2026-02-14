@@ -8,11 +8,11 @@ internal class CWidgetListHandler
 {
     internal ObservableCollection<CBaseWidget> SubWidgets { get; set; } = [];
 
-    internal static CWidgetListHandler FromXml(XElement? e)
+    internal static CWidgetListHandler FromXml(XElement? e, ImageCache c)
     {
         return new CWidgetListHandler()
         {
-            SubWidgets = new ObservableCollection<CBaseWidget>(e?.Elements("WidgetList").Select(CBaseWidget.GetFromXml) ?? []),
+            SubWidgets = new ObservableCollection<CBaseWidget>(e?.Elements("WidgetList").Select(x => CBaseWidget.GetFromXml(x, c)) ?? []),
         };
     }
 }
@@ -28,12 +28,12 @@ internal class CContainerWidget : CBaseWidget
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
-        WidgetListHandler = CWidgetListHandler.FromXml(e?.Element("SubWidgets"));
-        foreach (var c in WidgetListHandler.SubWidgets)
-            c.ParentNode = this;
+        base.FromXml(e, c);
+        WidgetListHandler = CWidgetListHandler.FromXml(e?.Element("SubWidgets"), c);
+        foreach (var widget in WidgetListHandler.SubWidgets)
+            widget.ParentNode = this;
     }
 
     internal override XElement ToXml()

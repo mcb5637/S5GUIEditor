@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Avalonia.Controls;
@@ -15,27 +16,30 @@ internal partial class MainWindow : Window
     public MainWindow()
     {
         M = new Model();
-        ImageCache.Instance = new ImageCache() { S = M.Settings };
+        C = new ImageCache() { S = M.Settings };
         InitializeComponent();
         Menu_New(null, null);
         DataContext = M;
-        LoadXml("/home/mcb/Games/s5/drive_c/dedk/merged_e2_bbas/menu/projects/ingame.xml");
+        Menu_LoadXml(null, null);
     }
 
     private readonly Model M;
+    private readonly ImageCache C;
 
     private void LoadXml(string xmlPath)
     {
         XDocument xd = XDocument.Load(xmlPath);
         CProjectWidget w = new();
-        w.FromXml(xd.Root);
+        w.FromXml(xd.Root, C);
         M.CurrentWidget.Clear();
         M.CurrentWidget.Add(w);
     }
 
-    private void Menu_LoadXml(object? sender, RoutedEventArgs e)
+    private void Menu_LoadXml(object? sender, RoutedEventArgs? e)
     {
-        LoadXml("/home/mcb/Games/s5/drive_c/dedk/merged_e2_bbas/menu/projects/ingame.xml");
+        string p = Path.Combine(M.Settings.WorkspacePath, "menu/projects/ingame.xml");
+        if (File.Exists(p))
+            LoadXml(p);
     }
 
     private void Menu_Save(object? sender, RoutedEventArgs e)

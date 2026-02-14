@@ -6,17 +6,22 @@ internal class CStaticWidget : CBaseWidget
 {
     internal new const string ClassName = "EGUIX::CStaticWidget";
     internal new const uint ClassId = 0x213A8776;
-    internal CMaterial BackgroundMaterial { get; set; } = new();
+    internal CMaterial BackgroundMaterial { get; set; }
+
+    internal CStaticWidget(ImageCache c)
+    {
+        BackgroundMaterial = new CMaterial() { Cache = c };
+    }
     
     internal override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
-        BackgroundMaterial = CMaterial.FromXml(e?.Element("BackgroundMaterial"));
+        base.FromXml(e, c);
+        BackgroundMaterial = CMaterial.FromXml(e?.Element("BackgroundMaterial"), c);
     }
 
     internal override XElement ToXml()

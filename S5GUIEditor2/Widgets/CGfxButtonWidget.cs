@@ -6,7 +6,13 @@ internal class CGfxButtonWidget : CButtonWidget
 {
     internal new const string ClassName = "EGUIX::CGfxButtonWidget";
     internal new const uint ClassId = 0x56DDA656;
-    internal CMaterial IconMaterial { get; set; } = new();
+
+    internal CGfxButtonWidget(ImageCache c) : base(c)
+    {
+        IconMaterial = new CMaterial() { Cache = c };
+    }
+
+    internal CMaterial IconMaterial { get; set; }
     internal UpdateFunc Update { get; set; } = new();
     
     internal override (string, uint) GetClass()
@@ -14,10 +20,10 @@ internal class CGfxButtonWidget : CButtonWidget
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
-        IconMaterial = CMaterial.FromXml(e?.Element("IconMaterial"));
+        base.FromXml(e, c);
+        IconMaterial = CMaterial.FromXml(e?.Element("IconMaterial"), c);
         Update = UpdateFunc.FromXml(e);
     }
 

@@ -46,7 +46,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
 
     internal string ClassDisplayName => GetClass().Item1;
     
-    internal virtual void FromXml(XElement? e)
+    internal virtual void FromXml(XElement? e, ImageCache c)
     {
         Name = e?.Element("Name")?.Value ?? "";
         IsShown = e?.Element("IsShown")?.Value.TryParseBool() ?? false;
@@ -58,7 +58,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         ForceToNeverBeFoundFlag = e?.Element("ForceToNeverBeFoundFlag")?.Value.TryParseBool() ?? false;
     }
 
-    internal static CBaseWidget GetFromXml(XElement? e)
+    internal static CBaseWidget GetFromXml(XElement? e, ImageCache c)
     {
         ArgumentNullException.ThrowIfNull(e);
         CBaseWidget r;
@@ -68,12 +68,12 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
             r = id switch
             {
                 CContainerWidget.ClassId => new CContainerWidget(),
-                CStaticWidget.ClassId => new CStaticWidget(),
-                CGfxButtonWidget.ClassId => new CGfxButtonWidget(),
-                CTextButtonWidget.ClassId => new CTextButtonWidget(),
-                CStaticTextWidget.ClassId => new CStaticTextWidget(),
+                CStaticWidget.ClassId => new CStaticWidget(c),
+                CGfxButtonWidget.ClassId => new CGfxButtonWidget(c),
+                CTextButtonWidget.ClassId => new CTextButtonWidget(c),
+                CStaticTextWidget.ClassId => new CStaticTextWidget(c),
                 CCustomWidget.ClassId => new CCustomWidget(),
-                CProgressBarWidget.ClassId => new CProgressBarWidget(),
+                CProgressBarWidget.ClassId => new CProgressBarWidget(c),
                 CPureTooltipWidget.ClassId => new CPureTooltipWidget(),
                 _ => throw new IOException($"invalid classid {id}")
             };
@@ -86,17 +86,17 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
             r = n switch
             {
                 CContainerWidget.ClassName => new CContainerWidget(),
-                CStaticWidget.ClassName => new CStaticWidget(),
-                CGfxButtonWidget.ClassName => new CGfxButtonWidget(),
-                CTextButtonWidget.ClassName => new CTextButtonWidget(),
-                CStaticTextWidget.ClassName => new CStaticTextWidget(),
+                CStaticWidget.ClassName => new CStaticWidget(c),
+                CGfxButtonWidget.ClassName => new CGfxButtonWidget(c),
+                CTextButtonWidget.ClassName => new CTextButtonWidget(c),
+                CStaticTextWidget.ClassName => new CStaticTextWidget(c),
                 CCustomWidget.ClassName => new CCustomWidget(),
-                CProgressBarWidget.ClassName => new CProgressBarWidget(),
+                CProgressBarWidget.ClassName => new CProgressBarWidget(c),
                 CPureTooltipWidget.ClassName => new CPureTooltipWidget(),
                 _ => throw new IOException($"invalid classname {n}")
             };
         }
-        r.FromXml(e);
+        r.FromXml(e, c);
         return r;
     }
 

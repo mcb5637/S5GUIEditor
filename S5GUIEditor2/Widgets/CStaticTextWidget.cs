@@ -7,6 +7,11 @@ internal class CStaticTextWidget : CStaticWidget
 {
     internal new const string ClassName = "EGUIX::CStaticTextWidget";
     internal new const uint ClassId = 0x86E3BC06;
+
+    internal CStaticTextWidget(ImageCache c) : base(c)
+    {
+    }
+
     internal CWidgetStringHelper StringHelper { get; set; } = new();
     internal UpdateFunc Update { get; set; } = new();
     internal int FirstLineToPrint { get; set; }
@@ -17,9 +22,9 @@ internal class CStaticTextWidget : CStaticWidget
         return (ClassName, ClassId);
     }
 
-    internal override void FromXml(XElement? e)
+    internal override void FromXml(XElement? e, ImageCache c)
     {
-        base.FromXml(e);
+        base.FromXml(e, c);
         StringHelper = CWidgetStringHelper.FromXml(e?.Element("StringHelper"));
         Update = UpdateFunc.FromXml(e);
         FirstLineToPrint = e?.Element("FirstLineToPrint")?.Value.TryParseInt() ?? 0;
