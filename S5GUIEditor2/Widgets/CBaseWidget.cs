@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Xml.Linq;
@@ -31,7 +30,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         }
     } = "";
 
-    internal RectangleF PositionAndSize { get; set; }
+    internal RectangleF PositionAndSize { get; set; } = new();
     internal bool IsShown { get; set; }
     internal float ZPriority { get; set; }
     internal string Group { get; set; } = "";

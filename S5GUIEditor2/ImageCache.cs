@@ -11,17 +11,13 @@ internal class ImageCache
     
     private Dictionary<string, Bitmap?> Cache = new();
 
-    private const string Data = "data/";
-    
     private Bitmap? LoadImage(string path)
     {
+        if (string.IsNullOrEmpty(path))
+            return null;
         try
         {
-            path = path.Replace('\\', '/');
-            if (path.StartsWith(Data, StringComparison.InvariantCultureIgnoreCase))
-                path = path.Remove(0, Data.Length);
-            var fullPath = Path.Combine(S!.WorkspacePath, path);
-            return new Bitmap(fullPath);
+            return new Bitmap(S!.ResolveS5Path(path));
         }
         catch (IOException)
         {

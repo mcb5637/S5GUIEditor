@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,6 +5,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
+using S5GUIEditor2.Widgets;
 using SkiaSharp;
 using Color = Avalonia.Media.Color;
 using Point = Avalonia.Point;
@@ -22,25 +22,37 @@ internal class TextureView : Control
     public Bitmap? Image
     {
         get => GetValue(ImageProperty);
-        set => SetValue(ImageProperty, value);
+        set
+        {
+            SetValue(ImageProperty, value);
+            InvalidateVisual();
+        }
     }
 
     public RectangleF Rectangle
     {
         get => GetValue(RectangleProperty);
-        set => SetValue(RectangleProperty, value);
+        set
+        {
+            SetValue(RectangleProperty, value);
+            InvalidateVisual();
+        }
     }
 
     public Color Color
     {
         get => GetValue(ColorProperty);
-        set => SetValue(ColorProperty, value);
+        set
+        {
+            SetValue(ColorProperty, value); 
+            InvalidateVisual();
+        }
     }
 
     protected override Size MeasureOverride(Size availableSize)
     {
         if (Image == null)
-            return availableSize;
+            return new Size(32, 32);
         var s = Image.Size;
         var r = new Size(double.Min(availableSize.Width, Rectangle.Width * s.Width), 
             double.Min(availableSize.Height, Rectangle.Height * s.Height));
@@ -50,7 +62,10 @@ internal class TextureView : Control
     public sealed override void Render(DrawingContext context)
     {
         if (Image == null)
+        {
+            context.FillRectangle(new SolidColorBrush(Color), Bounds);
             return;
+        }
         var s = Image.Size;
         Rect src = new(Rectangle.X * s.Width,
             Rectangle.Y * s.Height, Rectangle.Width * s.Width,

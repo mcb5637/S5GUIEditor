@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -25,6 +24,7 @@ internal partial class MainWindow : Window
 
     private readonly Model M;
     private readonly ImageCache C;
+    internal Settings Settings => M.Settings;
 
     private void LoadXml(string xmlPath)
     {
@@ -55,7 +55,13 @@ internal partial class MainWindow : Window
         CProjectWidget w = new()
         {
             Name = "GUIRoot",
-            PositionAndSize = new RectangleF(0, 0, 1024, 768),
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 1024,
+                Height = 768,
+            },
         };
         w.WidgetListHandler.SubWidgets.Add(new CContainerWidget()
         {

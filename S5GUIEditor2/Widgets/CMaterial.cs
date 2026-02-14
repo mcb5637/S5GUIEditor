@@ -1,66 +1,110 @@
-using System.Drawing;
+using System.ComponentModel;
 using System.Xml.Linq;
 using Avalonia.Media;
 using Color = Avalonia.Media.Color;
 
 namespace S5GUIEditor2.Widgets;
 
-internal class CMaterial
+internal class CMaterial : INotifyPropertyChanged
 {
-    internal string Texture { get; set; } = "";
-    internal RectangleF TextureCoordinates { get; set; }
-    internal Color Color { get; set; }
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    internal void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    internal string Texture {
+        get;
+        set 
+        {
+            field = value;
+            OnPropertyChanged(nameof(Texture));
+            OnPropertyChanged(nameof(Image));
+            OnPropertyChanged(nameof(GridWidth));
+            OnPropertyChanged(nameof(GridHeight));
+            OnPropertyChanged(nameof(GridX));
+            OnPropertyChanged(nameof(GridY));
+        } 
+    } = "";
+
+    private void OnCoordinateChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(Image));
+        OnPropertyChanged(nameof(GridWidth));
+        OnPropertyChanged(nameof(GridHeight));
+        OnPropertyChanged(nameof(GridX));
+        OnPropertyChanged(nameof(GridY));
+        OnPropertyChanged(nameof(TextureCoordinates));
+    }
+    internal RectangleF TextureCoordinates
+    {
+        get;
+        set
+        {
+            field.PropertyChanged -= OnCoordinateChanged;
+            field = value;
+            field.PropertyChanged += OnCoordinateChanged;
+            OnPropertyChanged(nameof(Image));
+            OnPropertyChanged(nameof(GridWidth));
+            OnPropertyChanged(nameof(GridHeight));
+            OnPropertyChanged(nameof(GridX));
+            OnPropertyChanged(nameof(GridY));
+            OnPropertyChanged(nameof(TextureCoordinates));
+        }
+    } = new();
+
+    internal Color Color
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(Color));
+        }
+    }
     internal required ImageCache Cache { get; init; }
     
     internal IImage? Image => Cache.Get(Texture);
 
-    internal float GridSizeX
+    internal double GridWidth
     {
-        get => (float)(TextureCoordinates.Width * Image?.Size.Width ?? 0);
+        get => Image == null ? 0 : TextureCoordinates.Width * Image.Size.Width;
         set
         {
             if (Image == null)
                 return;
-            var d = TextureCoordinates;
-            d.Width = (float)(value / Image.Size.Width);
-            TextureCoordinates = d;
+            TextureCoordinates.Width = value / Image.Size.Width;
         }
     }
-    internal float GridSizeY
+    internal double GridHeight
     {
-        get => (float)(TextureCoordinates.Height * Image?.Size.Height ?? 0);
+        get => Image == null ? 0 : TextureCoordinates.Height * Image.Size.Height;
         set
         {
             if (Image == null)
                 return;
-            var d = TextureCoordinates;
-            d.Height = (float)(value / Image.Size.Height);
-            TextureCoordinates = d;
+            TextureCoordinates.Height = value / Image.Size.Height;
         }
     }
-
-    internal float GridIndexX
+    internal double GridX
     {
-        get => Image == null ? 0 : (float)(TextureCoordinates.X * Image.Size.Width / GridSizeX);
+        get => Image == null ? 0 : TextureCoordinates.X * Image.Size.Width / GridWidth;
         set
         {
             if (Image == null)
                 return;
-            var d = TextureCoordinates;
-            d.X = (float)(value / Image.Size.Width * GridSizeX);
-            TextureCoordinates = d;
+            TextureCoordinates.X = value / Image.Size.Width * GridWidth;
         }
     }
-    internal float GridIndexY
+    internal double GridY
     {
-        get => Image == null ? 0 : (float)(TextureCoordinates.Y * Image.Size.Height / GridSizeY);
+        get => Image == null ? 0 : TextureCoordinates.Y * Image.Size.Height / GridHeight;
         set
         {
             if (Image == null)
                 return;
-            var d = TextureCoordinates;
-            d.Y = (float)(value / Image.Size.Height * GridSizeY);
-            TextureCoordinates = d;
+            TextureCoordinates.Y = value / Image.Size.Height * GridHeight;
         }
     }
     
