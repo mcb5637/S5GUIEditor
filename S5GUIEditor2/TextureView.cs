@@ -1,8 +1,6 @@
-using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
 using S5GUIEditor2.Widgets;
@@ -15,11 +13,11 @@ namespace S5GUIEditor2;
 
 internal class TextureView : Control
 {
-    public static readonly StyledProperty<Bitmap?> ImageProperty = AvaloniaProperty.Register<TextureView, Bitmap?>(nameof(Image));
+    public static readonly StyledProperty<SKImage?> ImageProperty = AvaloniaProperty.Register<TextureView, SKImage?>(nameof(Image));
     public static readonly StyledProperty<RectangleF> RectangleProperty = AvaloniaProperty.Register<TextureView, RectangleF>(nameof(Rectangle));
     public static readonly StyledProperty<Color> ColorProperty = AvaloniaProperty.Register<TextureView, Color>(nameof(Color));
 
-    public Bitmap? Image
+    public SKImage? Image
     {
         get => GetValue(ImageProperty);
         set
@@ -53,9 +51,8 @@ internal class TextureView : Control
     {
         if (Image == null)
             return new Size(32, 32);
-        var s = Image.Size;
-        var r = new Size(double.Min(availableSize.Width, Rectangle.Width * s.Width), 
-            double.Min(availableSize.Height, Rectangle.Height * s.Height));
+        var r = new Size(double.Min(availableSize.Width, Rectangle.Width * Image.Width), 
+            double.Min(availableSize.Height, Rectangle.Height * Image.Height));
         return r;
     }
     
@@ -74,7 +71,7 @@ internal class TextureView : Control
     private class CustomRender : ICustomDrawOperation
     {
         internal required Color C { get; init; }
-        internal required Bitmap? Image { get; init; }
+        internal required SKImage? Image { get; init; }
         internal required RectangleF Source { get; init; }
         internal required bool WhiteBG { get; init; }
         public required Rect Bounds { get; init; }
@@ -87,23 +84,21 @@ internal class TextureView : Control
 
         public void Render(ImmediateDrawingContext context)
         {
-            DoRender(context, Source, Image, C, Bounds, WhiteBG);
+            if (context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) is not ISkiaSharpApiLeaseFeature leaseFeature)
+            {
+                return;
+            }
+
+            using ISkiaSharpApiLease lease = leaseFeature.Lease();
+            SKCanvas canvas = lease.SkCanvas;
+            DoRender(canvas, Source, Image, C, Bounds, WhiteBG);
         }
 
         public bool Equals(ICustomDrawOperation? other) => false;
     }
 
-    internal static void DoRender(ImmediateDrawingContext context, RectangleF source, Bitmap? image, Color color, Rect bounds, bool whiteBG)
+    internal static void DoRender(SKCanvas canvas, RectangleF source, SKImage? image, Color color, Rect bounds, bool whiteBG)
     {
-        ISkiaSharpApiLeaseFeature? leaseFeature = context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) as ISkiaSharpApiLeaseFeature;
-        if (leaseFeature == null)
-        {
-            return;
-        }
-
-        using ISkiaSharpApiLease lease = leaseFeature.Lease();
-        SKCanvas canvas = lease.SkCanvas;
-
         if (whiteBG)
         {
             canvas.DrawRect(bounds.ToSKRect(), new SKPaint()
@@ -115,22 +110,16 @@ internal class TextureView : Control
 
         if (image != null)
         {
-            var imageSize = image.Size;
-            Rect src = new(source.X * imageSize.Width,
-                source.Y * imageSize.Height, source.Width * imageSize.Width,
-                source.Height * imageSize.Height);
+            Rect src = new(source.X * image.Width,
+                source.Y * image.Height, source.Width * image.Width,
+                source.Height * image.Height);
             
-            MemoryStream s = new();
-            image.Save(s);
-            using SKBitmap bitmap = SKBitmap.Decode(s.ToArray());
-            SKImage img = SKImage.FromBitmap(bitmap);
-
             using SKPaint paint = new();
             paint.ImageFilter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(color.ToSKColor(),
                 SKBlendMode.Modulate));
             paint.FilterQuality = SKFilterQuality.High;
 
-            canvas.DrawImage(img, src.ToSKRect(), bounds.ToSKRect(), paint);
+            canvas.DrawImage(image, src.ToSKRect(), bounds.ToSKRect(), paint);
         }
         else
         {

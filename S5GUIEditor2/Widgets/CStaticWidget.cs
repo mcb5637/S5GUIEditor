@@ -6,7 +6,19 @@ internal class CStaticWidget : CBaseWidget
 {
     internal new const string ClassName = "EGUIX::CStaticWidget";
     internal new const uint ClassId = 0x213A8776;
-    internal CMaterial BackgroundMaterial { get; set; }
+
+    internal CMaterial BackgroundMaterial
+    {
+        get;
+        set
+        {
+            field?.PropertyChanged -= PropertyChangedHandlerMaterial;
+            field = value;
+            field.PropertyChanged += PropertyChangedHandlerMaterial;
+            OnPropertyChanged(nameof(BackgroundMaterial));
+            OnPropertyChanged(nameof(RendererMaterial));
+        }
+    }
 
     internal CStaticWidget(ImageCache c)
     {
@@ -45,4 +57,5 @@ internal class CStaticWidget : CBaseWidget
     }
 
     internal override CMaterial StaticMaterial => BackgroundMaterial;
+    internal override CMaterial? RendererMaterial => BackgroundMaterial;
 }

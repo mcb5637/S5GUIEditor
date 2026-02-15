@@ -34,6 +34,7 @@ internal partial class MainWindow : Window
         M.CurrentWidget.Clear();
         M.CurrentWidget.Add(w);
         M.OnPropertyChanged(nameof(M.RootWidget));
+        w.PropertyChanged += (_, _) => Renderer.InvalidateVisual();
     }
 
     private void Menu_LoadXml(object? sender, RoutedEventArgs? e)

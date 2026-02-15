@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace S5GUIEditor2.Widgets;
 
-public class RectangleF : INotifyPropertyChanged
+internal class RectangleF : INotifyPropertyChanged
 {
     
     public event PropertyChangedEventHandler? PropertyChanged;

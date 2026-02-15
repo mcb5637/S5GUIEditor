@@ -44,7 +44,9 @@
                     <TextBlock Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Color</TextBlock>
                     <ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Color}" ColorChanged="ColorChanged"></ColorPicker>
                 </Grid>
-                <Image Grid.Column="1" Grid.Row="0" Source="{Binding Image}" Margin="5"></Image>
+                <s5GuiEditor2:TextureView Grid.Column="1" Grid.Row="0" Image="{Binding Image}"
+                                          Rectangle="{Binding UvFull}" Color="White"
+                                          Margin="5"></s5GuiEditor2:TextureView>
             </Grid>
         </StackPanel>
     </Border>

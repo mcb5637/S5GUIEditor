@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Xml.Linq;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
+using SkiaSharp;
 using Color = Avalonia.Media.Color;
 
 namespace S5GUIEditor2.Widgets;
@@ -54,6 +53,14 @@ internal class CMaterial : INotifyPropertyChanged
             OnPropertyChanged(nameof(TextureCoordinates));
         }
     } = new();
+    
+    internal static RectangleF UvFull { get; } = new()
+    {
+        X = 0,
+        Y = 0,
+        Width = 1,
+        Height = 1,
+    };
 
     internal Color Color
     {
@@ -66,46 +73,46 @@ internal class CMaterial : INotifyPropertyChanged
     }
     internal required ImageCache Cache { get; init; }
     
-    internal Bitmap? Image => Cache.Get(Texture);
+    internal SKImage? Image => Cache.Get(Texture);
 
     internal double GridWidth
     {
-        get => Image == null ? 0 : TextureCoordinates.Width * Image.Size.Width;
+        get => Image == null ? 0 : TextureCoordinates.Width * Image.Width;
         set
         {
             if (Image == null)
                 return;
-            TextureCoordinates.Width = value / Image.Size.Width;
+            TextureCoordinates.Width = value / Image.Width;
         }
     }
     internal double GridHeight
     {
-        get => Image == null ? 0 : TextureCoordinates.Height * Image.Size.Height;
+        get => Image == null ? 0 : TextureCoordinates.Height * Image.Height;
         set
         {
             if (Image == null)
                 return;
-            TextureCoordinates.Height = value / Image.Size.Height;
+            TextureCoordinates.Height = value / Image.Height;
         }
     }
     internal double GridX
     {
-        get => Image == null ? 0 : TextureCoordinates.X * Image.Size.Width / GridWidth;
+        get => Image == null ? 0 : TextureCoordinates.X * Image.Width / GridWidth;
         set
         {
             if (Image == null)
                 return;
-            TextureCoordinates.X = value / Image.Size.Width * GridWidth;
+            TextureCoordinates.X = value / Image.Width * GridWidth;
         }
     }
     internal double GridY
     {
-        get => Image == null ? 0 : TextureCoordinates.Y * Image.Size.Height / GridHeight;
+        get => Image == null ? 0 : TextureCoordinates.Y * Image.Height / GridHeight;
         set
         {
             if (Image == null)
                 return;
-            TextureCoordinates.Y = value / Image.Size.Height * GridHeight;
+            TextureCoordinates.Y = value / Image.Height * GridHeight;
         }
     }
     

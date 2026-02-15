@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using MsBox.Avalonia;
 using Pfim;
@@ -15,9 +14,9 @@ internal class ImageCache
 {
     internal required Settings? S { get; init; }
 
-    private Dictionary<string, Bitmap?> Cache = new();
+    private Dictionary<string, SKImage?> Cache = new();
 
-    private Bitmap? LoadImage(string path)
+    private SKImage? LoadImage(string path)
     {
         if (string.IsNullOrEmpty(path))
             return null;
@@ -25,7 +24,7 @@ internal class ImageCache
         {
             path = S!.ResolveS5Path(path);
             if (Path.GetExtension(path) != ".dds")
-                return new Bitmap(path);
+                return SKImage.FromEncodedData(path);
 
             // mostly from https://github.com/nickbabcock/Pfim/blob/master/src/Pfim.Skia/Program.cs
             SKColorType colorType;
@@ -73,13 +72,7 @@ internal class ImageCache
             var handle = GCHandle.Alloc(newData, GCHandleType.Pinned);
             var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(newData, 0);
             using var data = SKData.Create(ptr, newDataLen, (_, _) => handle.Free());
-            using var skImage = SKImage.FromPixels(imageInfo, data, stride);
-            using var bitmap = SKBitmap.FromImage(skImage);
-            using var fs = new MemoryStream();
-            using var wstream = new SKManagedWStream(fs);
-            bitmap.Encode(wstream, SKEncodedImageFormat.Png, 100);
-            fs.Seek(0, SeekOrigin.Begin);
-            return new Bitmap(fs);
+            return SKImage.FromPixels(imageInfo, data, stride);
         }
         catch (IOException)
         {
@@ -98,11 +91,11 @@ internal class ImageCache
         }
     }
 
-    internal Bitmap? Get(string path)
+    internal SKImage? Get(string path)
     {
-        if (Cache.TryGetValue(path, out Bitmap? r))
+        if (Cache.TryGetValue(path, out SKImage? r))
             return r;
-        Bitmap? l = LoadImage(path);
+        SKImage? l = LoadImage(path);
         Cache[path] = l;
         return l;
     }

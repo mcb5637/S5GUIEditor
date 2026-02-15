@@ -9,7 +9,19 @@ internal class CButtonWidget : CBaseWidget
     internal new const string ClassName = "EGUIX::CButtonWidget";
     internal new const uint ClassId = 0xFE028496;
     internal CButtonHelper ButtonHelper { get; set; } = new();
-    internal CMaterial MaterialsNormal { get; set; }
+
+    internal CMaterial MaterialsNormal
+    {
+        get;
+        set
+        {
+            field?.PropertyChanged -= PropertyChangedHandlerMaterial;
+            field = value;
+            field.PropertyChanged += PropertyChangedHandlerMaterial;
+            OnPropertyChanged(nameof(MaterialsNormal));
+            OnPropertyChanged(nameof(RendererMaterial));
+        }
+    }
     internal CMaterial MaterialsHover { get; set; }
     internal CMaterial MaterialsPressed { get; set; }
     internal CMaterial MaterialsDisabled { get; set; }

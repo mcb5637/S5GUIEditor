@@ -1,8 +1,11 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Rendering.SceneGraph;
+using Avalonia.Skia;
 using S5GUIEditor2.Widgets;
+using SkiaSharp;
 
 namespace S5GUIEditor2;
 
@@ -34,26 +37,43 @@ internal class GUIRender : Control
     {
         public required Rect Bounds { get; init; }
         public required CBaseWidget RootWidget { get; init; }
+        private Point Scale { get; set; }
 
         public bool HitTest(Point p) => Bounds.Contains(p);
 
         public void Render(ImmediateDrawingContext context)
         {
-            DoRender(context, new Point(Bounds.X, Bounds.Y), RootWidget);
+            if (context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) is not ISkiaSharpApiLeaseFeature leaseFeature)
+            {
+                return;
+            }
+
+            using ISkiaSharpApiLease lease = leaseFeature.Lease();
+            SKCanvas canvas = lease.SkCanvas;
+
+            Scale = new Point(Bounds.Width / RootWidget.PositionAndSize.Width, Bounds.Height / RootWidget.PositionAndSize.Height);
+            
+            DoRender(canvas, new Point(Bounds.X, Bounds.Y), RootWidget);
         }
 
-        private void DoRender(ImmediateDrawingContext context, Point topLeft, CBaseWidget wid)
+        private void DoRender(SKCanvas canvas, Point topLeft, CBaseWidget wid)
         {
-            Rect r = new Rect(topLeft.X + wid.PositionAndSize.X, topLeft.Y + wid.PositionAndSize.Y, wid.PositionAndSize.Width, wid.PositionAndSize.Height);
+            if (!wid.Visible)
+                return;
+            Rect r = new Rect(topLeft.X + wid.PositionAndSize.X * Scale.X,
+                topLeft.Y + wid.PositionAndSize.Y * Scale.Y,
+                wid.PositionAndSize.Width * Scale.X,
+                wid.PositionAndSize.Height * Scale.Y
+            );
             if (wid.RendererMaterial != null)
             {
-                TextureView.DoRender(context, wid.RendererMaterial.TextureCoordinates, wid.RendererMaterial.Image, wid.RendererMaterial.Color, r, false);
+                TextureView.DoRender(canvas, wid.RendererMaterial.TextureCoordinates, wid.RendererMaterial.Image, wid.RendererMaterial.Color, r, false);
             }
 
             if (wid is CContainerWidget cw)
             {
-                foreach (CBaseWidget child in cw.WidgetListHandler.SubWidgets)
-                    DoRender(context, r.TopLeft, child);
+                foreach (CBaseWidget child in cw.WidgetListHandler.SubWidgets.Reverse())
+                    DoRender(canvas, r.TopLeft, child);
             }
         }
 

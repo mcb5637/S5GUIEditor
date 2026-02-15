@@ -11,14 +11,30 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    internal void OnPropertyChanged(string propertyName)
+    protected void PropertyChangedHandlerMaterial(object? sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(RendererMaterial));
+    }
+    
+    protected void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        if (propertyName is nameof(RendererMaterial) or nameof(Visible))
+            ParentNode?.OnPropertyChanged(propertyName);
     }
     
     internal const string ClassName = "EGUIX::CBaseWidget";
     internal const uint ClassId = 0x18736A06;
-    internal bool Visible { get; set; } = true;
+
+    internal bool Visible
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(Visible));
+        }
+    } = true;
 
     internal string Name
     {
@@ -159,5 +175,5 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal virtual CMaterial? StaticMaterial => null;
     internal virtual UpdateFunc? UpdateData => null;
     internal virtual CWidgetStringHelper? TextRender => null;
-    internal virtual CMaterial? RendererMaterial => StaticMaterial;
+    internal virtual CMaterial? RendererMaterial => null;
 }
