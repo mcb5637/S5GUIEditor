@@ -5,10 +5,10 @@ namespace S5GUIEditor2.Widgets;
 internal class CToolTipHelper
 {
     internal bool ToolTipEnabledFlag { get; set; }
-    internal CSingleStringHandler ToolTipString { get; set; } = new();
+    internal CSingleStringHandler ToolTipString { get; private init; } = new();
     internal string TargetWidget { get; set; } = "";
     internal bool ControlTargetWidgetDisplayState { get; set; }
-    internal CLuaFunctionHelper UpdateFunction { get; set; } = new();
+    internal CLuaFunctionHelper UpdateFunction { get; private init; } = new();
 
     internal static CToolTipHelper FromXml(XElement? e)
     {
@@ -38,11 +38,7 @@ internal class CToolTipHelper
     
     public string ToLua(string escapedname)
     {
-        string twid;
-        if (TargetWidget.Length == 0)
-            twid = "nil";
-        else
-            twid = $"\"{TargetWidget}\"";
+        string twid = TargetWidget.Length == 0 ? "nil" : $"\"{TargetWidget}\"";
         string s = $"CppLogic.UI.WidgetSetTooltipData({escapedname}, {twid}, {ControlTargetWidgetDisplayState.ToString().ToLower()}, {ToolTipEnabledFlag.ToString().ToLower()})\n";
         if (UpdateFunction.LuaCommand.Length > 0 && !UpdateFunction.LuaCommand.StartsWith("--"))
             s += $"CppLogic.UI.WidgetOverrideTooltipFunc({escapedname}, function() {UpdateFunction.LuaCommand} end)\n";

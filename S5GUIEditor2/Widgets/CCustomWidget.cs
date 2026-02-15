@@ -6,9 +6,9 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CCustomWidget : CBaseWidget
 {
-    internal new const string ClassName = "EGUIX::CCustomWidget";
-    internal new const uint ClassId = 0x7656DB56;
-    internal string CustomClassName { get; set; } = "";
+    internal const string ClassName = "EGUIX::CCustomWidget";
+    internal const uint ClassId = 0x7656DB56;
+    private string CustomClassName { get; set; } = "";
     internal int IntegerUserVariable0DefaultValue { get; set; }
     internal int IntegerUserVariable1DefaultValue { get; set; }
     internal int IntegerUserVariable2DefaultValue { get; set; }
@@ -17,8 +17,8 @@ internal class CCustomWidget : CBaseWidget
     internal int IntegerUserVariable5DefaultValue { get; set; }
     internal string StringUserVariable0DefaultValue { get; set; } = "";
     internal string StringUserVariable1DefaultValue { get; set; } = "";
-    
-    internal override (string, uint) GetClass()
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -98,7 +98,7 @@ internal class CCustomWidget : CBaseWidget
         }
     }
 
-    private static List<CustomWidgetOptions> KnownWidgetTypes =
+    private static readonly List<CustomWidgetOptions> KnownWidgetTypes =
     [
         new()
         {
@@ -203,7 +203,7 @@ internal class CCustomWidget : CBaseWidget
         },
     ];
 
-    internal override string GetLuaCreator(string parent, string befo)
+    protected override string GetLuaCreator(string parent, string befo)
     {
         //var o = TryGet(CustomClassName);
         //if (o == null || !o.SaveForExport)

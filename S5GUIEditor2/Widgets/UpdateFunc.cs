@@ -5,7 +5,7 @@ namespace S5GUIEditor2.Widgets;
 // not originally a struct, but these always appear together
 internal class UpdateFunc
 {
-    internal CLuaFunctionHelper UpdateFunction { get; set; } = new();
+    internal CLuaFunctionHelper UpdateFunction { get; private init; } = new();
     internal bool UpdateManualFlag { get; set; }
 
     internal static UpdateFunc FromXml(XElement? e)

@@ -12,12 +12,13 @@ internal class CStaticTextWidget : CStaticWidget
     {
     }
 
-    internal CWidgetStringHelper StringHelper { get; set; } = new();
-    internal UpdateFunc Update { get; set; } = new();
+    private CWidgetStringHelper StringHelper { get; set; } = new();
+    private UpdateFunc Update { get; set; } = new();
     internal int FirstLineToPrint { get; set; }
     internal int NumberOfLinesToPrint { get; set; }
     internal float LineDistanceFactor { get; set; }
-    internal override (string, uint) GetClass()
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -44,8 +45,8 @@ internal class CStaticTextWidget : CStaticWidget
         e.Add(new XElement("LineDistanceFactor", LineDistanceFactor.ToString(CultureInfo.InvariantCulture)));
         return e;
     }
-    
-    internal override string GetLuaCreator(string parent, string befo)
+
+    protected override string GetLuaCreator(string parent, string befo)
     {
         return $"CppLogic.UI.ContainerWidgetCreateStaticTextWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }

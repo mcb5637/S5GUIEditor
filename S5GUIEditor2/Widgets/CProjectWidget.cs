@@ -5,10 +5,10 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CProjectWidget : CContainerWidget
 {
-    internal new const string ClassName = "EGUIX::CProjectWidget";
-    internal new const uint ClassId = 0x5CA15E96;
-    
-    internal override (string, uint) GetClass()
+    private new const string ClassName = "EGUIX::CProjectWidget";
+    private new const uint ClassId = 0x5CA15E96;
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -21,7 +21,8 @@ internal class CProjectWidget : CContainerWidget
         xe.Name = "root";
         return xe;
     }
-    internal override string GetLuaCreator(string parent, string befo)
+
+    protected override string GetLuaCreator(string parent, string befo)
     {
         throw new InvalidOperationException("cannot create root widget");
     }

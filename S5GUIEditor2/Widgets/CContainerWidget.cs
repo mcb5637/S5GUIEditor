@@ -6,7 +6,7 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CWidgetListHandler
 {
-    internal ObservableCollection<CBaseWidget> SubWidgets { get; set; } = [];
+    internal ObservableCollection<CBaseWidget> SubWidgets { get; private init; } = [];
 
     internal static CWidgetListHandler FromXml(XElement? e, ImageCache c)
     {
@@ -19,11 +19,11 @@ internal class CWidgetListHandler
 
 internal class CContainerWidget : CBaseWidget
 {
-    internal new const string ClassName = "EGUIX::CContainerWidget";
-    internal new const uint ClassId = 0x55F9D1F6;
-    internal CWidgetListHandler WidgetListHandler { get; set; } = new();
-    
-    internal override (string, uint) GetClass()
+    internal const string ClassName = "EGUIX::CContainerWidget";
+    internal const uint ClassId = 0x55F9D1F6;
+    internal CWidgetListHandler WidgetListHandler { get; private set; } = new();
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -45,8 +45,8 @@ internal class CContainerWidget : CBaseWidget
         e.Add(s);
         return e;
     }
-    
-    internal override string GetLuaCreator(string parent, string befo)
+
+    protected override string GetLuaCreator(string parent, string befo)
     {
         return $"CppLogic.UI.ContainerWidgetCreateContainerWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }

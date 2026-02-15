@@ -14,7 +14,7 @@ internal class ImageCache
 {
     internal required Settings? S { get; init; }
 
-    private Dictionary<string, SKImage?> Cache = new();
+    private readonly Dictionary<string, SKImage?> Cache = new();
 
     private SKImage? LoadImage(string path)
     {

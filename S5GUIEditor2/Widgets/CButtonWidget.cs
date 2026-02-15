@@ -6,15 +6,16 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CButtonWidget : CBaseWidget
 {
-    internal new const string ClassName = "EGUIX::CButtonWidget";
-    internal new const uint ClassId = 0xFE028496;
-    internal CButtonHelper ButtonHelper { get; set; } = new();
+    private const string ClassName = "EGUIX::CButtonWidget";
+    private const uint ClassId = 0xFE028496;
+    internal CButtonHelper ButtonHelper { get; private set; } = new();
 
     internal CMaterial MaterialsNormal
     {
         get;
         set
         {
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             field?.PropertyChanged -= PropertyChangedHandlerMaterial;
             field = value;
             field.PropertyChanged += PropertyChangedHandlerMaterial;
@@ -26,7 +27,7 @@ internal class CButtonWidget : CBaseWidget
     internal CMaterial MaterialsPressed { get; set; }
     internal CMaterial MaterialsDisabled { get; set; }
     internal CMaterial MaterialsHighlighted { get; set; }
-    internal CToolTipHelper ToolTipHelper { get; set; } = new();
+    private CToolTipHelper ToolTipHelper { get; set; } = new();
 
     internal CButtonWidget(ImageCache c)
     {
@@ -36,8 +37,8 @@ internal class CButtonWidget : CBaseWidget
         MaterialsDisabled = new CMaterial() { Cache = c };
         MaterialsHighlighted = new CMaterial() { Cache = c };
     }
-    
-    internal override (string, uint) GetClass()
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -75,7 +76,7 @@ internal class CButtonWidget : CBaseWidget
         return e;
     }
 
-    internal override string GetLuaCreator(string parent, string befo)
+    protected override string GetLuaCreator(string parent, string befo)
     {
         throw new InvalidOperationException("cannot create base button widget");
     }

@@ -6,8 +6,8 @@ internal class CButtonHelper
 {
     internal bool DisabledFlag { get; set; }
     internal bool HighLightedFlag { get; set; }
-    internal CLuaFunctionHelper ActionFunction { get; set; } = new();
-    internal CSingleStringHandler ShortCutString { get; set; } = new();
+    internal CLuaFunctionHelper ActionFunction { get; private init; } = new();
+    internal CSingleStringHandler ShortCutString { get; private init; } = new();
     
     internal static CButtonHelper FromXml(XElement? e)
     {

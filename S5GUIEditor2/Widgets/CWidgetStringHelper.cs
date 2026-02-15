@@ -6,8 +6,8 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CWidgetStringHelper
 {
-    internal CFontIDHandler Font { get; set; } = new();
-    internal CSingleStringHandler String { get; set; } = new();
+    internal CFontIDHandler Font { get; private init; } = new();
+    internal CSingleStringHandler String { get; private init; } = new();
     internal float StringFrameDistance { get; set; }
     internal Color Color { get; set; }
 

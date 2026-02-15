@@ -7,6 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="S5GUIEditor2.MainWindow"
         x:DataType="s5GuiEditor2:Model"
+        WindowState="Maximized"
         Title="S5GUIEditor">
     <DockPanel>
         <Menu DockPanel.Dock="Top">

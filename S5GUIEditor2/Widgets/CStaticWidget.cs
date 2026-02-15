@@ -4,14 +4,15 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CStaticWidget : CBaseWidget
 {
-    internal new const string ClassName = "EGUIX::CStaticWidget";
-    internal new const uint ClassId = 0x213A8776;
+    internal const string ClassName = "EGUIX::CStaticWidget";
+    internal const uint ClassId = 0x213A8776;
 
     internal CMaterial BackgroundMaterial
     {
         get;
         set
         {
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             field?.PropertyChanged -= PropertyChangedHandlerMaterial;
             field = value;
             field.PropertyChanged += PropertyChangedHandlerMaterial;
@@ -24,8 +25,8 @@ internal class CStaticWidget : CBaseWidget
     {
         BackgroundMaterial = new CMaterial() { Cache = c };
     }
-    
-    internal override (string, uint) GetClass()
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -43,8 +44,8 @@ internal class CStaticWidget : CBaseWidget
         e.Add(new XElement("BackgroundMaterial", BackgroundMaterial.ToXml()));
         return e;
     }
-    
-    internal override string GetLuaCreator(string parent, string befo)
+
+    protected override string GetLuaCreator(string parent, string befo)
     {
         return $"CppLogic.UI.ContainerWidgetCreateStaticWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
@@ -57,5 +58,5 @@ internal class CStaticWidget : CBaseWidget
     }
 
     internal override CMaterial StaticMaterial => BackgroundMaterial;
-    internal override CMaterial? RendererMaterial => BackgroundMaterial;
+    internal override CMaterial RendererMaterial => BackgroundMaterial;
 }

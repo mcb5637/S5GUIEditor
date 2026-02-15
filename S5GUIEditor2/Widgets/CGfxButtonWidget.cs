@@ -4,18 +4,18 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CGfxButtonWidget : CButtonWidget
 {
-    internal new const string ClassName = "EGUIX::CGfxButtonWidget";
-    internal new const uint ClassId = 0x56DDA656;
+    internal const string ClassName = "EGUIX::CGfxButtonWidget";
+    internal const uint ClassId = 0x56DDA656;
 
     internal CGfxButtonWidget(ImageCache c) : base(c)
     {
         IconMaterial = new CMaterial() { Cache = c };
     }
 
-    internal CMaterial IconMaterial { get; set; }
-    internal UpdateFunc Update { get; set; } = new();
-    
-    internal override (string, uint) GetClass()
+    private CMaterial IconMaterial { get; set; }
+    private UpdateFunc Update { get; set; } = new();
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -36,8 +36,8 @@ internal class CGfxButtonWidget : CButtonWidget
         e.Add(Update.ToXml());
         return e;
     }
-    
-    internal override string GetLuaCreator(string parent, string befo)
+
+    protected override string GetLuaCreator(string parent, string befo)
     {
         return $"CppLogic.UI.ContainerWidgetCreateGFXButtonWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }

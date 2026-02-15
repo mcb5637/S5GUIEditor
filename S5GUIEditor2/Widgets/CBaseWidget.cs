@@ -22,9 +22,9 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         if (propertyName is nameof(RendererMaterial) or nameof(Visible))
             ParentNode?.OnPropertyChanged(propertyName);
     }
-    
-    internal const string ClassName = "EGUIX::CBaseWidget";
-    internal const uint ClassId = 0x18736A06;
+
+    private const string ClassName = "EGUIX::CBaseWidget";
+    private const uint ClassId = 0x18736A06;
 
     internal bool Visible
     {
@@ -54,7 +54,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal bool ForceToNeverBeFoundFlag { get; set; }
     internal CContainerWidget? ParentNode { get; set; }
 
-    internal virtual (string, uint) GetClass()
+    protected virtual (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -143,7 +143,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
             return $"\"{ParentNode.WidgetListHandler.SubWidgets[i + 1].Name}\"";
         return "nil";
     }
-    internal virtual string GetLuaCreator(string parent, string befo)
+    protected virtual string GetLuaCreator(string parent, string befo)
     {
         throw new InvalidOperationException("cannot create base widget");
     }

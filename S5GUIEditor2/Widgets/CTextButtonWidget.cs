@@ -4,18 +4,18 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CTextButtonWidget : CButtonWidget
 {
-    internal new const string ClassName = "EGUIX::CTextButtonWidget";
-    internal new const uint ClassId = 0x5DD085A6;
+    internal const string ClassName = "EGUIX::CTextButtonWidget";
+    internal const uint ClassId = 0x5DD085A6;
 
     internal CTextButtonWidget(ImageCache c) : base(c)
     {
     }
 
-    internal CWidgetStringHelper StringHelper { get; set; } = new();
+    private CWidgetStringHelper StringHelper { get; set; } = new();
     internal bool CppLogicCenterText { get; set; }
-    internal UpdateFunc Update { get; set; } = new();
-    
-    internal override (string, uint) GetClass()
+    private UpdateFunc Update { get; set; } = new();
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -38,8 +38,8 @@ internal class CTextButtonWidget : CButtonWidget
         e.Add(Update.ToXml());
         return e;
     }
-    
-    internal override string GetLuaCreator(string parent, string befo)
+
+    protected override string GetLuaCreator(string parent, string befo)
     {
         return $"CppLogic.UI.ContainerWidgetCreateTextButtonWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }

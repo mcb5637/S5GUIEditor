@@ -4,10 +4,11 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CPureTooltipWidget : CBaseWidget
 {
-    internal new const string ClassName = "EGUIX::CPureTooltipWidget";
-    internal new const uint ClassId = 0x82CC8876;
-    internal CToolTipHelper ToolTipHelper { get; set; } = new();
-    internal override (string, uint) GetClass()
+    internal const string ClassName = "EGUIX::CPureTooltipWidget";
+    internal const uint ClassId = 0x82CC8876;
+    private CToolTipHelper ToolTipHelper { get; set; } = new();
+
+    protected override (string, uint) GetClass()
     {
         return (ClassName, ClassId);
     }
@@ -25,8 +26,8 @@ internal class CPureTooltipWidget : CBaseWidget
         e.Add(new XElement("ToolTipHelper", ToolTipHelper.ToXml()));
         return e;
     }
-    
-    internal override string GetLuaCreator(string parent, string befo)
+
+    protected override string GetLuaCreator(string parent, string befo)
     {
         return $"CppLogic.UI.ContainerWidgetCreatePureTooltipWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }

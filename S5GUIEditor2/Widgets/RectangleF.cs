@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.Globalization;
+using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
 
@@ -7,7 +9,7 @@ internal class RectangleF : INotifyPropertyChanged
     
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    internal void OnPropertyChanged(string propertyName)
+    private void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
@@ -48,4 +50,27 @@ internal class RectangleF : INotifyPropertyChanged
             OnPropertyChanged(nameof(Height));
         }
     } = 0;
+    
+    
+    internal static RectangleF FromXml(XElement? e)
+    {
+        return new RectangleF
+        {
+            X = e?.Element("X")?.Value.TryParseFloat() ?? 0.0f,
+            Y = e?.Element("Y")?.Value.TryParseFloat() ?? 0.0f,
+            Width = e?.Element("W")?.Value.TryParseFloat() ?? 0.0f,
+            Height = e?.Element("H")?.Value.TryParseFloat() ?? 0.0f
+        };
+    }
+
+    internal XElement[] ToXml()
+    {
+        return
+        [
+            new XElement("X", X.ToString(CultureInfo.InvariantCulture)),
+            new XElement("Y", Y.ToString(CultureInfo.InvariantCulture)),
+            new XElement("W", Width.ToString(CultureInfo.InvariantCulture)),
+            new XElement("H", Height.ToString(CultureInfo.InvariantCulture))
+        ];
+    }
 }
