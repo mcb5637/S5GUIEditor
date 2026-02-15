@@ -40,7 +40,8 @@
             </TreeView>
             <TabControl Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding SelectedTabItem}" Margin="5">
                 <TabItem Header="View">
-                
+                    <s5GuiEditor2:GUIRender Width="1024" Height="768" RootWidget="{Binding RootWidget}" Name="Renderer">
+                    </s5GuiEditor2:GUIRender>
                 </TabItem>
                 <TabItem Header="Widget" IsVisible="{Binding HasEditWidget}">
                     <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" DataContext="{Binding EditWidget}">

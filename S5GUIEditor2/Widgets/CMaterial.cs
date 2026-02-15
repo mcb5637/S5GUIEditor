@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Xml.Linq;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Color = Avalonia.Media.Color;
 
 namespace S5GUIEditor2.Widgets;
@@ -65,7 +66,7 @@ internal class CMaterial : INotifyPropertyChanged
     }
     internal required ImageCache Cache { get; init; }
     
-    internal IImage? Image => Cache.Get(Texture);
+    internal Bitmap? Image => Cache.Get(Texture);
 
     internal double GridWidth
     {

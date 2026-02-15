@@ -48,6 +48,8 @@ internal class Model : INotifyPropertyChanged
     
     internal CCustomWidget? EditCustomWidget => EditWidget as CCustomWidget;
     internal bool HasEditCustomWidget => EditCustomWidget != null;
+    
+    internal CBaseWidget? RootWidget => CurrentWidget.FirstOrDefault();
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

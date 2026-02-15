@@ -159,4 +159,5 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal virtual CMaterial? StaticMaterial => null;
     internal virtual UpdateFunc? UpdateData => null;
     internal virtual CWidgetStringHelper? TextRender => null;
+    internal virtual CMaterial? RendererMaterial => StaticMaterial;
 }

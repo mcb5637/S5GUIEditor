@@ -89,4 +89,6 @@ internal class CButtonWidget : CBaseWidget
     }
 
     internal override CToolTipHelper Tooltip => ToolTipHelper;
+
+    internal override CMaterial RendererMaterial => MaterialsNormal;
 }

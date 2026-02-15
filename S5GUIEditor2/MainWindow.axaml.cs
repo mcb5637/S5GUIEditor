@@ -33,6 +33,7 @@ internal partial class MainWindow : Window
         w.FromXml(xd.Root, C);
         M.CurrentWidget.Clear();
         M.CurrentWidget.Add(w);
+        M.OnPropertyChanged(nameof(M.RootWidget));
     }
 
     private void Menu_LoadXml(object? sender, RoutedEventArgs? e)

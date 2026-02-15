@@ -61,21 +61,13 @@ internal class TextureView : Control
     
     public sealed override void Render(DrawingContext context)
     {
-        if (Image == null)
-        {
-            context.FillRectangle(new SolidColorBrush(Color), Bounds);
-            return;
-        }
-        var s = Image.Size;
-        Rect src = new(Rectangle.X * s.Width,
-            Rectangle.Y * s.Height, Rectangle.Width * s.Width,
-            Rectangle.Height * s.Height);
         context.Custom(new CustomRender()
         {
             C = Color,
             Image = Image,
-            Bounds = new Rect(0, 0, double.Min(src.Width, Bounds.Width), double.Min(src.Height, Bounds.Height)),
-            Source = src.ToSKRect(),
+            Bounds = new Rect(0, 0, Bounds.Width, Bounds.Height),
+            Source = Rectangle,
+            WhiteBG = true,
         });
     }
 
@@ -83,7 +75,9 @@ internal class TextureView : Control
     {
         internal required Color C { get; init; }
         internal required Bitmap? Image { get; init; }
-        internal required SKRect Source { get; init; }
+        internal required RectangleF Source { get; init; }
+        internal required bool WhiteBG { get; init; }
+        public required Rect Bounds { get; init; }
         
         public void Dispose()
         {
@@ -93,31 +87,58 @@ internal class TextureView : Control
 
         public void Render(ImmediateDrawingContext context)
         {
-            ISkiaSharpApiLeaseFeature? leaseFeature = context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) as ISkiaSharpApiLeaseFeature;
-            if (leaseFeature == null)
-            {
-                return;
-            }
-
-            using ISkiaSharpApiLease lease = leaseFeature.Lease();
-            SKCanvas canvas = lease.SkCanvas;
-            
-            MemoryStream s = new();
-            Image!.Save(s);
-            using SKBitmap bitmap = SKBitmap.Decode(s.ToArray());
-            using SKPaint paint = new();
-            
-            if (bitmap == null)
-            {
-                return;
-            }
-            SKImage img = SKImage.FromBitmap(bitmap);
-            paint.ImageFilter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(C.ToSKColor(), SKBlendMode.Modulate));
-            paint.FilterQuality = SKFilterQuality.High;
-            canvas.DrawImage(img, Source, Bounds.ToSKRect(), paint);
+            DoRender(context, Source, Image, C, Bounds, WhiteBG);
         }
 
-        public required Rect Bounds { get; init; }
         public bool Equals(ICustomDrawOperation? other) => false;
+    }
+
+    internal static void DoRender(ImmediateDrawingContext context, RectangleF source, Bitmap? image, Color color, Rect bounds, bool whiteBG)
+    {
+        ISkiaSharpApiLeaseFeature? leaseFeature = context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) as ISkiaSharpApiLeaseFeature;
+        if (leaseFeature == null)
+        {
+            return;
+        }
+
+        using ISkiaSharpApiLease lease = leaseFeature.Lease();
+        SKCanvas canvas = lease.SkCanvas;
+
+        if (whiteBG)
+        {
+            canvas.DrawRect(bounds.ToSKRect(), new SKPaint()
+            {
+                Color = SKColors.White,
+                Style = SKPaintStyle.Fill,
+            });
+        }
+
+        if (image != null)
+        {
+            var imageSize = image.Size;
+            Rect src = new(source.X * imageSize.Width,
+                source.Y * imageSize.Height, source.Width * imageSize.Width,
+                source.Height * imageSize.Height);
+            
+            MemoryStream s = new();
+            image.Save(s);
+            using SKBitmap bitmap = SKBitmap.Decode(s.ToArray());
+            SKImage img = SKImage.FromBitmap(bitmap);
+
+            using SKPaint paint = new();
+            paint.ImageFilter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(color.ToSKColor(),
+                SKBlendMode.Modulate));
+            paint.FilterQuality = SKFilterQuality.High;
+
+            canvas.DrawImage(img, src.ToSKRect(), bounds.ToSKRect(), paint);
+        }
+        else
+        {
+            canvas.DrawRect(bounds.ToSKRect(), new SKPaint()
+            {
+                Color = color.ToSKColor(),
+                Style = SKPaintStyle.Fill,
+            });
+        }
     }
 }
