@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Xml.Linq;
+using Avalonia.Media;
 using SkiaSharp;
 using Color = Avalonia.Media.Color;
 
@@ -52,7 +53,7 @@ internal class CMaterial : INotifyPropertyChanged
             OnPropertyChanged(nameof(GridY));
             OnPropertyChanged(nameof(TextureCoordinates));
         }
-    } = new();
+    } = new() {X = 0, Y = 0, Width = 1, Height = 1};
     
     internal static RectangleF UvFull { get; } = new()
     {
@@ -70,7 +71,7 @@ internal class CMaterial : INotifyPropertyChanged
             field = value;
             OnPropertyChanged(nameof(Color));
         }
-    }
+    } = Colors.White;
     internal required ImageCache Cache { get; init; }
     
     internal SKImage? Image => Cache.Get(Texture);

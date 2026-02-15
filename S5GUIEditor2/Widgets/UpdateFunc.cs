@@ -6,7 +6,7 @@ namespace S5GUIEditor2.Widgets;
 internal class UpdateFunc
 {
     internal CLuaFunctionHelper UpdateFunction { get; private init; } = new();
-    internal bool UpdateManualFlag { get; set; }
+    internal bool UpdateManualFlag { get; set; } = true;
 
     internal static UpdateFunc FromXml(XElement? e)
     {

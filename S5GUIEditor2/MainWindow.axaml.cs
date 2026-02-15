@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using MsBox.Avalonia;
 using S5GUIEditor2.Widgets;
@@ -78,11 +79,214 @@ internal partial class MainWindow : Window
     {
         try
         {
-            var s = M.SelectedWidgets?.FirstOrDefault()?.ToXml().ToString();
+            var s = M.SelectedWidgets?.Select(x => x.ToXml().ToString()).Aggregate((a, b) => a + "\0" + b);
             var c = Clipboard;
-            if (c == null)
+            if (c == null || s == null)
                 return;
             await c.SetTextAsync(s);
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    private async void Widget_Paste(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var parent = M.EditWidget as CContainerWidget;
+            var c = Clipboard;
+            if (c == null || parent == null)
+                return;
+            var s = await c.TryGetTextAsync();
+            if (s == null)
+                return;
+            foreach (var w in s.Split('\0').Where(x => !string.IsNullOrWhiteSpace(x)).
+                         Select(x => CBaseWidget.GetFromXml(XDocument.Parse(x).Element("WidgetList"), C)))
+                parent.WidgetListHandler.SubWidgets.Add(w);
+            Renderer.InvalidateVisual();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    private async void Widget_Delete(object? sender, RoutedEventArgs e)
+    {
+        try {
+            if (M.SelectedWidgets == null || M.SelectedWidgets.Count == 0)
+                return;
+            CBaseWidget? firstParent = null;
+            foreach (var w in M.SelectedWidgets.ToArray())
+            {
+                if (w.ParentNode == null)
+                    return;
+                firstParent ??= w.ParentNode;
+                w.ParentNode.WidgetListHandler.SubWidgets.Remove(w);
+                w.ParentNode = null;
+            }
+
+            M.SelectedWidgets.Clear();
+            if (firstParent != null)
+                M.SelectedWidgets.Add(firstParent);
+            Renderer.InvalidateVisual();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    private void Widget_NewContainer(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CContainerWidget()
+        {
+            Name = "New Container",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+    private void Widget_NewStatic(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CStaticWidget(C)
+        {
+            Name = "New",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+    private void Widget_NewStaticText(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CStaticTextWidget(C)
+        {
+            Name = "New",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+    private void Widget_NewPureTooltip(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CPureTooltipWidget()
+        {
+            Name = "New",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+    private void Widget_NewProgressBar(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CProgressBarWidget(C)
+        {
+            Name = "New",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+    private void Widget_NewGfxButton(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CGfxButtonWidget(C)
+        {
+            Name = "New",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+    private void Widget_NewTextButton(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CTextButtonWidget(C)
+        {
+            Name = "New",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+    private void Widget_NewCustomWidget(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget parent)
+            return;
+        parent.WidgetListHandler.SubWidgets.Add(new CCustomWidget()
+        {
+            Name = "New",
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 100,
+                Height = 100,
+            },
+            ParentNode = parent,
+        });
+    }
+
+    private async void Widget_ExportLua(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var l = M.SelectedWidgets;
+            if (l == null || l.Count == 0 || Clipboard == null)
+                return;
+            await Clipboard.SetTextAsync(CBaseWidget.GetLua(l));
         }
         catch (Exception ex)
         {

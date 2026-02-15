@@ -9,7 +9,7 @@ internal class CWidgetStringHelper
     internal CFontIDHandler Font { get; private init; } = new();
     internal CSingleStringHandler String { get; private init; } = new();
     internal float StringFrameDistance { get; set; }
-    internal Color Color { get; set; }
+    internal Color Color { get; set; } = Colors.White;
 
 
     internal static CWidgetStringHelper FromXml(XElement? e)

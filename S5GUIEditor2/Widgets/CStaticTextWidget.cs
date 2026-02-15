@@ -50,10 +50,10 @@ internal class CStaticTextWidget : CStaticWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateStaticTextWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(bool ignorebef)
+    internal override string GetLuaData(string before)
     {
         string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(ignorebef);
+        string s = base.GetLuaData(before);
         s += StringHelper.ToLua(escapedname);
         s += Update.ToLua(escapedname);
         s += $"XGUIEng.SetLinesToPrint({escapedname}, {FirstLineToPrint}, {NumberOfLinesToPrint})\n";

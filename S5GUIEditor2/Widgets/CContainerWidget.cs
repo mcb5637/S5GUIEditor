@@ -57,11 +57,11 @@ internal class CContainerWidget : CBaseWidget
             r += w.GetLuaAssert();
         return r;
     }
-    internal override string GetLuaData(bool ignorebef)
+    internal override string GetLuaData(string before)
     {
-        string s = base.GetLuaData(ignorebef);
+        string s = base.GetLuaData(before);
         foreach (var w in WidgetListHandler.SubWidgets)
-            s += w.GetLuaData(true);
+            s += w.GetLuaData("nil");
         return s;
     }
     

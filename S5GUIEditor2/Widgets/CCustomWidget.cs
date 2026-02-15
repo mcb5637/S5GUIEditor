@@ -8,7 +8,7 @@ internal class CCustomWidget : CBaseWidget
 {
     internal const string ClassName = "EGUIX::CCustomWidget";
     internal const uint ClassId = 0x7656DB56;
-    private string CustomClassName { get; set; } = "";
+    private string CustomClassName { get; set; } = "EGUIX::CVideoPlaybackCustomWidget";
     internal int IntegerUserVariable0DefaultValue { get; set; }
     internal int IntegerUserVariable1DefaultValue { get; set; }
     internal int IntegerUserVariable2DefaultValue { get; set; }

@@ -12,8 +12,8 @@ internal class CProgressBarWidget : CStaticWidget
     }
 
     private UpdateFunc Update { get; set; } = new();
-    internal float ProgressBarValue { get; set; } = 1.0f;
-    internal float ProgressBarLimit { get; set; } = 1.0f;
+    internal float ProgressBarValue { get; set; } = 50.0f;
+    internal float ProgressBarLimit { get; set; } = 100.0f;
 
     protected override (string, uint) GetClass()
     {
@@ -42,10 +42,10 @@ internal class CProgressBarWidget : CStaticWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateProgressBarWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(bool ignorebef)
+    internal override string GetLuaData(string before)
     {
         string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(ignorebef);
+        string s = base.GetLuaData(before);
         s += $"XGUIEng.SetProgressBarValues({escapedname}, {ProgressBarValue}, {ProgressBarLimit})\n";
         s += Update.ToLua(escapedname);
         return s;

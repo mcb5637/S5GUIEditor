@@ -4,7 +4,7 @@ namespace S5GUIEditor2.Widgets;
 
 internal class CFontIDHandler
 {
-    internal string FontName { get; set; } = "";
+    internal string FontName { get; set; } = @"data\menu\fonts\standard12.met";
 
     internal static CFontIDHandler FromXml(XElement? e)
     {

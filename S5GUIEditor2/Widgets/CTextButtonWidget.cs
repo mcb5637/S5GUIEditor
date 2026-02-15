@@ -12,7 +12,7 @@ internal class CTextButtonWidget : CButtonWidget
     }
 
     private CWidgetStringHelper StringHelper { get; set; } = new();
-    internal bool CppLogicCenterText { get; set; }
+    internal bool CppLogicCenterText { get; set; } = true;
     private UpdateFunc Update { get; set; } = new();
 
     protected override (string, uint) GetClass()
@@ -43,10 +43,10 @@ internal class CTextButtonWidget : CButtonWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateTextButtonWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(bool ignorebef)
+    internal override string GetLuaData(string before)
     {
         string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(ignorebef);
+        string s = base.GetLuaData(before);
         s += StringHelper.ToLua(escapedname);
         s += $"CppLogic.UI.TextButtonSetCenterText(\"{Name}\", {CppLogicCenterText.ToString().ToLower()})\n";
         return s;

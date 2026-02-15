@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -47,7 +49,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     } = "";
 
     internal RectangleF PositionAndSize { get; set; } = new();
-    internal bool IsShown { get; set; }
+    internal bool IsShown { get; set; } = true;
     internal float ZPriority { get; set; }
     internal string Group { get; set; } = "";
     internal bool ForceToHandleMouseEventsFlag { get; set; }
@@ -134,33 +136,50 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     }
     
     
-    private string GetNextInParent()
+    private CBaseWidget? GetNextInParent(Func<CBaseWidget, bool> ignore)
     {
         if (ParentNode == null)
-            return "nil";
-        int i = ParentNode.WidgetListHandler.SubWidgets.IndexOf(this);
-        if (i >= 0 && (i + 1) < ParentNode.WidgetListHandler.SubWidgets.Count)
-            return $"\"{ParentNode.WidgetListHandler.SubWidgets[i + 1].Name}\"";
-        return "nil";
+            return null;
+        int i = ParentNode.WidgetListHandler.SubWidgets.IndexOf(this) + 1;
+        while (i >= 0 && i < ParentNode.WidgetListHandler.SubWidgets.Count)
+        {
+            if (ignore(ParentNode.WidgetListHandler.SubWidgets[i]))
+            {
+                ++i;
+                continue;
+            }
+            return ParentNode.WidgetListHandler.SubWidgets[i];
+        }
+        return null;
     }
     protected virtual string GetLuaCreator(string parent, string befo)
     {
         throw new InvalidOperationException("cannot create base widget");
     }
-    internal string GetLua()
+    internal static string GetLua(IList<CBaseWidget> widgets)
     {
-        return GetLuaAssert() + GetLuaData(false);
+        string r = widgets.Aggregate("", (current, w) => current + w.GetLuaAssert());
+        for (int i = 0; i < widgets.Count; ++i)
+        {
+            var w = widgets[i];
+            string bef = "nil";
+            var n = w.GetNextInParent(widgets.Contains);
+            if (n != null)
+                bef = $"\"{n.Name}\"";
+            r += w.GetLuaData(bef);
+        }
+        return r;
     }
     internal virtual string GetLuaAssert()
     {
         return $"assert(XGUIEng.GetWidgetID(\"{Name}\")==0, \"{Name} already exists\")\n";
     }
-    internal virtual string GetLuaData(bool ignorebef)
+    internal virtual string GetLuaData(string before)
     {
         string escapedname = $"\"{Name}\"";
         if (ParentNode == null)
             throw new InvalidOperationException("no parent widget found");
-        string s = GetLuaCreator(ParentNode.Name, ignorebef ? "nil" : GetNextInParent());
+        string s = GetLuaCreator(ParentNode.Name, before);
         s += $"CppLogic.UI.WidgetSetPositionAndSize({escapedname}, {PositionAndSize.X}, {PositionAndSize.Y}, {PositionAndSize.Width}, {PositionAndSize.Height})\n";
         s += $"XGUIEng.ShowWidget({escapedname}, {(IsShown ? "1" : "0")})\n";
         s += $"CppLogic.UI.WidgetSetBaseData({escapedname}, {ZPriority}, {ForceToHandleMouseEventsFlag.ToString().ToLower()}, {ForceToNeverBeFoundFlag.ToString().ToLower()})\n";
@@ -176,4 +195,5 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal virtual UpdateFunc? UpdateData => null;
     internal virtual CWidgetStringHelper? TextRender => null;
     internal virtual CMaterial? RendererMaterial => null;
+    internal bool IsContainer => this is CContainerWidget;
 }

@@ -80,10 +80,10 @@ internal class CButtonWidget : CBaseWidget
     {
         throw new InvalidOperationException("cannot create base button widget");
     }
-    internal override string GetLuaData(bool ignorebef)
+    internal override string GetLuaData(string before)
     {
         string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(ignorebef);
+        string s = base.GetLuaData(before);
         s += $"XGUIEng.DisableButton({escapedname}, {(ButtonHelper.DisabledFlag ? "1" : "0")})\n";
         s += $"XGUIEng.HighLightButton({escapedname}, {(ButtonHelper.HighLightedFlag ? "1" : "0")})\n";
         if (ButtonHelper.ActionFunction.LuaCommand.Length > 0 && !ButtonHelper.ActionFunction.LuaCommand.StartsWith("--"))

@@ -41,10 +41,10 @@ internal class CGfxButtonWidget : CButtonWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateGFXButtonWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(bool ignorebef)
+    internal override string GetLuaData(string before)
     {
         string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(ignorebef);
+        string s = base.GetLuaData(before);
         s += IconMaterial.ToLua(escapedname, 10);
         return s;
     }

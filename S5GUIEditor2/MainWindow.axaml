@@ -31,7 +31,19 @@
                             <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Copy" Click="Widget_Copy"></MenuItem>
+                                        <MenuItem Header="Copy" Click="Widget_Copy" HotKey="Ctrl+C"></MenuItem>
+                                        <MenuItem Header="Paste" IsVisible="{Binding IsContainer}" Click="Widget_Paste" HotKey="Ctrl+V"></MenuItem>
+                                        <MenuItem Header="Delete" Click="Widget_Delete"></MenuItem>
+                                        <MenuItem Header="Export Lua" Click="Widget_ExportLua"></MenuItem>
+                                        <Separator IsVisible="{Binding IsContainer}"></Separator>
+                                        <MenuItem Header="New Container Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewContainer" HotKey="Ctrl+N"></MenuItem>
+                                        <MenuItem Header="New Static Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewStatic"></MenuItem>
+                                        <MenuItem Header="New Static Text Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewStaticText"></MenuItem>
+                                        <MenuItem Header="New Pure Tooltip Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewPureTooltip"></MenuItem>
+                                        <MenuItem Header="New Progress Bar Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewProgressBar"></MenuItem>
+                                        <MenuItem Header="New GFX Button Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewGfxButton"></MenuItem>
+                                        <MenuItem Header="New Text Button Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewTextButton"></MenuItem>
+                                        <MenuItem Header="New Custom Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewCustomWidget"></MenuItem>
                                     </ContextMenu>
                                 </TextBlock.ContextMenu>
                             </TextBlock>
