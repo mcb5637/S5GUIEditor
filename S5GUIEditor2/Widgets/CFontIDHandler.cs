@@ -1,16 +1,35 @@
+using System.ComponentModel;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
 
-internal class CFontIDHandler
+internal class CFontIDHandler : INotifyPropertyChanged
 {
-    internal string FontName { get; set; } = @"data\menu\fonts\standard12.met";
+    public event PropertyChangedEventHandler? PropertyChanged;
 
-    internal static CFontIDHandler FromXml(XElement? e)
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    
+    internal required ImageCache Cache { get; init; }
+    
+    internal string FontName { 
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(FontName));
+            OnPropertyChanged(nameof(Font));
+        }
+    } = @"data\menu\fonts\standard12.met";
+
+    internal static CFontIDHandler FromXml(XElement? e, ImageCache c)
     {
         return new CFontIDHandler()
         {
-            FontName = e?.Attribute("FontName")?.Value ?? "",
+            FontName = e?.Element("FontName")?.Value ?? "",
+            Cache = c
         };
     }
 
@@ -18,4 +37,6 @@ internal class CFontIDHandler
     {
         return new XElement("FontName", FontName);
     }
+    
+    internal RWFont? Font => Cache.GetFont(FontName);
 }

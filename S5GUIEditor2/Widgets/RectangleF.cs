@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Linq;
+using Avalonia;
 
 namespace S5GUIEditor2.Widgets;
 
@@ -73,4 +74,6 @@ internal class RectangleF : INotifyPropertyChanged
             new XElement("H", Height.ToString(CultureInfo.InvariantCulture))
         ];
     }
+    
+    internal Rect ToRect => new Rect(X, Y, Width, Height);
 }

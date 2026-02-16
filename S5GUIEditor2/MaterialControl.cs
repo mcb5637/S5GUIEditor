@@ -16,17 +16,6 @@ public partial class MaterialControl : UserControl
         InitializeComponent();
     }
 
-    private void CoordinateChanged(object? sender, NumericUpDownValueChangedEventArgs e)
-    {
-        View.InvalidateVisual();
-    }
-
-    private void ColorChanged(object? sender, ColorChangedEventArgs e)
-    {
-        (DataContext as CMaterial)?.Color = e.NewColor;
-        View.InvalidateVisual();
-    }
-
     private static readonly List<FilePickerFileType> FileTypes = [
         new("s5 textures")
         {

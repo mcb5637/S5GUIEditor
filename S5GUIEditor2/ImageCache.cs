@@ -15,6 +15,7 @@ internal class ImageCache
     internal required Settings? S { get; init; }
 
     private readonly Dictionary<string, SKImage?> Cache = new();
+    private readonly Dictionary<string, RWFont?> FontsCache = new();
 
     private SKImage? LoadImage(string path)
     {
@@ -23,6 +24,8 @@ internal class ImageCache
         try
         {
             path = S!.ResolveS5Path(path);
+            if (!File.Exists(path))
+                return null;
             if (Path.GetExtension(path) != ".dds")
                 return SKImage.FromEncodedData(path);
 
@@ -97,6 +100,15 @@ internal class ImageCache
             return r;
         SKImage? l = LoadImage(path);
         Cache[path] = l;
+        return l;
+    }
+
+    internal RWFont? GetFont(string path)
+    {
+        if (FontsCache.TryGetValue(path, out RWFont? r))
+            return r;
+        RWFont? l = RWFont.Load(path, this);
+        FontsCache[path] = l;
         return l;
     }
 }

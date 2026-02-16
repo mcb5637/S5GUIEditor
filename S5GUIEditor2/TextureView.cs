@@ -17,6 +17,12 @@ internal class TextureView : Control
     public static readonly StyledProperty<RectangleF> RectangleProperty = AvaloniaProperty.Register<TextureView, RectangleF>(nameof(Rectangle));
     public static readonly StyledProperty<Color> ColorProperty = AvaloniaProperty.Register<TextureView, Color>(nameof(Color));
 
+    static TextureView()
+    {
+        AffectsRender<TextureView>(ImageProperty, RectangleProperty, ColorProperty);
+        AffectsMeasure<TextureView>(RectangleProperty, ImageProperty);
+    }
+    
     public SKImage? Image
     {
         get => GetValue(ImageProperty);
@@ -92,13 +98,13 @@ internal class TextureView : Control
 
             using ISkiaSharpApiLease lease = leaseFeature.Lease();
             SKCanvas canvas = lease.SkCanvas;
-            DoRender(canvas, Source, Image, C, Bounds, WhiteBG);
+            DoRender(canvas, Source.ToRect, Image, C, Bounds, WhiteBG);
         }
 
         public bool Equals(ICustomDrawOperation? other) => false;
     }
 
-    internal static void DoRender(SKCanvas canvas, RectangleF source, SKImage? image, Color color, Rect bounds, bool whiteBG)
+    internal static void DoRender(SKCanvas canvas, Rect source, SKImage? image, Color color, Rect bounds, bool whiteBG)
     {
         SKRect b = bounds.ToSKRect();
         if (whiteBG)

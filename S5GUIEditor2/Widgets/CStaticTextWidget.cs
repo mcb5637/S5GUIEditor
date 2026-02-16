@@ -10,9 +10,16 @@ internal class CStaticTextWidget : CStaticWidget
 
     internal CStaticTextWidget(ImageCache c) : base(c)
     {
+        StringHelper = new()
+        {
+            Font = new()
+            {
+                Cache = c,
+            }
+        };
     }
 
-    private CWidgetStringHelper StringHelper { get; set; } = new();
+    private CWidgetStringHelper StringHelper { get; set; }
     private UpdateFunc Update { get; set; } = new();
     internal int FirstLineToPrint { get; set; }
     internal int NumberOfLinesToPrint { get; set; }
@@ -26,7 +33,7 @@ internal class CStaticTextWidget : CStaticWidget
     internal override void FromXml(XElement? e, ImageCache c)
     {
         base.FromXml(e, c);
-        StringHelper = CWidgetStringHelper.FromXml(e?.Element("StringHelper"));
+        StringHelper = CWidgetStringHelper.FromXml(e?.Element("StringHelper"), c);
         Update = UpdateFunc.FromXml(e);
         FirstLineToPrint = e?.Element("FirstLineToPrint")?.Value.TryParseInt() ?? 0;
         NumberOfLinesToPrint = e?.Element("NumberOfLinesToPrint")?.Value.TryParseInt() ?? 0;

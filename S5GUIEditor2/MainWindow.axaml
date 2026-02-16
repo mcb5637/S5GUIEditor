@@ -135,9 +135,10 @@
                 </TabItem>
                 <TabItem Header="Text" IsVisible="{Binding HasEditText}">
                     <StackPanel>
-                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditText}">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" DataContext="{Binding EditText}">
                             <TextBlock Text="Font" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
                             <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Font.FontName}" Margin="5"></TextBox>
+                            <Button Grid.Column="2" Grid.Row="0" Click="SelectFont" Margin="5"><TextBlock>Open</TextBlock></Button>
 
                             <TextBlock Grid.Column="0" Grid.Row="2"  Text="RawText" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
                             <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding String.RawString}" Margin="5"></TextBox>
@@ -149,6 +150,13 @@
 
                             <TextBlock Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">TextColor</TextBlock>
                             <ColorPicker Grid.Column="1" Grid.Row="4" Color="{Binding Color}"></ColorPicker>
+                            
+                            <TextBlock Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Preview BG Color</TextBlock>
+                            <ColorPicker Grid.Column="1" Grid.Row="5" Color="White" Name="BgColor"></ColorPicker>
+
+                            <s5GuiEditor2:TextSample Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="5" Margin="5"
+                                                     Text="{Binding String.ToRender}" Color="{Binding Color}"
+                                                     Font="{Binding Font.Font}" BGColor="{Binding #BgColor.Color}"></s5GuiEditor2:TextSample>
                         </Grid>
                         <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto" IsVisible="{Binding HasEditStaticText}">
                             <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">FirstLineToPrint</TextBlock>

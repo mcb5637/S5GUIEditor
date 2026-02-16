@@ -9,9 +9,16 @@ internal class CTextButtonWidget : CButtonWidget
 
     internal CTextButtonWidget(ImageCache c) : base(c)
     {
+        StringHelper = new()
+        {
+            Font = new()
+            {
+                Cache = c,
+            }
+        };
     }
 
-    private CWidgetStringHelper StringHelper { get; set; } = new();
+    private CWidgetStringHelper StringHelper { get; set; }
     internal bool CppLogicCenterText { get; set; } = true;
     private UpdateFunc Update { get; set; } = new();
 
@@ -23,7 +30,7 @@ internal class CTextButtonWidget : CButtonWidget
     internal override void FromXml(XElement? e, ImageCache c)
     {
         base.FromXml(e, c);
-        StringHelper = CWidgetStringHelper.FromXml(e?.Element("StringHelper"));
+        StringHelper = CWidgetStringHelper.FromXml(e?.Element("StringHelper"), c);
         CppLogicCenterText = e?.Element("CenterText")?.Value.TryParseBool() ?? true;
         Update = UpdateFunc.FromXml(e);
     }

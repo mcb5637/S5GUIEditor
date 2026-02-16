@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using MsBox.Avalonia;
 using S5GUIEditor2.Widgets;
 
@@ -390,6 +392,35 @@ internal partial class MainWindow : Window
             wid.WidgetListHandler.SubWidgets.Add(c);
             c.ParentNode = wid;
             Renderer.InvalidateVisual();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    private static readonly List<FilePickerFileType> FileTypes = [
+        new("s5 fonts")
+        {
+            Patterns = ["*.met"],
+        },
+        FilePickerFileTypes.All,
+    ];
+    private async void SelectFont(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var storage = StorageProvider;
+            var r = await storage.OpenFilePickerAsync(new()
+            {
+                Title = "Select Font",
+                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(M.Settings.WorkspacePath),
+                FileTypeFilter = FileTypes,
+            });
+            if (r.Count == 0)
+                return;
+            M.EditText?.Font.FontName = M.Settings.ToS5Path(r[0].Path.AbsolutePath);
         }
         catch (Exception ex)
         {

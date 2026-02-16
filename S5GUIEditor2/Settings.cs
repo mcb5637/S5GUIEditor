@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace S5GUIEditor2;
@@ -27,7 +28,17 @@ public class Settings
         path = path.Replace('\\', '/');
         if (path.StartsWith(Data, StringComparison.InvariantCultureIgnoreCase))
             path = path.Remove(0, Data.Length);
-        return Path.Combine(WorkspacePath, path);
+        path = Path.Combine(WorkspacePath, path);
+        if (!OperatingSystem.IsWindows())
+        {
+            string dir = Path.GetDirectoryName(path)!;
+            string? c = Directory.EnumerateFiles(dir).FirstOrDefault(
+                x => path.Equals(x, StringComparison.InvariantCultureIgnoreCase)
+            );
+            if (c != null)
+                return c;
+        }
+        return path;
     }
 }
 

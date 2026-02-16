@@ -1,22 +1,38 @@
+using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Linq;
 using Avalonia.Media;
 
 namespace S5GUIEditor2.Widgets;
 
-internal class CWidgetStringHelper
+internal class CWidgetStringHelper : INotifyPropertyChanged
 {
-    internal CFontIDHandler Font { get; private init; } = new();
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    internal required CFontIDHandler Font { get; init; }
     internal CSingleStringHandler String { get; private init; } = new();
     internal float StringFrameDistance { get; set; }
-    internal Color Color { get; set; } = Colors.White;
 
-
-    internal static CWidgetStringHelper FromXml(XElement? e)
+    internal Color Color
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(Color));
+        }
+    } = Colors.White;
+    
+    internal static CWidgetStringHelper FromXml(XElement? e, ImageCache c)
     {
         return new CWidgetStringHelper()
         {
-            Font = CFontIDHandler.FromXml(e?.Element("Font")),
+            Font = CFontIDHandler.FromXml(e?.Element("Font"), c),
             String = CSingleStringHandler.FromXml(e?.Element("String")),
             StringFrameDistance = e?.Element("StringFrameDistance")?.Value.TryParseFloat() ?? 0.0f,
             Color = Color.FromXml(e?.Element("Color")),

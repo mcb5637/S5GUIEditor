@@ -143,7 +143,16 @@ internal class GUIRender : Control
             );
             if (wid.RendererMaterial != null)
             {
-                TextureView.DoRender(canvas, wid.RendererMaterial.TextureCoordinates, wid.RendererMaterial.Image, wid.RendererMaterial.Color, r, false);
+                TextureView.DoRender(canvas, wid.RendererMaterial.TextureCoordinates.ToRect, wid.RendererMaterial.Image, wid.RendererMaterial.Color, r, false);
+            }
+
+            if (wid.TextRender != null)
+            {
+                var f = wid.TextRender.Font.Font;
+                if (f != null)
+                {
+                    f.Render(canvas, wid.TextRender.String.ToRender, r.TopLeft, Scale, wid.TextRender.Color);
+                }
             }
 
             if (wid is CContainerWidget cw)
