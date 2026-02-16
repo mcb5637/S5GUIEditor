@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -101,6 +102,27 @@ internal class Model : INotifyPropertyChanged
         {
             Console.WriteLine(e);
             return new Settings();
+        }
+    }
+
+    internal CBaseWidget? GetById(string id)
+    {
+        return Search(CurrentWidget);
+
+        CBaseWidget? Search(IEnumerable<CBaseWidget> w)
+        {
+            foreach (CBaseWidget c in w)
+            {
+                if (c.Id == id)
+                    return c;
+                if (c is CContainerWidget cw)
+                {
+                    var r = Search(cw.WidgetListHandler.SubWidgets);
+                    if (r != null)
+                        return r;
+                }
+            }
+            return null;
         }
     }
 }

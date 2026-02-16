@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using MsBox.Avalonia;
@@ -13,6 +14,8 @@ namespace S5GUIEditor2;
 
 internal partial class MainWindow : Window
 {
+    private readonly DataFormat<string> DragDropFormat = DataFormat.CreateStringApplicationFormat("xxx-avalonia-controlcatalog-custom");
+    
     public MainWindow()
     {
         M = new Model();
@@ -298,6 +301,7 @@ internal partial class MainWindow : Window
     private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         M.OnSelectionChanged();
+        Renderer.InvalidateVisual();
     }
 
     private async void Menu_SetWorkspace(object? sender, RoutedEventArgs e)
@@ -312,6 +316,80 @@ internal partial class MainWindow : Window
                 return;
             M.Settings.WorkspacePath = r[0].Path.AbsolutePath;
             M.StoreSettings();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    private async void TreeDragStart(object? sender, PointerPressedEventArgs e)
+    {
+        try
+        {
+            if (sender is not Control cnt)
+                return;
+            if (cnt.DataContext is not CBaseWidget wid)
+                return;
+            var dragData = new DataTransfer();
+            dragData.Add(DataTransferItem.Create(DragDropFormat, wid.Id));
+            await DragDrop.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    // ReSharper disable once UnusedMember.Local
+    private void TreeDragOver(object? sender, DragEventArgs e)
+    {
+        e.DragEffects &= DragDropEffects.Move;
+        if (!e.DataTransfer.Contains(DragDropFormat))
+        {
+            e.DragEffects = DragDropEffects.None;
+            return;
+        }
+        if (sender is not Control cnt)
+            return;
+        if (cnt.DataContext is not CContainerWidget wid)
+            return;
+        string r = e.DataTransfer.TryGetValue(DragDropFormat) ?? "";
+        CBaseWidget? c = M.GetById(r);
+        if (c == null || wid == c || c.ParentNode == null)
+        {
+            e.DragEffects = DragDropEffects.None;
+            return;
+        }
+        if (c is CContainerWidget cc && cc.IsChildRecursive(wid))
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+    }
+
+    // ReSharper disable once UnusedMember.Local
+    private async void TreeDrop(object? sender, DragEventArgs e)
+    {
+        try
+        {
+            if (sender is not Control cnt)
+                return;
+            if (cnt.DataContext is not CContainerWidget wid)
+                return;
+            string r = e.DataTransfer.TryGetValue(DragDropFormat) ?? "";
+            CBaseWidget? c = M.GetById(r);
+            if (c == null)
+                return;
+            if (wid == c || c.ParentNode == null)
+                return;
+            if (c is CContainerWidget cc && cc.IsChildRecursive(wid))
+                return;
+            c.ParentNode.WidgetListHandler.SubWidgets.Remove(c);
+            wid.WidgetListHandler.SubWidgets.Add(c);
+            c.ParentNode = wid;
+            Renderer.InvalidateVisual();
         }
         catch (Exception ex)
         {

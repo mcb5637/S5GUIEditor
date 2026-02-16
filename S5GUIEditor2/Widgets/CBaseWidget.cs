@@ -196,4 +196,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal virtual CWidgetStringHelper? TextRender => null;
     internal virtual CMaterial? RendererMaterial => null;
     internal bool IsContainer => this is CContainerWidget;
+
+    // for drag&drop
+    internal string Id { get; } = Guid.NewGuid().ToString();
 }

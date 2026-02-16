@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -12,12 +13,21 @@ namespace S5GUIEditor2;
 internal class GUIRender : Control
 {
     public static readonly StyledProperty<CBaseWidget?> RootWidgetProperty = AvaloniaProperty.Register<TextureView, CBaseWidget?>(nameof(RootWidget));
+    public static readonly StyledProperty<ObservableCollection<CBaseWidget>?> SelectedWidgetsProperty = AvaloniaProperty.Register<TextureView, ObservableCollection<CBaseWidget>?>(nameof(SelectedWidgets));
     
     internal CBaseWidget? RootWidget {
         get => GetValue(RootWidgetProperty);
         set
         {
             SetValue(RootWidgetProperty, value);
+            InvalidateVisual();
+        }
+    }
+    internal ObservableCollection<CBaseWidget>? SelectedWidgets {
+        get => GetValue(SelectedWidgetsProperty);
+        set
+        {
+            SetValue(SelectedWidgetsProperty, value);
             InvalidateVisual();
         }
     }
@@ -30,14 +40,16 @@ internal class GUIRender : Control
         {
             Bounds = new Rect(0, 0, Bounds.Width, Bounds.Height),
             RootWidget = RootWidget,
+            SelectedWidgets = SelectedWidgets,
         });
     }
 
     private class CustomRender : ICustomDrawOperation
     {
         public required Rect Bounds { get; init; }
-        public required CBaseWidget RootWidget { get; init; }
+        internal required CBaseWidget RootWidget { get; init; }
         private Point Scale { get; set; }
+        internal required ObservableCollection<CBaseWidget>? SelectedWidgets { get; init; }
 
         public bool HitTest(Point p) => Bounds.Contains(p);
 
@@ -51,9 +63,12 @@ internal class GUIRender : Control
             using ISkiaSharpApiLease lease = leaseFeature.Lease();
             SKCanvas canvas = lease.SkCanvas;
 
-            Scale = new Point(Bounds.Width / RootWidget.PositionAndSize.Width, Bounds.Height / RootWidget.PositionAndSize.Height);
+            Scale = new Point((Bounds.Width-2) / RootWidget.PositionAndSize.Width, (Bounds.Height-2) / RootWidget.PositionAndSize.Height);
             
-            DoRender(canvas, new Point(Bounds.X, Bounds.Y), RootWidget);
+            canvas.Clear(SKColors.Black);
+            
+            DoRender(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);
+            DoRenderBorder(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);
         }
 
         private void DoRender(SKCanvas canvas, Point topLeft, CBaseWidget wid)
@@ -74,6 +89,30 @@ internal class GUIRender : Control
             {
                 foreach (CBaseWidget child in cw.WidgetListHandler.SubWidgets.Reverse())
                     DoRender(canvas, r.TopLeft, child);
+            }
+        }
+
+        private void DoRenderBorder(SKCanvas canvas, Point topLeft, CBaseWidget wid)
+        {
+            Rect r = new Rect(topLeft.X + wid.PositionAndSize.X * Scale.X,
+                topLeft.Y + wid.PositionAndSize.Y * Scale.Y,
+                wid.PositionAndSize.Width * Scale.X,
+                wid.PositionAndSize.Height * Scale.Y
+            );
+            
+            if (wid is CContainerWidget cw)
+            {
+                foreach (CBaseWidget child in cw.WidgetListHandler.SubWidgets.Reverse())
+                    DoRenderBorder(canvas, r.TopLeft, child);
+            }
+
+            if (SelectedWidgets?.Contains(wid) ?? false)
+            {
+                canvas.DrawRect(r.ToSKRect(), new SKPaint()
+                {
+                    Color = SKColors.Red,
+                    Style = SKPaintStyle.Stroke,
+                });
             }
         }
 

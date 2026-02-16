@@ -25,10 +25,11 @@
                       SelectionChanged="OnSelectionChanged" SelectionMode="Multiple" Margin="5">
                 <TreeView.ItemTemplate>
                     <TreeDataTemplate DataType="widgets:CBaseWidget" ItemsSource="{Binding ChildWidgets}">
-                        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto">
+                        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto" DragDrop.AllowDrop="{Binding IsContainer}"
+                              DragDrop.DragOver="TreeDragOver" DragDrop.Drop="TreeDrop">
                             <CheckBox IsChecked="{Binding Visible}" Margin="5">
                             </CheckBox>
-                            <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="5">
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" PointerPressed="TreeDragStart" Margin="5">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Copy" Click="Widget_Copy" HotKey="Ctrl+C"></MenuItem>
@@ -53,7 +54,8 @@
             </TreeView>
             <TabControl Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding SelectedTabItem}" Margin="5">
                 <TabItem Header="View">
-                    <s5GuiEditor2:GUIRender Width="1024" Height="768" RootWidget="{Binding RootWidget}" Name="Renderer">
+                    <s5GuiEditor2:GUIRender Width="1026" Height="770" RootWidget="{Binding RootWidget}"
+                                            SelectedWidgets="{Binding SelectedWidgets}" Name="Renderer">
                     </s5GuiEditor2:GUIRender>
                 </TabItem>
                 <TabItem Header="Widget" IsVisible="{Binding HasEditWidget}">

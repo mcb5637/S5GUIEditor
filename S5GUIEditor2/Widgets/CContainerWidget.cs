@@ -66,4 +66,9 @@ internal class CContainerWidget : CBaseWidget
     }
     
     internal override ObservableCollection<CBaseWidget> ChildWidgets => WidgetListHandler.SubWidgets;
+
+    internal bool IsChildRecursive(CBaseWidget c)
+    {
+        return WidgetListHandler.SubWidgets.Contains(c) || WidgetListHandler.SubWidgets.Any(x => (x as CContainerWidget)?.IsChildRecursive(c) ?? false);
+    }
 }
