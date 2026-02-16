@@ -22,7 +22,7 @@
         </Menu>
         <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="*" DockPanel.Dock="Bottom">
             <TreeView ItemsSource="{Binding CurrentWidget}" SelectedItems="{Binding SelectedWidgets}"
-                      SelectionChanged="OnSelectionChanged" SelectionMode="Multiple" Margin="5">
+                      SelectionChanged="OnSelectionChanged" SelectionMode="Multiple" AutoScrollToSelectedItem="True" Margin="5">
                 <TreeView.ItemTemplate>
                     <TreeDataTemplate DataType="widgets:CBaseWidget" ItemsSource="{Binding ChildWidgets}">
                         <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto" DragDrop.AllowDrop="{Binding IsContainer}"

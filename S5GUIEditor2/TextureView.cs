@@ -58,11 +58,14 @@ internal class TextureView : Control
     
     public sealed override void Render(DrawingContext context)
     {
+        if (Bounds.Width == 0 || Bounds.Height == 0)
+            return;
         context.Custom(new CustomRender()
         {
             C = Color,
             Image = Image,
-            Bounds = new Rect(0, 0, Bounds.Width, Bounds.Height),
+            Bounds = Image == null ? new Rect(0, 0, Bounds.Width, Bounds.Height) :
+                new Rect(0, 0, double.Min(Bounds.Width, Image.Width), double.Min(Bounds.Height, Image.Height)),
             Source = Rectangle,
             WhiteBG = true,
         });
@@ -85,9 +88,7 @@ internal class TextureView : Control
         public void Render(ImmediateDrawingContext context)
         {
             if (context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) is not ISkiaSharpApiLeaseFeature leaseFeature)
-            {
                 return;
-            }
 
             using ISkiaSharpApiLease lease = leaseFeature.Lease();
             SKCanvas canvas = lease.SkCanvas;
@@ -99,9 +100,10 @@ internal class TextureView : Control
 
     internal static void DoRender(SKCanvas canvas, RectangleF source, SKImage? image, Color color, Rect bounds, bool whiteBG)
     {
+        SKRect b = bounds.ToSKRect();
         if (whiteBG)
         {
-            canvas.DrawRect(bounds.ToSKRect(), new SKPaint()
+            canvas.DrawRect(b, new SKPaint()
             {
                 Color = SKColors.White,
                 Style = SKPaintStyle.Fill,
@@ -119,11 +121,11 @@ internal class TextureView : Control
                 SKBlendMode.Modulate));
             paint.FilterQuality = SKFilterQuality.High;
 
-            canvas.DrawImage(image, src.ToSKRect(), bounds.ToSKRect(), paint);
+            canvas.DrawImage(image, src.ToSKRect(), b, paint);
         }
         else
         {
-            canvas.DrawRect(bounds.ToSKRect(), new SKPaint()
+            canvas.DrawRect(b, new SKPaint()
             {
                 Color = color.ToSKColor(),
                 Style = SKPaintStyle.Fill,

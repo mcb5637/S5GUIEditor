@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
@@ -41,7 +43,63 @@ internal class GUIRender : Control
             Bounds = new Rect(0, 0, Bounds.Width, Bounds.Height),
             RootWidget = RootWidget,
             SelectedWidgets = SelectedWidgets,
+            PointedAt = PointedAt,
         });
+    }
+
+    private CBaseWidget? GetWidgetAtPos(Point p)
+    {
+        return RootWidget == null ? null : Search([RootWidget], p);
+
+        static CBaseWidget? Search(IEnumerable<CBaseWidget> w, Point p)
+        {
+            foreach (CBaseWidget c in w)
+            {
+                if (!c.Visible)
+                    continue;
+                Point np = new Point(p.X - c.PositionAndSize.X,  p.Y - c.PositionAndSize.Y);
+                if (np.X < 0 || np.Y < 0 || np.X > c.PositionAndSize.Width || np.Y > c.PositionAndSize.Height)
+                    continue;
+                if (c is CContainerWidget cw)
+                {
+                    var r = Search(cw.WidgetListHandler.SubWidgets, np);
+                    if (r != null)
+                        return r;
+                }
+                return c;
+            }
+            return null;
+        }
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e)
+    {
+        var n = GetWidgetAtPos(e.GetCurrentPoint(this).Position);
+        if (n == null)
+            return;
+        SelectedWidgets?.Clear();
+        SelectedWidgets?.Add(n);
+        InvalidateVisual();
+    }
+
+    private CBaseWidget? PointedAt = null;
+    protected override void OnPointerMoved(PointerEventArgs e)
+    {
+        var n = GetWidgetAtPos(e.GetCurrentPoint(this).Position);
+        if (PointedAt != n)
+        {
+            PointedAt = n;
+            InvalidateVisual();
+        }
+    }
+
+    protected override void OnPointerExited(PointerEventArgs e)
+    {
+        if (PointedAt != null)
+        {
+            PointedAt = null;
+            InvalidateVisual();
+        }
     }
 
     private class CustomRender : ICustomDrawOperation
@@ -50,22 +108,25 @@ internal class GUIRender : Control
         internal required CBaseWidget RootWidget { get; init; }
         private Point Scale { get; set; }
         internal required ObservableCollection<CBaseWidget>? SelectedWidgets { get; init; }
+        internal required CBaseWidget? PointedAt { get; init; }
 
         public bool HitTest(Point p) => Bounds.Contains(p);
 
         public void Render(ImmediateDrawingContext context)
         {
             if (context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) is not ISkiaSharpApiLeaseFeature leaseFeature)
-            {
                 return;
-            }
 
             using ISkiaSharpApiLease lease = leaseFeature.Lease();
             SKCanvas canvas = lease.SkCanvas;
 
             Scale = new Point((Bounds.Width-2) / RootWidget.PositionAndSize.Width, (Bounds.Height-2) / RootWidget.PositionAndSize.Height);
             
-            canvas.Clear(SKColors.Black);
+            canvas.DrawRect(Bounds.ToSKRect(), new SKPaint()
+            {
+                Color = SKColors.Black,
+                Style = SKPaintStyle.Fill,
+            });
             
             DoRender(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);
             DoRenderBorder(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);
@@ -111,6 +172,14 @@ internal class GUIRender : Control
                 canvas.DrawRect(r.ToSKRect(), new SKPaint()
                 {
                     Color = SKColors.Red,
+                    Style = SKPaintStyle.Stroke,
+                });
+            }
+            else if (PointedAt == wid)
+            {
+                canvas.DrawRect(r.ToSKRect(), new SKPaint()
+                {
+                    Color = SKColors.Blue,
                     Style = SKPaintStyle.Stroke,
                 });
             }
