@@ -9,6 +9,7 @@ using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using bbaLib;
 using MsBox.Avalonia;
 using S5GUIEditor2.Widgets;
 
@@ -80,6 +81,109 @@ internal partial class MainWindow : Window
         M.CurrentWidget.Add(w);
     }
 
+    private async void Menu_SetWorkspace(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var r = await StorageProvider.OpenFolderPickerAsync(new()
+            {
+                Title = "Select Workspace",
+            });
+            if (r.Count == 0)
+                return;
+            M.Settings.WorkspacePath = r[0].Path.AbsolutePath;
+            M.StoreSettings();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    private async void Menu_UnpackS5Data(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            string? s5Path = null;
+            if (s5Path == null)
+            {
+                var r = await StorageProvider.OpenFolderPickerAsync(new()
+                {
+                    Title = "Select S5 installation directory",
+                });
+                if (r.Count == 0)
+                    return;
+                s5Path = r[0].Path.AbsolutePath;
+            }
+
+            using BbaArchive a = new();
+            // gold
+            var add = (string s) => s.StartsWith("graphics\\textures\\gui") || s.StartsWith("menu") || s.StartsWith("text");
+            foreach (string s in new[]{"base/data.bba", "extra2/bba/patch.bba", "extra2/bba/data.bba", "extra2/bba/patche2.bba"})
+            {
+                string p = Path.Combine(s5Path, s);
+                if (!File.Exists(p))
+                    continue;
+                a.ReadBba(p, add);
+            }
+            a.WriteToFolder(M.Settings.WorkspacePath, null, _ => true);
+            
+            if (Directory.Exists(Path.Combine(s5Path, "base/shr")))
+            {
+                // history edition
+                foreach (string source in new[] { "base/shr/", "extra2/shr/" })
+                {
+                    foreach (string folder in new[] { "graphics/textures/gui", "menu", "text" })
+                    {
+                        string sourceFolder = Path.Combine(s5Path, source, folder);
+                        string dstFolder = Path.Combine(M.Settings.WorkspacePath, folder);
+                        if (Directory.Exists(sourceFolder))
+                            CopyDirRecursive(sourceFolder, dstFolder, []);
+                    }
+                }
+            }
+            
+            await MessageBoxManager.GetMessageBoxStandard("done", "done").ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
+    private static void CopyDirRecursive(string sourceDirectory, string targetDirectory, IEnumerable<string> exclude)
+    {
+        DirectoryInfo diSource = new(sourceDirectory);
+        DirectoryInfo diTarget = new(targetDirectory);
+
+        CopyDirRecursive(diSource, diTarget, exclude);
+    }
+
+    private static void CopyDirRecursive(DirectoryInfo source, DirectoryInfo target, IEnumerable<string> exclude)
+    {
+        Directory.CreateDirectory(target.FullName);
+
+        foreach (FileInfo fi in source.GetFiles())
+        {
+            // ReSharper disable once PossibleMultipleEnumeration
+            if (exclude.Contains(fi.Name))
+                continue;
+            fi.CopyTo(Path.Combine(target.FullName, fi.Name), true);
+        }
+
+        foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
+        {
+            // ReSharper disable once PossibleMultipleEnumeration
+            if (exclude.Contains(diSourceSubDir.Name))
+                continue;
+            DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
+            // ReSharper disable once PossibleMultipleEnumeration
+            CopyDirRecursive(diSourceSubDir, nextTargetSubDir, exclude);
+        }
+    }
+    
     private async void Widget_Copy(object? sender, RoutedEventArgs e)
     {
         try
@@ -304,26 +408,6 @@ internal partial class MainWindow : Window
     {
         M.OnSelectionChanged();
         Renderer.InvalidateVisual();
-    }
-
-    private async void Menu_SetWorkspace(object? sender, RoutedEventArgs e)
-    {
-        try
-        {
-            var r = await StorageProvider.OpenFolderPickerAsync(new()
-            {
-                Title = "Select Workspace",
-            });
-            if (r.Count == 0)
-                return;
-            M.Settings.WorkspacePath = r[0].Path.AbsolutePath;
-            M.StoreSettings();
-        }
-        catch (Exception ex)
-        {
-            Debugger.Break();
-            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
-        }
     }
 
     private async void TreeDragStart(object? sender, PointerPressedEventArgs e)

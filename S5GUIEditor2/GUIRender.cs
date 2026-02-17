@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -34,6 +35,13 @@ internal class GUIRender : Control
         }
     }
 
+    private static readonly SKImage Background;
+
+    static GUIRender()
+    {
+        Background = SKImage.FromEncodedData(Assembly.GetExecutingAssembly().GetManifestResourceStream("S5GUIEditor2.resources.bg.png"));
+    }
+    
     public sealed override void Render(DrawingContext context)
     {
         if (RootWidget == null)
@@ -127,6 +135,7 @@ internal class GUIRender : Control
                 Color = SKColors.Black,
                 Style = SKPaintStyle.Fill,
             });
+            canvas.DrawImage(Background, new Point(Bounds.X+1, Bounds.Y+1).ToSKPoint());
             
             DoRender(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);
             DoRenderBorder(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);

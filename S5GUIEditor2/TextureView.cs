@@ -123,8 +123,12 @@ internal class TextureView : Control
                 source.Height * image.Height);
             
             using SKPaint paint = new();
-            paint.ImageFilter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateBlendMode(color.ToSKColor(),
-                SKBlendMode.Modulate));
+            paint.ImageFilter = SKImageFilter.CreateColorFilter(SKColorFilter.CreateColorMatrix([
+                color.R/255.0f, 0, 0, 0, 0,
+                0, color.G/255.0f, 0, 0, 0,
+                0, 0, color.B/255.0f, 0, 0,
+                0, 0, 0, color.A/255.0f, 0,
+            ]));
             paint.FilterQuality = SKFilterQuality.High;
 
             canvas.DrawImage(image, src.ToSKRect(), b, paint);

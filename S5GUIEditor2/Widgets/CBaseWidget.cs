@@ -48,7 +48,18 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         }
     } = "";
 
-    internal RectangleF PositionAndSize { get; set; } = new();
+    internal RectangleF PositionAndSize
+    {
+        get;
+        set
+        {
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+            field?.PropertyChanged -= OnPosSizeChanged;
+            field = value;
+            field.PropertyChanged += OnPosSizeChanged;
+            OnPropertyChanged(nameof(PositionAndSize));
+        }
+    } = new();
     internal bool IsShown { get; set; } = true;
     internal float ZPriority { get; set; }
     internal string Group { get; set; } = "";
@@ -199,4 +210,17 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
 
     // for drag&drop
     internal string Id { get; } = Guid.NewGuid().ToString();
+
+    private void OnPosSizeChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(PosSizeXMax));
+        OnPropertyChanged(nameof(PosSizeWMax));
+        OnPropertyChanged(nameof(PosSizeYMax));
+        OnPropertyChanged(nameof(PosSizeHMax));
+    }
+    
+    internal double PosSizeXMax => (ParentNode?.PositionAndSize.Width ?? 1024) - PositionAndSize.Width;
+    internal double PosSizeWMax => (ParentNode?.PositionAndSize.Width ?? 1024) - PositionAndSize.X;
+    internal double PosSizeYMax => (ParentNode?.PositionAndSize.Height ?? 768) - PositionAndSize.Height;
+    internal double PosSizeHMax => (ParentNode?.PositionAndSize.Height ?? 768) - PositionAndSize.Y;
 }

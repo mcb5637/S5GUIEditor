@@ -18,6 +18,7 @@
             </MenuItem>
             <MenuItem Header="Settings">
                 <MenuItem Header="Set Workspace" Click="Menu_SetWorkspace"></MenuItem>
+                <MenuItem Header="Unpack S5 Data" Click="Menu_UnpackS5Data"></MenuItem>
             </MenuItem>
         </Menu>
         <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="*" DockPanel.Dock="Bottom">
@@ -79,13 +80,17 @@
                         
                         
                         <TextBlock Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">X</TextBlock>
-                        <NumericUpDown Grid.Column="3" Grid.Row="0" Value="{Binding PositionAndSize.X}" Margin="5"></NumericUpDown>
+                        <NumericUpDown Grid.Column="3" Grid.Row="0" Value="{Binding PositionAndSize.X}"
+                                       Minimum="0" Maximum="{Binding PosSizeXMax}" Margin="5"></NumericUpDown>
                         <TextBlock Grid.Column="2" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Y</TextBlock>
-                        <NumericUpDown Grid.Column="3" Grid.Row="1" Value="{Binding PositionAndSize.Y}" Margin="5"></NumericUpDown>
+                        <NumericUpDown Grid.Column="3" Grid.Row="1" Value="{Binding PositionAndSize.Y}"
+                                       Minimum="0" Maximum="{Binding PosSizeYMax}" Margin="5"></NumericUpDown>
                         <TextBlock Grid.Column="4" Grid.Row="0" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Width</TextBlock>
-                        <NumericUpDown Grid.Column="5" Grid.Row="0" Value="{Binding PositionAndSize.Width}" Margin="5"></NumericUpDown>
+                        <NumericUpDown Grid.Column="5" Grid.Row="0" Value="{Binding PositionAndSize.Width}"
+                                       Minimum="0" Maximum="{Binding PosSizeWMax}" Margin="5"></NumericUpDown>
                         <TextBlock Grid.Column="4" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Height</TextBlock>
-                        <NumericUpDown Grid.Column="5" Grid.Row="1" Value="{Binding PositionAndSize.Height}" Margin="5"></NumericUpDown>
+                        <NumericUpDown Grid.Column="5" Grid.Row="1" Value="{Binding PositionAndSize.Height}"
+                                       Minimum="0" Maximum="{Binding PosSizeHMax}" Margin="5"></NumericUpDown>
                         
                         
                         <TextBlock Grid.Column="4" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">ZPriority</TextBlock>
