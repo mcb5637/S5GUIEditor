@@ -222,17 +222,23 @@
                         </ComboBox>
                         
                         <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 0</TextBlock>
-                        <NumericUpDown Grid.Column="1" Grid.Row="1" Value="{Binding IntegerUserVariable0DefaultValue}" Margin="5"></NumericUpDown>
+                        <s5GuiEditor2:CustomWidgetIntVarView Grid.Column="1" Grid.Row="1"
+                                                             DataContext="{Binding IntUserVar0}"></s5GuiEditor2:CustomWidgetIntVarView>
                         <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 1</TextBlock>
-                        <NumericUpDown Grid.Column="1" Grid.Row="2" Value="{Binding IntegerUserVariable1DefaultValue}" Margin="5"></NumericUpDown>
+                        <s5GuiEditor2:CustomWidgetIntVarView Grid.Column="1" Grid.Row="2"
+                                                             DataContext="{Binding IntUserVar1}"></s5GuiEditor2:CustomWidgetIntVarView>
                         <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 2</TextBlock>
-                        <NumericUpDown Grid.Column="1" Grid.Row="3" Value="{Binding IntegerUserVariable2DefaultValue}" Margin="5"></NumericUpDown>
+                        <s5GuiEditor2:CustomWidgetIntVarView Grid.Column="1" Grid.Row="3"
+                                                             DataContext="{Binding IntUserVar2}"></s5GuiEditor2:CustomWidgetIntVarView>
                         <TextBlock Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 3</TextBlock>
-                        <NumericUpDown Grid.Column="1" Grid.Row="4" Value="{Binding IntegerUserVariable3DefaultValue}" Margin="5"></NumericUpDown>
+                        <s5GuiEditor2:CustomWidgetIntVarView Grid.Column="1" Grid.Row="4"
+                                                             DataContext="{Binding IntUserVar3}"></s5GuiEditor2:CustomWidgetIntVarView>
                         <TextBlock Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 4</TextBlock>
-                        <NumericUpDown Grid.Column="1" Grid.Row="5" Value="{Binding IntegerUserVariable4DefaultValue}" Margin="5"></NumericUpDown>
+                        <s5GuiEditor2:CustomWidgetIntVarView Grid.Column="1" Grid.Row="5"
+                                                             DataContext="{Binding IntUserVar4}"></s5GuiEditor2:CustomWidgetIntVarView>
                         <TextBlock Grid.Column="0" Grid.Row="6" VerticalAlignment="Center" TextAlignment="Right" Margin="5">int Value 5</TextBlock>
-                        <NumericUpDown Grid.Column="1" Grid.Row="6" Value="{Binding IntegerUserVariable5DefaultValue}" Margin="5"></NumericUpDown>
+                        <s5GuiEditor2:CustomWidgetIntVarView Grid.Column="1" Grid.Row="6"
+                                                             DataContext="{Binding IntUserVar5}"></s5GuiEditor2:CustomWidgetIntVarView>
                         
                         <TextBlock Grid.Column="0" Grid.Row="7"  Text="string Value 0" VerticalAlignment="Center" TextAlignment="Right" Margin="5"></TextBlock>
                         <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding StringUserVariable0DefaultValue}" Margin="5"></TextBox>

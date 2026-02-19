@@ -170,9 +170,8 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal static string GetLua(IList<CBaseWidget> widgets)
     {
         string r = widgets.Aggregate("", (current, w) => current + w.GetLuaAssert());
-        for (int i = 0; i < widgets.Count; ++i)
+        foreach (var w in widgets)
         {
-            var w = widgets[i];
             string bef = "nil";
             var n = w.GetNextInParent(widgets.Contains);
             if (n != null)

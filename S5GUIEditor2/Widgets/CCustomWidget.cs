@@ -1,20 +1,181 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Xml.Linq;
+using Avalonia.Media;
 
 namespace S5GUIEditor2.Widgets;
+
+internal class IntUserVarConfig : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    internal required CCustomWidget.IntUserVar Value
+    {
+        get;
+        init
+        {
+            field = value;
+            field.PropertyChanged += (_, _) =>
+            {
+                OnPropertyChanged(nameof(SelectedMode));
+                OnPropertyChanged(nameof(Flag1));
+                OnPropertyChanged(nameof(Flag2));
+            };
+        }
+    }
+    internal required CCustomWidget.CustomWidgetOptionsIntVar Config { get; init; }
+
+    internal CCustomWidget.NamedInt? SelectedMode
+    {
+        get => Config.Modes.FirstOrDefault(x => x.Value == Value.Value);
+        set => Value.Value = value?.Value ?? 0;
+    }
+
+    internal bool Flag1
+    {
+        get => Value.GetFlag(Config.Flags.FirstOrDefault()?.Value ?? 1);
+        set => Value.SetFlag(Config.Flags.FirstOrDefault()?.Value ?? 1, value);
+    }
+    internal bool Flag2
+    {
+        get => Value.GetFlag(Config.Flags.Skip(1).FirstOrDefault()?.Value ?? 2);
+        set => Value.SetFlag(Config.Flags.Skip(1).FirstOrDefault()?.Value ?? 2, value);
+    }
+
+    internal string Flag1Name => Config.Flags.FirstOrDefault()?.Name ?? "";
+    internal string Flag2Name => Config.Flags.Skip(1).FirstOrDefault()?.Name ?? "";
+}
 
 internal class CCustomWidget : CBaseWidget
 {
     internal const string ClassName = "EGUIX::CCustomWidget";
     internal const uint ClassId = 0x7656DB56;
-    private string CustomClassName { get; set; } = "EGUIX::CVideoPlaybackCustomWidget";
-    internal int IntegerUserVariable0DefaultValue { get; set; }
-    internal int IntegerUserVariable1DefaultValue { get; set; }
-    internal int IntegerUserVariable2DefaultValue { get; set; }
-    internal int IntegerUserVariable3DefaultValue { get; set; }
-    internal int IntegerUserVariable4DefaultValue { get; set; }
-    internal int IntegerUserVariable5DefaultValue { get; set; }
+
+    private string CustomClassName
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(CustomClassName));
+            OnPropertyChanged(nameof(IntUserVar0));
+            OnPropertyChanged(nameof(IntUserVar1));
+            OnPropertyChanged(nameof(IntUserVar2));
+            OnPropertyChanged(nameof(IntUserVar3));
+            OnPropertyChanged(nameof(IntUserVar4));
+            OnPropertyChanged(nameof(IntUserVar5));
+            OnPropertyChanged(nameof(SelectedTypeStringDesc0));
+            OnPropertyChanged(nameof(SelectedTypeStringDesc1));
+        }
+    } = "EGUIX::CVideoPlaybackCustomWidget";
+    
+    internal class IntUserVar : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        internal int Value
+        {
+            get;
+            set
+            {
+                field = value;
+                OnPropertyChanged(nameof(Value));
+                OnPropertyChanged(nameof(Col));
+            }
+        }
+
+        internal Color Col
+        {
+            get => Color.FromArgb((byte)(Value >> 24),  (byte)(Value >> 16 & 0xFF), (byte)(Value >> 8 & 0xFF), (byte)(Value & 0xFF));
+            set => Value = value.A << 24 | value.B << 16 | value.G << 8 | value.R;
+        }
+
+        internal IntUserVar(int v)
+        {
+            Value = v;
+        }
+
+        internal bool GetFlag(int n)
+        {
+            return (Value & (1 << n)) != 0;
+        }
+
+        internal void SetFlag(int n, bool v)
+        {
+            if (v)
+                Value |= 1 << n;
+            else
+                Value &= ~(1 << n);
+        }
+    }
+    
+    private IntUserVar IntegerUserVariable0DefaultValue
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(IntUserVar0));
+        }
+    } = new(0);
+
+    private IntUserVar IntegerUserVariable1DefaultValue
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(IntUserVar1));
+        }
+    } = new(0);
+    private IntUserVar IntegerUserVariable2DefaultValue
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(IntUserVar2));
+        }
+    } = new(0);
+    private IntUserVar IntegerUserVariable3DefaultValue
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(IntUserVar3));
+        }
+    } = new(0);
+    private IntUserVar IntegerUserVariable4DefaultValue
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(IntUserVar4));
+        }
+    } = new(0);
+    private IntUserVar IntegerUserVariable5DefaultValue
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(IntUserVar5));
+        }
+    } = new(0);
     internal string StringUserVariable0DefaultValue { get; set; } = "";
     internal string StringUserVariable1DefaultValue { get; set; } = "";
 
@@ -27,12 +188,12 @@ internal class CCustomWidget : CBaseWidget
     {
         base.FromXml(e, c);
         CustomClassName = e?.Element("CustomClassName")?.Value ?? "";
-        IntegerUserVariable0DefaultValue = e?.Element("IntegerUserVariable0DefaultValue")?.Value.TryParseInt() ?? 0;
-        IntegerUserVariable1DefaultValue = e?.Element("IntegerUserVariable1DefaultValue")?.Value.TryParseInt() ?? 0;
-        IntegerUserVariable2DefaultValue = e?.Element("IntegerUserVariable2DefaultValue")?.Value.TryParseInt() ?? 0;
-        IntegerUserVariable3DefaultValue = e?.Element("IntegerUserVariable3DefaultValue")?.Value.TryParseInt() ?? 0;
-        IntegerUserVariable4DefaultValue = e?.Element("IntegerUserVariable4DefaultValue")?.Value.TryParseInt() ?? 0;
-        IntegerUserVariable5DefaultValue = e?.Element("IntegerUserVariable5DefaultValue")?.Value.TryParseInt() ?? 0;
+        IntegerUserVariable0DefaultValue = new IntUserVar(e?.Element("IntegerUserVariable0DefaultValue")?.Value.TryParseInt() ?? 0);
+        IntegerUserVariable1DefaultValue = new IntUserVar(e?.Element("IntegerUserVariable1DefaultValue")?.Value.TryParseInt() ?? 0);
+        IntegerUserVariable2DefaultValue = new IntUserVar(e?.Element("IntegerUserVariable2DefaultValue")?.Value.TryParseInt() ?? 0);
+        IntegerUserVariable3DefaultValue = new IntUserVar(e?.Element("IntegerUserVariable3DefaultValue")?.Value.TryParseInt() ?? 0);
+        IntegerUserVariable4DefaultValue = new IntUserVar(e?.Element("IntegerUserVariable4DefaultValue")?.Value.TryParseInt() ?? 0);
+        IntegerUserVariable5DefaultValue = new IntUserVar(e?.Element("IntegerUserVariable5DefaultValue")?.Value.TryParseInt() ?? 0);
         StringUserVariable0DefaultValue = e?.Element("StringUserVariable0DefaultValue")?.Value ?? "";
         StringUserVariable1DefaultValue = e?.Element("StringUserVariable1DefaultValue")?.Value ?? "";
     }
@@ -40,62 +201,53 @@ internal class CCustomWidget : CBaseWidget
     internal override XElement ToXml()
     {
         var e = base.ToXml();
-        e.Add(new XElement("CustomClassName", this.CustomClassName));
-        e.Add(new XElement("IntegerUserVariable0DefaultValue", this.IntegerUserVariable0DefaultValue.ToString()));
-        e.Add(new XElement("IntegerUserVariable1DefaultValue", this.IntegerUserVariable1DefaultValue.ToString()));
-        e.Add(new XElement("IntegerUserVariable2DefaultValue", this.IntegerUserVariable2DefaultValue.ToString()));
-        e.Add(new XElement("IntegerUserVariable3DefaultValue", this.IntegerUserVariable3DefaultValue.ToString()));
-        e.Add(new XElement("IntegerUserVariable4DefaultValue", this.IntegerUserVariable4DefaultValue.ToString()));
-        e.Add(new XElement("IntegerUserVariable5DefaultValue", this.IntegerUserVariable5DefaultValue.ToString()));
-        e.Add(new XElement("StringUserVariable0DefaultValue", this.StringUserVariable0DefaultValue));
-        e.Add(new XElement("StringUserVariable1DefaultValue", this.StringUserVariable1DefaultValue));
+        e.Add(new XElement("CustomClassName", CustomClassName));
+        e.Add(new XElement("IntegerUserVariable0DefaultValue", IntegerUserVariable0DefaultValue.Value.ToString()));
+        e.Add(new XElement("IntegerUserVariable1DefaultValue", IntegerUserVariable1DefaultValue.Value.ToString()));
+        e.Add(new XElement("IntegerUserVariable2DefaultValue", IntegerUserVariable2DefaultValue.Value.ToString()));
+        e.Add(new XElement("IntegerUserVariable3DefaultValue", IntegerUserVariable3DefaultValue.Value.ToString()));
+        e.Add(new XElement("IntegerUserVariable4DefaultValue", IntegerUserVariable4DefaultValue.Value.ToString()));
+        e.Add(new XElement("IntegerUserVariable5DefaultValue", IntegerUserVariable5DefaultValue.Value.ToString()));
+        e.Add(new XElement("StringUserVariable0DefaultValue", StringUserVariable0DefaultValue));
+        e.Add(new XElement("StringUserVariable1DefaultValue", StringUserVariable1DefaultValue));
         return e;
+    }
+
+    internal class NamedInt
+    {
+        internal string Name { get; init; }
+        internal int Value { get; init; }
+
+        internal NamedInt(string n, int v)
+        {
+            Name = n;
+            Value = v;
+        }
+    }
+    internal class CustomWidgetOptionsIntVar
+    {
+        internal string Description { get; init; } = "";
+        internal bool IsColor { get; init; } = false;
+        internal ObservableCollection<NamedInt> Modes { get; set; } = [];
+        internal NamedInt[] Flags { get; init; } = [];
+        internal bool IsModes => Modes.Count > 0;
+        internal bool IsFlags => Flags.Length > 0;
+        internal bool HasFlag2 => Flags.Length > 1;
     }
     
     internal class CustomWidgetOptions
     {
         // ReSharper disable once MemberHidesStaticFromOuterClass
         internal required string ClassName { get; init; }
-        internal string IntUserVar0  { get; init; }= "";
-        internal string IntUserVar1  { get; init; }= "";
-        internal string IntUserVar2  { get; init; }= "";
-        internal string IntUserVar3  { get; init; }= "";
-        internal string IntUserVar4  { get; init; }= "";
-        internal string IntUserVar5  { get; init; }= "";
-        internal string StringUserVar0  { get; init; }= "";
-        internal string StringUserVar1  { get; init; }= "";
+        internal CustomWidgetOptionsIntVar IntUserVar0 { get; init; } = new();
+        internal CustomWidgetOptionsIntVar IntUserVar1 { get; init; } = new();
+        internal CustomWidgetOptionsIntVar IntUserVar2 { get; init; } = new();
+        internal CustomWidgetOptionsIntVar IntUserVar3 { get; init; } = new();
+        internal CustomWidgetOptionsIntVar IntUserVar4 { get; init; } = new();
+        internal CustomWidgetOptionsIntVar IntUserVar5 { get; init; } = new();
+        internal string StringUserVar0 { get; init; } = "";
+        internal string StringUserVar1 { get; init; } = "";
         internal bool SaveForExport = false;
-
-        internal string IntVar(int i)
-        {
-            switch (i)
-            {
-                case 0:
-                    return IntUserVar0;
-                case 1:
-                    return IntUserVar1;
-                case 2:
-                    return IntUserVar2;
-                case 3:
-                    return IntUserVar3;
-                case 4:
-                    return IntUserVar4;
-                case 5:
-                    return IntUserVar5;
-            }
-            return "";
-        }
-        internal string StringVar(int i)
-        {
-            switch (i)
-            {
-                case 0:
-                    return StringUserVar0;
-                case 1:
-                    return StringUserVar1;
-            }
-            return "";
-        }
     }
 
     private static readonly List<CustomWidgetOptions> KnownWidgetTypes =
@@ -103,11 +255,25 @@ internal class CCustomWidget : CBaseWidget
         new()
         {
             ClassName = "EGUIX::CStringInputCustomWidget",
-            IntUserVar0 = "bool alwaysVisible",
-            IntUserVar1 = "bool keepContentOnClose",
-            IntUserVar2 = "int mode, 0->chat, 1->password, 2->cdkey",
-            IntUserVar3 = "bool noConfirmCall",
-            IntUserVar4 = "int bufferSize",
+            IntUserVar0 = new CustomWidgetOptionsIntVar(){
+                Description = "bool alwaysVisible",
+                Flags = [new NamedInt("alwaysVisible", 0)]
+            },
+            IntUserVar1 = new CustomWidgetOptionsIntVar(){
+                Description = "bool keepContentOnClose",
+                Flags = [new NamedInt("keepContentOnClose", 0)]
+            },
+            IntUserVar2 = new CustomWidgetOptionsIntVar(){
+                Description = "int mode, 0->chat, 1->password, 2->cdkey",
+                Modes = [new NamedInt("chat", 0), new NamedInt("password", 1), new NamedInt("cdkey", 2)]
+            },
+            IntUserVar3 = new CustomWidgetOptionsIntVar(){
+                Description = "bool noConfirmCall",
+                Flags = [new NamedInt("noConfirmCall", 0)]
+            },
+            IntUserVar4 = new CustomWidgetOptionsIntVar(){
+                Description = "int bufferSize",
+            },
             StringUserVar0 = "confirm func (inputString, widgetId)",
             SaveForExport = true,
         },
@@ -136,7 +302,10 @@ internal class CCustomWidget : CBaseWidget
         new()
         {
             ClassName = "GGUI::CStatisticsRendererCustomWidget",
-            IntUserVar0 = "bool isMainmenu",
+            IntUserVar0 = new CustomWidgetOptionsIntVar(){
+                Description = "bool isMainmenu",
+                Flags = [new NamedInt("isMainmenu", 0)]
+            },
             SaveForExport = false,
         },
         new()
@@ -177,7 +346,9 @@ internal class CCustomWidget : CBaseWidget
         new()
         {
             ClassName = "CppLogic::Mod::UI::AutoScrollCustomWidget",
-            IntUserVar0 = "int spacing",
+            IntUserVar0 = new CustomWidgetOptionsIntVar(){
+                Description = "int spacing",
+            },
             StringUserVar0 = "slider widget (optional)",
             StringUserVar1 = "scrollable widget",
             SaveForExport = true,
@@ -185,12 +356,30 @@ internal class CCustomWidget : CBaseWidget
         new()
         {
             ClassName = "CppLogic::Mod::UI::TextInputCustomWidget",
-            IntUserVar0 = "int mode 0->normal, 1->password, 2->int, 3->double, 4->uint, 5->udouble",
-            IntUserVar1 = "flags 1->fire cancel event, 2->fire validate event",
-            IntUserVar2 = "argb text color (white, if a==0)",
-            IntUserVar3 = "argb cursor highlight color (gray, if a==0)",
-            IntUserVar4 = "argb background color (none, if a==0)",
-            IntUserVar5 = "int scroll delta",
+            IntUserVar0 = new CustomWidgetOptionsIntVar(){
+                Description = "int mode 0->normal, 1->password, 2->int, 3->double, 4->uint, 5->udouble",
+                Modes = [new NamedInt("normal", 0),  new NamedInt("password", 1), new NamedInt("int", 2),
+                    new NamedInt("double", 3), new NamedInt("uint", 4), new NamedInt("udouble", 5)]
+            },
+            IntUserVar1 = new CustomWidgetOptionsIntVar(){
+                Description = "flags 1->fire cancel event, 2->fire validate event",
+                Flags = [new NamedInt("fire cancel event", 0), new NamedInt("fire validate event", 1)]
+            },
+            IntUserVar2 = new CustomWidgetOptionsIntVar(){
+                Description = "argb text color (white, if a==0)",
+                IsColor = true,
+            },
+            IntUserVar3 = new CustomWidgetOptionsIntVar(){
+                Description = "argb cursor highlight color (gray, if a==0)",
+                IsColor = true,
+            },
+            IntUserVar4 = new CustomWidgetOptionsIntVar(){
+                Description = "argb background color (none, if a==0)",
+                IsColor = true,
+            },
+            IntUserVar5 = new CustomWidgetOptionsIntVar(){
+                Description = "int scroll delta",
+            },
             StringUserVar0 = "event func (text, widgetid, event) event: 0->confirm, 1->cancel, 2->validate",
             StringUserVar1 = "font (optional)",
             SaveForExport = true,
@@ -198,7 +387,9 @@ internal class CCustomWidget : CBaseWidget
         new()
         {
             ClassName = "CppLogic::Mod::UI::FreeCamCustomWidget",
-            IntUserVar0 = "default scroll speed",
+            IntUserVar0 = new CustomWidgetOptionsIntVar(){
+                Description = "default scroll speed",
+            },
             SaveForExport = true,
         },
     ];
@@ -221,4 +412,36 @@ internal class CCustomWidget : CBaseWidget
 
     internal string SelectedTypeStringDesc0 => SelectedType?.StringUserVar0 ?? "";
     internal string SelectedTypeStringDesc1 => SelectedType?.StringUserVar1 ?? "";
+
+    private static readonly CustomWidgetOptionsIntVar IntEmptyConfig = new();
+    internal IntUserVarConfig IntUserVar0 => new()
+    {
+        Config = SelectedType?.IntUserVar0 ?? IntEmptyConfig,
+        Value = IntegerUserVariable0DefaultValue,
+    };
+    internal IntUserVarConfig IntUserVar1 => new()
+    {
+        Config = SelectedType?.IntUserVar1 ?? IntEmptyConfig,
+        Value = IntegerUserVariable1DefaultValue,
+    };
+    internal IntUserVarConfig IntUserVar2 => new()
+    {
+        Config = SelectedType?.IntUserVar2 ?? IntEmptyConfig,
+        Value = IntegerUserVariable2DefaultValue,
+    };
+    internal IntUserVarConfig IntUserVar3 => new()
+    {
+        Config = SelectedType?.IntUserVar3 ?? IntEmptyConfig,
+        Value = IntegerUserVariable3DefaultValue,
+    };
+    internal IntUserVarConfig IntUserVar4 => new()
+    {
+        Config = SelectedType?.IntUserVar4 ?? IntEmptyConfig,
+        Value = IntegerUserVariable4DefaultValue,
+    };
+    internal IntUserVarConfig IntUserVar5 => new()
+    {
+        Config = SelectedType?.IntUserVar5 ?? IntEmptyConfig,
+        Value = IntegerUserVariable5DefaultValue,
+    };
 }

@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:widgets="clr-namespace:S5GUIEditor2.Widgets"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="S5GUIEditor2.CustomWidgetIntVarView"
+             x:DataType="widgets:IntUserVarConfig">
+    <StackPanel>
+        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto" RowDefinitions="Auto">
+            <NumericUpDown Grid.Column="0" Grid.Row="0" Value="{Binding Value.Value}" Margin="5"></NumericUpDown>
+            <ColorPicker Grid.Column="1" Grid.Row="0" Color="{Binding Value.Col}" IsVisible="{Binding Config.IsColor}" Margin="5"></ColorPicker>
+            <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Config.Modes}" IsVisible="{Binding Config.IsModes}"
+                      SelectedItem="{Binding SelectedMode, Mode=TwoWay}" Margin="5">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" FontFamily="{Binding}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <CheckBox Grid.Column="1" Grid.Row="0" IsChecked="{Binding Flag1}"
+                      IsVisible="{Binding Config.IsFlags}" Margin="5">
+                <TextBlock Text="{Binding Flag1Name}"></TextBlock>
+            </CheckBox>
+            <CheckBox Grid.Column="2" Grid.Row="0" IsChecked="{Binding Flag2}"
+                      IsVisible="{Binding Config.HasFlag2}" Margin="5">
+                <TextBlock Text="{Binding Flag2Name}"></TextBlock>
+            </CheckBox>
+        </Grid>
+        
+        <TextBlock Text="{Binding Config.Description}"></TextBlock>
+    </StackPanel>
+</UserControl>
