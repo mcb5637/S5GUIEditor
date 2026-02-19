@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -184,10 +185,18 @@ internal partial class MainWindow : Window
         }
     }
     
+    // ReSharper disable once AsyncVoidEventHandlerMethod
     private async void Widget_Copy(object? sender, RoutedEventArgs e)
+    {
+        await WidgetCopy();
+    }
+
+    internal async Task WidgetCopy()
     {
         try
         {
+            if ((M.SelectedWidgets?.Count ?? 0) == 0)
+                return;
             var s = M.SelectedWidgets?.Select(x => x.ToXml().ToString()).Aggregate((a, b) => a + "\0" + b);
             var c = Clipboard;
             if (c == null || s == null)
@@ -201,7 +210,13 @@ internal partial class MainWindow : Window
         }
     }
 
+    // ReSharper disable once AsyncVoidEventHandlerMethod
     private async void Widget_Paste(object? sender, RoutedEventArgs e)
+    {
+        await WidgetPaste();
+    }
+
+    internal async Task WidgetPaste()
     {
         try
         {
@@ -414,6 +429,8 @@ internal partial class MainWindow : Window
     {
         try
         {
+            if (e.Properties.IsRightButtonPressed)
+                return;
             if (sender is not Control cnt)
                 return;
             if (cnt.DataContext is not CBaseWidget wid)

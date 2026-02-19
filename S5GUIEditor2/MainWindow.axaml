@@ -8,7 +8,12 @@
         x:Class="S5GUIEditor2.MainWindow"
         x:DataType="s5GuiEditor2:Model"
         WindowState="Maximized"
-        Title="S5GUIEditor">
+        Title="S5GUIEditor"
+        Name="Win">
+    <Window.KeyBindings>
+        <KeyBinding Gesture="Ctrl+C" Command="{Binding #Win.WidgetCopy}"></KeyBinding>
+        <KeyBinding Gesture="Ctrl+V" Command="{Binding #Win.WidgetPaste}"></KeyBinding>
+    </Window.KeyBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
@@ -33,12 +38,12 @@
                             <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" PointerPressed="TreeDragStart" Margin="5">
                                 <TextBlock.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Copy" Click="Widget_Copy" HotKey="Ctrl+C"></MenuItem>
-                                        <MenuItem Header="Paste" IsVisible="{Binding IsContainer}" Click="Widget_Paste" HotKey="Ctrl+V"></MenuItem>
+                                        <MenuItem Header="Copy" Click="Widget_Copy"></MenuItem>
+                                        <MenuItem Header="Paste" IsVisible="{Binding IsContainer}" Click="Widget_Paste"></MenuItem>
                                         <MenuItem Header="Delete" Click="Widget_Delete"></MenuItem>
                                         <MenuItem Header="Export Lua" Click="Widget_ExportLua"></MenuItem>
                                         <Separator IsVisible="{Binding IsContainer}"></Separator>
-                                        <MenuItem Header="New Container Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewContainer" HotKey="Ctrl+N"></MenuItem>
+                                        <MenuItem Header="New Container Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewContainer"></MenuItem>
                                         <MenuItem Header="New Static Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewStatic"></MenuItem>
                                         <MenuItem Header="New Static Text Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewStaticText"></MenuItem>
                                         <MenuItem Header="New Pure Tooltip Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewPureTooltip"></MenuItem>
