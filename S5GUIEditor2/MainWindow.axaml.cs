@@ -419,6 +419,17 @@ internal partial class MainWindow : Window
         }
     }
 
+    private void Widget_SortChildren(object? sender, RoutedEventArgs e)
+    {
+        if (M.EditWidget is not CContainerWidget w)
+            return;
+        var a = w.WidgetListHandler.SubWidgets.OrderByDescending(x => x.ZPriority).ToArray();
+        w.WidgetListHandler.SubWidgets.Clear();
+        foreach (var x in a)
+            w.WidgetListHandler.SubWidgets.Add(x);
+        Renderer.InvalidateVisual();
+    }
+
     private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         M.OnSelectionChanged();
@@ -449,27 +460,11 @@ internal partial class MainWindow : Window
     // ReSharper disable once UnusedMember.Local
     private void TreeDragOver(object? sender, DragEventArgs e)
     {
-        e.DragEffects &= DragDropEffects.Move;
-        if (!e.DataTransfer.Contains(DragDropFormat))
-        {
+        var (target, _, move) = CheckDropTarget(sender, e);
+        if (target == null || move == null)
             e.DragEffects = DragDropEffects.None;
-            return;
-        }
-        if (sender is not Control cnt)
-            return;
-        if (cnt.DataContext is not CContainerWidget wid)
-            return;
-        string r = e.DataTransfer.TryGetValue(DragDropFormat) ?? "";
-        CBaseWidget? c = M.GetById(r);
-        if (c == null || wid == c || c.ParentNode == null)
-        {
-            e.DragEffects = DragDropEffects.None;
-            return;
-        }
-        if (c is CContainerWidget cc && cc.IsChildRecursive(wid))
-        {
-            e.DragEffects = DragDropEffects.None;
-        }
+        else
+            e.DragEffects &= DragDropEffects.Move;
     }
 
     // ReSharper disable once UnusedMember.Local
@@ -477,21 +472,16 @@ internal partial class MainWindow : Window
     {
         try
         {
-            if (sender is not Control cnt)
+            var (target, pos, move) = CheckDropTarget(sender, e);
+            if (target == null || move == null)
                 return;
-            if (cnt.DataContext is not CContainerWidget wid)
-                return;
-            string r = e.DataTransfer.TryGetValue(DragDropFormat) ?? "";
-            CBaseWidget? c = M.GetById(r);
-            if (c == null)
-                return;
-            if (wid == c || c.ParentNode == null)
-                return;
-            if (c is CContainerWidget cc && cc.IsChildRecursive(wid))
-                return;
-            c.ParentNode.WidgetListHandler.SubWidgets.Remove(c);
-            wid.WidgetListHandler.SubWidgets.Add(c);
-            c.ParentNode = wid;
+            
+            move.ParentNode!.WidgetListHandler.SubWidgets.Remove(move);
+            if (pos >= 0)
+                target.WidgetListHandler.SubWidgets.Insert(pos, move);
+            else
+                target.WidgetListHandler.SubWidgets.Add(move);
+            move.ParentNode = target;
             Renderer.InvalidateVisual();
         }
         catch (Exception ex)
@@ -499,6 +489,37 @@ internal partial class MainWindow : Window
             Debugger.Break();
             await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
         }
+    }
+
+    private (CContainerWidget?, int, CBaseWidget?) CheckDropTarget(object? sender, DragEventArgs e)
+    {
+        if (sender is not Control cnt)
+            return (null, 0, null);
+        if (cnt.DataContext is not CBaseWidget droppedOn)
+            return (null, 0, null);
+        string r = e.DataTransfer.TryGetValue(DragDropFormat) ?? "";
+        CBaseWidget? move = M.GetById(r);
+        if (move == null || droppedOn == move || move.ParentNode == null)
+            return (null, 0, null);
+        CContainerWidget target;
+        CBaseWidget? before = null;
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            if (droppedOn is not CContainerWidget cw)
+                return (null, 0, null);
+            target = cw;
+        }
+        else
+        {
+            if (droppedOn.ParentNode == null)
+                return (null, 0, null);
+            target = droppedOn.ParentNode;
+            before = droppedOn;
+        }
+        if (move is CContainerWidget cc && cc.IsChildRecursive(target) || move == target)
+            return (null, 0, null);
+        var idx = before == null ? -1 : target.WidgetListHandler.SubWidgets.IndexOf(before);
+        return (target, idx, move);
     }
 
     private static readonly List<FilePickerFileType> FileTypes = [

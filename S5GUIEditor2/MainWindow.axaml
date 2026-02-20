@@ -31,7 +31,7 @@
                       SelectionChanged="OnSelectionChanged" SelectionMode="Multiple" AutoScrollToSelectedItem="True" Margin="5">
                 <TreeView.ItemTemplate>
                     <TreeDataTemplate DataType="widgets:CBaseWidget" ItemsSource="{Binding ChildWidgets}">
-                        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto" DragDrop.AllowDrop="{Binding IsContainer}"
+                        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto" DragDrop.AllowDrop="true"
                               DragDrop.DragOver="TreeDragOver" DragDrop.Drop="TreeDrop">
                             <CheckBox IsChecked="{Binding Visible}" Margin="5">
                             </CheckBox>
@@ -42,6 +42,7 @@
                                         <MenuItem Header="Paste" IsVisible="{Binding IsContainer}" Click="Widget_Paste"></MenuItem>
                                         <MenuItem Header="Delete" Click="Widget_Delete"></MenuItem>
                                         <MenuItem Header="Export Lua" Click="Widget_ExportLua"></MenuItem>
+                                        <MenuItem Header="Sort children by ZPriority" Click="Widget_SortChildren" IsVisible="{Binding IsContainer}"></MenuItem>
                                         <Separator IsVisible="{Binding IsContainer}"></Separator>
                                         <MenuItem Header="New Container Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewContainer"></MenuItem>
                                         <MenuItem Header="New Static Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewStatic"></MenuItem>
