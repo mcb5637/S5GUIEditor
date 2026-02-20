@@ -52,6 +52,16 @@ internal class Model : INotifyPropertyChanged
     
     internal CBaseWidget? RootWidget => CurrentWidget.FirstOrDefault();
 
+    internal bool UIRenderDrag
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(UIRenderDrag));
+        }
+    } = true;
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     internal void OnPropertyChanged(string propertyName)

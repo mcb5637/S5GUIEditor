@@ -61,9 +61,13 @@
             </TreeView>
             <TabControl Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding SelectedTabItem}" Margin="5">
                 <TabItem Header="View">
-                    <s5GuiEditor2:GUIRender Width="1026" Height="770" RootWidget="{Binding RootWidget}"
-                                            SelectedWidgets="{Binding SelectedWidgets}" Name="Renderer">
-                    </s5GuiEditor2:GUIRender>
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding UIRenderDrag}"><TextBlock>Move Widgets</TextBlock></CheckBox>
+                        <s5GuiEditor2:GUIRender Width="1026" Height="770" RootWidget="{Binding RootWidget}"
+                                                SelectedWidgets="{Binding SelectedWidgets}" Name="Renderer"
+                                                MoveWidgets="{Binding UIRenderDrag}">
+                        </s5GuiEditor2:GUIRender>
+                    </StackPanel>
                 </TabItem>
                 <TabItem Header="Widget" IsVisible="{Binding HasEditWidget}">
                     <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" DataContext="{Binding EditWidget}">

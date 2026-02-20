@@ -17,6 +17,7 @@ internal class GUIRender : Control
 {
     public static readonly StyledProperty<CBaseWidget?> RootWidgetProperty = AvaloniaProperty.Register<TextureView, CBaseWidget?>(nameof(RootWidget));
     public static readonly StyledProperty<ObservableCollection<CBaseWidget>?> SelectedWidgetsProperty = AvaloniaProperty.Register<TextureView, ObservableCollection<CBaseWidget>?>(nameof(SelectedWidgets));
+    public static readonly StyledProperty<bool> MoveWidgetsProperty = AvaloniaProperty.Register<TextureView, bool>(nameof(MoveWidgets));
     
     internal CBaseWidget? RootWidget {
         get => GetValue(RootWidgetProperty);
@@ -34,6 +35,14 @@ internal class GUIRender : Control
             InvalidateVisual();
         }
     }
+    internal bool MoveWidgets {
+        get => GetValue(MoveWidgetsProperty);
+        set
+        {
+            SetValue(MoveWidgetsProperty, value);
+            InvalidateVisual();
+        }
+    }
 
     private static readonly SKImage Background;
 
@@ -46,12 +55,17 @@ internal class GUIRender : Control
     {
         if (RootWidget == null)
             return;
+        var at = PointedAt;
+        if (Move != null)
+        {
+            at = Move.Value.Item1.ParentNode;
+        }
         context.Custom(new CustomRender()
         {
             Bounds = new Rect(0, 0, Bounds.Width, Bounds.Height),
             RootWidget = RootWidget,
             SelectedWidgets = SelectedWidgets,
-            PointedAt = PointedAt,
+            PointedAt = at,
         });
     }
 
@@ -80,24 +94,51 @@ internal class GUIRender : Control
         }
     }
 
+    private (CBaseWidget, Point, Point)? Move = null;
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
-        var n = GetWidgetAtPos(e.GetCurrentPoint(this).Position);
+        var p = e.GetCurrentPoint(this).Position;
+        var n = GetWidgetAtPos(p);
         if (n == null)
             return;
         SelectedWidgets?.Clear();
         SelectedWidgets?.Add(n);
+        InvalidateVisual();
+        if (MoveWidgets)
+        {
+            if (n.ParentNode == null)
+                return;
+            Move = (n, p, new Point(n.PositionAndSize.X, n.PositionAndSize.Y));
+        }
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e)
+    {
+        Move = null;
         InvalidateVisual();
     }
 
     private CBaseWidget? PointedAt = null;
     protected override void OnPointerMoved(PointerEventArgs e)
     {
-        var n = GetWidgetAtPos(e.GetCurrentPoint(this).Position);
-        if (PointedAt != n)
+        var p = e.GetCurrentPoint(this).Position;
+        if (Move != null)
         {
-            PointedAt = n;
+            var (wid, mouseCoord, widgetCoord) = Move.Value;
+            var pos = widgetCoord + p - mouseCoord;
+            var parent = wid.ParentNode!;
+            wid.PositionAndSize.X = double.Clamp(pos.X, 0, parent.PositionAndSize.Width - wid.PositionAndSize.Width);
+            wid.PositionAndSize.Y = double.Clamp(pos.Y, 0, parent.PositionAndSize.Height - wid.PositionAndSize.Height);
             InvalidateVisual();
+        }
+        else
+        {
+            var n = GetWidgetAtPos(p);
+            if (PointedAt != n)
+            {
+                PointedAt = n;
+                InvalidateVisual();
+            }
         }
     }
 
