@@ -8,6 +8,7 @@ namespace S5GUIEditor2;
 public class Settings
 {
     public string WorkspacePath { get; set; } = "";
+    public string? LastLoadedXml { get; set; }
 
     private const string Data = "data/";
     

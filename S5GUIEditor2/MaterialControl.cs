@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -34,7 +35,7 @@ public partial class MaterialControl : UserControl
             var r = await storage.OpenFilePickerAsync(new()
             {
                 Title = "Select Texture",
-                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(window.Settings.WorkspacePath),
+                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(Path.Combine(window.Settings.WorkspacePath, "graphics/textures/gui")),
                 FileTypeFilter = FileTypes,
             });
             if (r.Count == 0)

@@ -27,7 +27,8 @@ internal partial class MainWindow : Window
         InitializeComponent();
         Menu_New(null, null);
         DataContext = M;
-        Menu_LoadXml(null, null);
+        if (Settings.LastLoadedXml != null)
+            LoadXml(Settings.LastLoadedXml);
     }
 
     private readonly Model M;
@@ -43,20 +44,64 @@ internal partial class MainWindow : Window
         M.CurrentWidget.Add(w);
         M.OnPropertyChanged(nameof(M.RootWidget));
         w.PropertyChanged += (_, _) => Renderer.InvalidateVisual();
+        Settings.LastLoadedXml = xmlPath;
+        M.StoreSettings();
     }
 
-    private void Menu_LoadXml(object? sender, RoutedEventArgs? e)
+    private static readonly List<FilePickerFileType> FileTypesXml = [
+        new("xml")
+        {
+            Patterns = ["*.xml"],
+        },
+        FilePickerFileTypes.All,
+    ];
+    private async void Menu_LoadXml(object? sender, RoutedEventArgs? e)
     {
-        string p = Path.Combine(M.Settings.WorkspacePath, "menu/projects/ingame.xml");
-        if (File.Exists(p))
-            LoadXml(p);
+        try
+        {
+            var storage = StorageProvider;
+            var r = await storage.OpenFilePickerAsync(new()
+            {
+                Title = "Load GUI xml",
+                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(Path.Combine(M.Settings.WorkspacePath, "menu/projects")),
+                FileTypeFilter = FileTypesXml,
+            });
+            if (r.Count == 0)
+                return;
+            LoadXml(r[0].Path.AbsolutePath);
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
     }
 
-    private void Menu_Save(object? sender, RoutedEventArgs e)
+    private async void Menu_Save(object? sender, RoutedEventArgs e)
     {
-        XDocument xd = new XDocument();
-        xd.Add(M.CurrentWidget.FirstOrDefault()?.ToXml());
-        xd.Save("/home/mcb/Games/s5/drive_c/dedk/merged_e2_bbas/menu/projects/ingame_out.xml");
+        try
+        {
+            var storage = StorageProvider;
+            var r = await storage.SaveFilePickerAsync(new()
+            {
+                Title = "Save GUI xml",
+                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(Path.Combine(M.Settings.WorkspacePath, "menu/projects")),
+                FileTypeChoices = FileTypesXml,
+                DefaultExtension = ".xml",
+            });
+            if (r == null)
+                return;
+            XDocument xd = new XDocument();
+            xd.Add(M.CurrentWidget.FirstOrDefault()?.ToXml());
+            xd.Save(r.Path.AbsolutePath);
+            Settings.LastLoadedXml = r.Path.AbsolutePath;
+            M.StoreSettings();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
     }
 
     private void Menu_New(object? sender, RoutedEventArgs? e)
@@ -76,7 +121,13 @@ internal partial class MainWindow : Window
         w.WidgetListHandler.SubWidgets.Add(new CContainerWidget()
         {
             Name = "Root",
-            PositionAndSize = w.PositionAndSize,
+            PositionAndSize = new RectangleF()
+            {
+                X = 0,
+                Y = 0,
+                Width = 1024,
+                Height = 768,
+            },
         });
         
         M.CurrentWidget.Add(w);
@@ -522,7 +573,7 @@ internal partial class MainWindow : Window
         return (target, idx, move);
     }
 
-    private static readonly List<FilePickerFileType> FileTypes = [
+    private static readonly List<FilePickerFileType> FileTypesFont = [
         new("s5 fonts")
         {
             Patterns = ["*.met"],
@@ -537,8 +588,8 @@ internal partial class MainWindow : Window
             var r = await storage.OpenFilePickerAsync(new()
             {
                 Title = "Select Font",
-                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(M.Settings.WorkspacePath),
-                FileTypeFilter = FileTypes,
+                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(Path.Combine(M.Settings.WorkspacePath, "menu/fonts")),
+                FileTypeFilter = FileTypesFont,
             });
             if (r.Count == 0)
                 return;

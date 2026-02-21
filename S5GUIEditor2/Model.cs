@@ -60,7 +60,7 @@ internal class Model : INotifyPropertyChanged
             field = value;
             OnPropertyChanged(nameof(UIRenderDrag));
         }
-    } = true;
+    } = false;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
