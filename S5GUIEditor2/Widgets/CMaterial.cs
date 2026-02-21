@@ -116,6 +116,8 @@ internal class CMaterial : INotifyPropertyChanged
             TextureCoordinates.Y = value / Image.Height * GridHeight;
         }
     }
+    internal double GridNumX => 1.0 / TextureCoordinates.Width;
+    internal double GridNumY => 1.0 / TextureCoordinates.Height;
     
     internal static CMaterial FromXml(XElement? e, ImageCache c)
     {

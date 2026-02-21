@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -33,12 +34,20 @@ internal class TextureView : Control
         }
     }
 
+    private void OnPropertyChangedRedraw(object? sender, PropertyChangedEventArgs e)
+    {
+        InvalidateVisual();
+    }
+
     public RectangleF Rectangle
     {
         get => GetValue(RectangleProperty);
         set
         {
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+            Rectangle?.PropertyChanged -= OnPropertyChangedRedraw;
             SetValue(RectangleProperty, value);
+            value.PropertyChanged += OnPropertyChangedRedraw;
             InvalidateVisual();
         }
     }
