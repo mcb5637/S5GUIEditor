@@ -280,7 +280,10 @@ internal partial class MainWindow : Window
                 return;
             foreach (var w in s.Split('\0').Where(x => !string.IsNullOrWhiteSpace(x)).
                          Select(x => CBaseWidget.GetFromXml(XDocument.Parse(x).Element("WidgetList"), C)))
+            {
                 parent.WidgetListHandler.SubWidgets.Add(w);
+                w.ParentNode = parent;
+            }
             Renderer.InvalidateVisual();
         }
         catch (Exception ex)
