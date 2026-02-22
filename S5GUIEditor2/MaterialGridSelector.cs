@@ -12,7 +12,16 @@ namespace S5GUIEditor2;
 
 internal class MaterialGridSelector : Control
 {
-    public static readonly StyledProperty<CMaterial?> MaterialProperty = AvaloniaProperty.Register<TextureView, CMaterial?>(nameof(Image));
+    public static readonly StyledProperty<CMaterial?> MaterialProperty = AvaloniaProperty.Register<MaterialGridSelector, CMaterial?>(nameof(Image));
+    // only for re-render
+    public static readonly StyledProperty<SKImage?> ImageProperty = AvaloniaProperty.Register<MaterialGridSelector, SKImage?>(nameof(Image));
+    public static readonly StyledProperty<Rect> RectangleProperty = AvaloniaProperty.Register<MaterialGridSelector, Rect>(nameof(Rectangle));
+
+    static MaterialGridSelector()
+    {
+        AffectsRender<MaterialGridSelector>(MaterialProperty, ImageProperty, RectangleProperty);
+        AffectsMeasure<MaterialGridSelector>(ImageProperty);
+    }
     
     public CMaterial? Material
     {
@@ -23,8 +32,26 @@ internal class MaterialGridSelector : Control
             InvalidateVisual();
         }
     }
-    private SKImage? Image => Material?.Image;
-    private (int, int) SelectedGridCell = (-1, -1);
+    public SKImage? Image
+    {
+        get => GetValue(ImageProperty);
+        set
+        {
+            SetValue(ImageProperty, value);
+            InvalidateVisual();
+        }
+    }
+    public Rect Rectangle
+    {
+        get => GetValue(RectangleProperty);
+        set
+        {
+            SetValue(RectangleProperty, value);
+            InvalidateVisual();
+        }
+    }
+    
+    private (int, int) HoveredGridCell = (-1, -1);
 
     private Rect RenderBounds => Image == null
         ? new Rect(0, 0, Bounds.Width, Bounds.Height)
@@ -67,9 +94,9 @@ internal class MaterialGridSelector : Control
         if (Material == null || !GridActive)
             return;
         var n = GetPointerGrid(e.GetPosition(this));
-        if (SelectedGridCell == n)
+        if (HoveredGridCell == n)
             return;
-        SelectedGridCell = n;
+        HoveredGridCell = n;
         InvalidateVisual();
     }
 
@@ -85,7 +112,7 @@ internal class MaterialGridSelector : Control
 
     protected override void OnPointerExited(PointerEventArgs e)
     {
-        SelectedGridCell = (-1, -1);
+        HoveredGridCell = (-1, -1);
         InvalidateVisual();
     }
 
@@ -99,7 +126,7 @@ internal class MaterialGridSelector : Control
             Bounds = RenderBounds,
             WhiteBG = true,
             GridActive = GridActive,
-            SelectedGridCell = SelectedGridCell,
+            HoveredGridCell = HoveredGridCell,
         });
     }
 
@@ -108,7 +135,7 @@ internal class MaterialGridSelector : Control
         internal required CMaterial? Material { get; init; }
         internal required bool WhiteBG { get; init; }
         internal required bool GridActive { get; init; }
-        internal required (int, int) SelectedGridCell { get; init; }
+        internal required (int, int) HoveredGridCell { get; init; }
         public required Rect Bounds { get; init; }
         
         public void Dispose()
@@ -149,7 +176,7 @@ internal class MaterialGridSelector : Control
                 canvas.DrawLine(new SKPoint(0, py), new SKPoint((float)Bounds.Width, py), paint);
             }
 
-            var (selx, sely) = SelectedGridCell;
+            var (selx, sely) = HoveredGridCell;
             if (selx >= 0 && selx < nx && sely >= 0 && sely < ny)
             {
                 paint.Color = SKColors.Blue;

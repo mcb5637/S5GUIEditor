@@ -22,6 +22,7 @@ internal class RectangleF : INotifyPropertyChanged
         {
             field = value;
             OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(ToRect));
         }
     } = 0;
     internal double Y
@@ -31,6 +32,7 @@ internal class RectangleF : INotifyPropertyChanged
         {
             field = value;
             OnPropertyChanged(nameof(Y));
+            OnPropertyChanged(nameof(ToRect));
         }
     } = 0;
     internal double Width
@@ -40,6 +42,7 @@ internal class RectangleF : INotifyPropertyChanged
         {
             field = value;
             OnPropertyChanged(nameof(Width));
+            OnPropertyChanged(nameof(ToRect));
         }
     } = 0;
     internal double Height
@@ -49,6 +52,7 @@ internal class RectangleF : INotifyPropertyChanged
         {
             field = value;
             OnPropertyChanged(nameof(Height));
+            OnPropertyChanged(nameof(ToRect));
         }
     } = 0;
     

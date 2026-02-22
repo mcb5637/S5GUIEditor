@@ -13,7 +13,7 @@
                 <CheckBox Name="Edit" IsChecked="False" Margin="5"><TextBlock>Edit</TextBlock></CheckBox>
                 <s5GuiEditor2:TextureView Grid.Column="1" Grid.Row="0" Name="View"
                                           Image="{Binding Image}"
-                                          Rectangle="{Binding TextureCoordinates}"
+                                          Rectangle="{Binding TextureCoordinates.ToRect}"
                                           Color="{Binding Color}" Margin="5"></s5GuiEditor2:TextureView>
             </Grid>
             <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto" IsVisible="{Binding #Edit.IsChecked}">
@@ -32,19 +32,20 @@
                     <TextBlock Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Height</TextBlock>
                     <NumericUpDown Grid.Column="3" Grid.Row="2" Value="{Binding TextureCoordinates.Height}" Margin="5"></NumericUpDown>
                     
-                    <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid Size X</TextBlock>
-                    <NumericUpDown Grid.Column="1" Grid.Row="3" Value="{Binding GridWidth}" Margin="5"></NumericUpDown>
-                    <TextBlock Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid Size Y</TextBlock>
-                    <NumericUpDown Grid.Column="1" Grid.Row="4" Value="{Binding GridHeight}" Margin="5"></NumericUpDown>
-                    <TextBlock Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid X</TextBlock>
-                    <NumericUpDown Grid.Column="3" Grid.Row="3" Value="{Binding GridX}" Margin="5"></NumericUpDown>
-                    <TextBlock Grid.Column="2" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid Y</TextBlock>
-                    <NumericUpDown Grid.Column="3" Grid.Row="4" Value="{Binding GridY}" Margin="5"></NumericUpDown>
+                    <TextBlock Grid.Column="2" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid Size X</TextBlock>
+                    <NumericUpDown Grid.Column="3" Grid.Row="3" Value="{Binding GridWidth}" Margin="5"></NumericUpDown>
+                    <TextBlock Grid.Column="2" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid Size Y</TextBlock>
+                    <NumericUpDown Grid.Column="3" Grid.Row="4" Value="{Binding GridHeight}" Margin="5"></NumericUpDown>
+                    <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid X</TextBlock>
+                    <NumericUpDown Grid.Column="1" Grid.Row="3" Value="{Binding GridX}" Margin="5"></NumericUpDown>
+                    <TextBlock Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Grid Y</TextBlock>
+                    <NumericUpDown Grid.Column="1" Grid.Row="4" Value="{Binding GridY}" Margin="5"></NumericUpDown>
                     
                     <TextBlock Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" TextAlignment="Right" Margin="5">Color</TextBlock>
                     <ColorPicker Grid.Column="1" Grid.Row="5" Color="{Binding Color}"></ColorPicker>
                 </Grid>
                 <s5GuiEditor2:MaterialGridSelector Grid.Column="1" Grid.Row="0" Material="{Binding .}"
+                                                   Image="{Binding Image}" Rectangle="{Binding TextureCoordinates.ToRect}"
                                                    Margin="5"></s5GuiEditor2:MaterialGridSelector>
             </Grid>
         </StackPanel>

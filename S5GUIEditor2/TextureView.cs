@@ -1,10 +1,8 @@
-using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
-using S5GUIEditor2.Widgets;
 using SkiaSharp;
 using Color = Avalonia.Media.Color;
 using Point = Avalonia.Point;
@@ -15,7 +13,7 @@ namespace S5GUIEditor2;
 internal class TextureView : Control
 {
     public static readonly StyledProperty<SKImage?> ImageProperty = AvaloniaProperty.Register<TextureView, SKImage?>(nameof(Image));
-    public static readonly StyledProperty<RectangleF> RectangleProperty = AvaloniaProperty.Register<TextureView, RectangleF>(nameof(Rectangle));
+    public static readonly StyledProperty<Rect> RectangleProperty = AvaloniaProperty.Register<TextureView, Rect>(nameof(Rectangle));
     public static readonly StyledProperty<Color> ColorProperty = AvaloniaProperty.Register<TextureView, Color>(nameof(Color));
 
     static TextureView()
@@ -34,20 +32,12 @@ internal class TextureView : Control
         }
     }
 
-    private void OnPropertyChangedRedraw(object? sender, PropertyChangedEventArgs e)
-    {
-        InvalidateVisual();
-    }
-
-    public RectangleF Rectangle
+    public Rect Rectangle
     {
         get => GetValue(RectangleProperty);
         set
         {
-            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-            Rectangle?.PropertyChanged -= OnPropertyChangedRedraw;
             SetValue(RectangleProperty, value);
-            value.PropertyChanged += OnPropertyChangedRedraw;
             InvalidateVisual();
         }
     }
@@ -90,7 +80,7 @@ internal class TextureView : Control
     {
         internal required Color C { get; init; }
         internal required SKImage? Image { get; init; }
-        internal required RectangleF Source { get; init; }
+        internal required Rect Source { get; init; }
         internal required bool WhiteBG { get; init; }
         public required Rect Bounds { get; init; }
         
@@ -107,7 +97,7 @@ internal class TextureView : Control
 
             using ISkiaSharpApiLease lease = leaseFeature.Lease();
             SKCanvas canvas = lease.SkCanvas;
-            DoRender(canvas, Source.ToRect, Image, C, Bounds, WhiteBG);
+            DoRender(canvas, Source, Image, C, Bounds, WhiteBG);
         }
 
         public bool Equals(ICustomDrawOperation? other) => false;
