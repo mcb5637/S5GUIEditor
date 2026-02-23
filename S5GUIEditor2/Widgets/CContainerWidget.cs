@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
@@ -71,4 +72,6 @@ internal class CContainerWidget : CBaseWidget
     {
         return WidgetListHandler.SubWidgets.Contains(c) || WidgetListHandler.SubWidgets.Any(x => (x as CContainerWidget)?.IsChildRecursive(c) ?? false);
     }
+
+    internal override IEnumerable<string> ReferencedFiles => WidgetListHandler.SubWidgets.SelectMany(c => c.ReferencedFiles);
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -61,4 +62,13 @@ internal class CTextButtonWidget : CButtonWidget
 
     internal override UpdateFunc UpdateData => Update;
     internal override CWidgetStringHelper TextRender => StringHelper;
+    
+    internal override IEnumerable<string> ReferencedFiles => [
+        StringHelper.Font.FontName,
+        MaterialsNormal.Texture,
+        MaterialsHover.Texture,
+        MaterialsPressed.Texture,
+        MaterialsDisabled.Texture,
+        MaterialsHighlighted.Texture,
+    ];
 }

@@ -222,4 +222,6 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal double PosSizeWMax => (ParentNode?.PositionAndSize.Width ?? 1024) - PositionAndSize.X;
     internal double PosSizeYMax => (ParentNode?.PositionAndSize.Height ?? 768) - PositionAndSize.Height;
     internal double PosSizeHMax => (ParentNode?.PositionAndSize.Height ?? 768) - PositionAndSize.Y;
+
+    internal virtual IEnumerable<string> ReferencedFiles => [];
 }

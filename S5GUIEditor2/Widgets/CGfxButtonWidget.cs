@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -51,4 +52,13 @@ internal class CGfxButtonWidget : CButtonWidget
 
     internal override UpdateFunc UpdateData => Update;
     internal override CMaterial StaticMaterial => IconMaterial;
+    
+    internal override IEnumerable<string> ReferencedFiles => [
+        MaterialsNormal.Texture,
+        MaterialsHover.Texture,
+        MaterialsPressed.Texture,
+        MaterialsDisabled.Texture,
+        MaterialsHighlighted.Texture,
+        IconMaterial.Texture,
+    ];
 }

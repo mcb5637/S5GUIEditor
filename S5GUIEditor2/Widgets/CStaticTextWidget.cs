@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
 
@@ -70,4 +71,6 @@ internal class CStaticTextWidget : CStaticWidget
 
     internal override UpdateFunc UpdateData => Update;
     internal override CWidgetStringHelper TextRender => StringHelper;
+
+    internal override IEnumerable<string> ReferencedFiles => [StringHelper.Font.FontName, BackgroundMaterial.Texture];
 }

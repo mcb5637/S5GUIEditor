@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -59,4 +60,6 @@ internal class CStaticWidget : CBaseWidget
 
     internal override CMaterial StaticMaterial => BackgroundMaterial;
     internal override CMaterial RendererMaterial => BackgroundMaterial;
+    
+    internal override IEnumerable<string> ReferencedFiles => [BackgroundMaterial.Texture];
 }

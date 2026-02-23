@@ -12,7 +12,7 @@ namespace S5GUIEditor2;
 internal class Model : INotifyPropertyChanged
 {
     private const string SettingsJson = "settings.json";
-    internal Settings Settings { get; } = ReadSettings();
+    internal Settings Settings { get; }
     
     internal ObservableCollection<CBaseWidget> CurrentWidget { get; set; } = [];
 
@@ -101,18 +101,26 @@ internal class Model : INotifyPropertyChanged
         File.WriteAllText(SettingsJson, s);
     }
 
-    private static Settings ReadSettings()
+    internal Model()
     {
+        Settings = ReadSettings(ExistingFileList);
+    }
+
+    private static Settings ReadSettings(Func<IEnumerable<string>> l)
+    {
+        Settings r;
         try
         {
             var s = File.ReadAllText(SettingsJson);
-            return JsonSerializer.Deserialize<Settings>(s, SourceGenerationContext.Default.Settings) ?? new Settings();
+            r = JsonSerializer.Deserialize<Settings>(s, SourceGenerationContext.Default.Settings) ?? new Settings();
         }
         catch (IOException e)
         {
             Console.WriteLine(e);
-            return new Settings();
+            r = new Settings();
         }
+        r.ExistingFileList = l;
+        return r;
     }
 
     internal CBaseWidget? GetById(string id)
@@ -134,5 +142,10 @@ internal class Model : INotifyPropertyChanged
             }
             return null;
         }
+    }
+
+    private IEnumerable<string> ExistingFileList()
+    {
+        return CurrentWidget.SelectMany(x => x.ReferencedFiles);
     }
 }

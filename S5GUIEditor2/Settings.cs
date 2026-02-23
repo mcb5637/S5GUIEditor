@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -9,6 +10,8 @@ public class Settings
 {
     public string WorkspacePath { get; set; } = "";
     public string? LastLoadedXml { get; set; }
+    
+    internal Func<IEnumerable<string>>? ExistingFileList { get; set; }
 
     private const string Data = "data/";
     
@@ -19,9 +22,12 @@ public class Settings
         path = Path.GetRelativePath(WorkspacePath, path);
         if (path.StartsWith('.'))
             path = path[2..];
-        path = Data + path;
+        string with = (Data + path).Replace('/', '\\');
         path = path.Replace('/', '\\');
-        return path;
+        var d = ExistingFileList?.Invoke().Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault(x =>
+            x.Equals(path, StringComparison.InvariantCultureIgnoreCase) ||
+            x.Equals(with, StringComparison.InvariantCultureIgnoreCase));
+        return d ?? with;
     }
 
     internal string ResolveS5Path(string path)
