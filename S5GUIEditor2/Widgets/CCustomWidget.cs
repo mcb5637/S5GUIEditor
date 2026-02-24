@@ -399,7 +399,7 @@ internal class CCustomWidget : CBaseWidget
         //var o = TryGet(CustomClassName);
         //if (o == null || !o.SaveForExport)
         //    MessageBox.Show($"Warning: CustomWidget {Name} of type {CustomClassName} in export, make sure this works properly.\nLook at the CppLogic.UI.ContainerWidgetCreateCustomWidgetChild documentation for more info.", "CustomWidget export");
-        return $"CppLogic.UI.ContainerWidgetCreateCustomWidgetChild(\"{parent}\", \"{Name}\", \"{CustomClassName}\", {befo}, {IntegerUserVariable0DefaultValue}, {IntegerUserVariable1DefaultValue}, {IntegerUserVariable2DefaultValue}, {IntegerUserVariable3DefaultValue}, {IntegerUserVariable4DefaultValue}, {IntegerUserVariable5DefaultValue}, \"{StringUserVariable0DefaultValue.Replace("\\", @"\\")}\", \"{StringUserVariable1DefaultValue.Replace("\\", @"\\")}\")\n";
+        return $"CppLogic.UI.ContainerWidgetCreateCustomWidgetChild(\"{parent}\", \"{Name}\", \"{CustomClassName}\", {befo}, {IntegerUserVariable0DefaultValue.Value}, {IntegerUserVariable1DefaultValue.Value}, {IntegerUserVariable2DefaultValue.Value}, {IntegerUserVariable3DefaultValue.Value}, {IntegerUserVariable4DefaultValue.Value}, {IntegerUserVariable5DefaultValue.Value}, \"{StringUserVariable0DefaultValue.Replace("\\", @"\\")}\", \"{StringUserVariable1DefaultValue.Replace("\\", @"\\")}\")\n";
     }
 
     internal static List<CustomWidgetOptions> SelectableTypes => KnownWidgetTypes;

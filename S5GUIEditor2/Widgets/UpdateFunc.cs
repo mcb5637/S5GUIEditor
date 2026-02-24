@@ -21,7 +21,7 @@ internal class UpdateFunc
     {
         return
         [
-            UpdateFunction.ToXml(),
+            new XElement("UpdateFunction", UpdateFunction.ToXml()),
             new XElement("UpdateManualFlag", UpdateManualFlag.ToString().ToLower()),
         ];
     }
