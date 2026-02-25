@@ -57,6 +57,7 @@ internal class CTextButtonWidget : CButtonWidget
         string s = base.GetLuaData(before);
         s += StringHelper.ToLua(escapedname);
         s += $"CppLogic.UI.TextButtonSetCenterText(\"{Name}\", {CppLogicCenterText.ToString().ToLower()})\n";
+        s += Update.ToLua(escapedname);
         return s;
     }
 

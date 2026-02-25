@@ -47,6 +47,7 @@ internal class CGfxButtonWidget : CButtonWidget
         string escapedname = $"\"{Name}\"";
         string s = base.GetLuaData(before);
         s += IconMaterial.ToLua(escapedname, 10);
+        s += Update.ToLua(escapedname);
         return s;
     }
 
