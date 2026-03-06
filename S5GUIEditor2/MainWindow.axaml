@@ -10,10 +10,6 @@
         WindowState="Maximized"
         Title="S5GUIEditor"
         Name="Win">
-    <Window.KeyBindings>
-        <KeyBinding Gesture="Ctrl+C" Command="{Binding #Win.WidgetCopy}"></KeyBinding>
-        <KeyBinding Gesture="Ctrl+V" Command="{Binding #Win.WidgetPaste}"></KeyBinding>
-    </Window.KeyBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
@@ -29,6 +25,10 @@
         <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="*" DockPanel.Dock="Bottom">
             <TreeView ItemsSource="{Binding CurrentWidget}" SelectedItems="{Binding SelectedWidgets}"
                       SelectionChanged="OnSelectionChanged" SelectionMode="Multiple" AutoScrollToSelectedItem="True" Margin="5">
+                <TreeView.KeyBindings>
+                    <KeyBinding Gesture="Ctrl+C" Command="{Binding #Win.WidgetCopy}"></KeyBinding>
+                    <KeyBinding Gesture="Ctrl+V" Command="{Binding #Win.WidgetPaste}"></KeyBinding>
+                </TreeView.KeyBindings>
                 <TreeView.ItemTemplate>
                     <TreeDataTemplate DataType="widgets:CBaseWidget" ItemsSource="{Binding ChildWidgets}">
                         <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto" DragDrop.AllowDrop="true"
