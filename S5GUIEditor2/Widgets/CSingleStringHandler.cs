@@ -60,5 +60,5 @@ internal class CSingleStringHandler : INotifyPropertyChanged
             return $"XGUIEng.SetText({escapedname}, \"{RawString}\", 1)\n";
     }
 
-    internal string ToRender => StringTableKey != "" ? StringTableKey : RawString;
+    internal string ToRender => StringTableKey != "" ? "ABC" : RawString;
 }
