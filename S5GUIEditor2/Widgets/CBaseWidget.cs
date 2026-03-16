@@ -142,7 +142,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         var (cn, id) = GetClass();
         e.SetAttributeValue("classname", cn);
         // ReSharper disable once StringLiteralTypo
-        e.SetAttributeValue("classid", id);
+        e.SetAttributeValue("classid", $"0x{id:x8}");
         return e;
     }
     
