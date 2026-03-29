@@ -248,7 +248,7 @@ internal partial class MainWindow : Window
         {
             if ((M.SelectedWidgets?.Count ?? 0) == 0)
                 return;
-            var s = M.SelectedWidgets?.Select(x => x.ToXml().ToString()).Aggregate((a, b) => a + "\0" + b);
+            var s = M.SelectedWidgets?.Select(x => x.ToXml().ToString()).Aggregate((a, b) => a + "\n<!--MultiWidgetSeparator-->\n" + b);
             var c = Clipboard;
             if (c == null || s == null)
                 return;
@@ -278,7 +278,7 @@ internal partial class MainWindow : Window
             var s = await c.TryGetTextAsync();
             if (s == null)
                 return;
-            foreach (var w in s.Split('\0').Where(x => !string.IsNullOrWhiteSpace(x)).
+            foreach (var w in s.Split("<!--MultiWidgetSeparator-->").Where(x => !string.IsNullOrWhiteSpace(x)).
                          Select(x => CBaseWidget.GetFromXml(XDocument.Parse(x).Element("WidgetList"), C)))
             {
                 parent.WidgetListHandler.SubWidgets.Add(w);
