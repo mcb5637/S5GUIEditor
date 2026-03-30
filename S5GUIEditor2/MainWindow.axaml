@@ -62,10 +62,14 @@
             <TabControl Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding SelectedTabItem}" Margin="5">
                 <TabItem Header="View">
                     <StackPanel>
-                        <CheckBox IsChecked="{Binding UIRenderDrag}"><TextBlock>Move Widgets</TextBlock></CheckBox>
+                        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto">
+                            <CheckBox IsChecked="{Binding UIRenderSelect}"><TextBlock>Select Widgets</TextBlock></CheckBox>
+                            <CheckBox Grid.Column="1" IsChecked="{Binding UIRenderDrag}"><TextBlock>Move Widgets</TextBlock></CheckBox>
+                        </Grid>
                         <s5GuiEditor2:GUIRender Width="1026" Height="770" RootWidget="{Binding RootWidget}"
                                                 SelectedWidgets="{Binding SelectedWidgets}" Name="Renderer"
-                                                MoveWidgets="{Binding UIRenderDrag}">
+                                                MoveWidgets="{Binding UIRenderDrag}"
+                                                SelectWidgets="{Binding UIRenderSelect}">
                         </s5GuiEditor2:GUIRender>
                     </StackPanel>
                 </TabItem>

@@ -61,6 +61,15 @@ internal class Model : INotifyPropertyChanged
             OnPropertyChanged(nameof(UIRenderDrag));
         }
     } = false;
+    internal bool UIRenderSelect
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(UIRenderSelect));
+        }
+    } = true;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

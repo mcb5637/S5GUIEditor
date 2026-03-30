@@ -18,6 +18,7 @@ internal class GUIRender : Control
     public static readonly StyledProperty<CBaseWidget?> RootWidgetProperty = AvaloniaProperty.Register<TextureView, CBaseWidget?>(nameof(RootWidget));
     public static readonly StyledProperty<ObservableCollection<CBaseWidget>?> SelectedWidgetsProperty = AvaloniaProperty.Register<TextureView, ObservableCollection<CBaseWidget>?>(nameof(SelectedWidgets));
     public static readonly StyledProperty<bool> MoveWidgetsProperty = AvaloniaProperty.Register<TextureView, bool>(nameof(MoveWidgets));
+    public static readonly StyledProperty<bool> SelectWidgetsProperty = AvaloniaProperty.Register<TextureView, bool>(nameof(SelectWidgets));
     
     internal CBaseWidget? RootWidget {
         get => GetValue(RootWidgetProperty);
@@ -40,6 +41,14 @@ internal class GUIRender : Control
         set
         {
             SetValue(MoveWidgetsProperty, value);
+            InvalidateVisual();
+        }
+    }
+    internal bool SelectWidgets {
+        get => GetValue(SelectWidgetsProperty);
+        set
+        {
+            SetValue(SelectWidgetsProperty, value);
             InvalidateVisual();
         }
     }
@@ -101,14 +110,18 @@ internal class GUIRender : Control
         var n = GetWidgetAtPos(p);
         if (n == null)
             return;
-        SelectedWidgets?.Clear();
-        SelectedWidgets?.Add(n);
-        InvalidateVisual();
+        if (SelectWidgets)
+        {
+            SelectedWidgets?.Clear();
+            SelectedWidgets?.Add(n);
+            InvalidateVisual();
+        }
         if (MoveWidgets)
         {
-            if (n.ParentNode == null)
+            var s = SelectedWidgets?.FirstOrDefault();
+            if (s?.ParentNode == null)
                 return;
-            Move = (n, p, new Point(n.PositionAndSize.X, n.PositionAndSize.Y));
+            Move = (s, p, new Point(s.PositionAndSize.X, s.PositionAndSize.Y));
         }
     }
 
