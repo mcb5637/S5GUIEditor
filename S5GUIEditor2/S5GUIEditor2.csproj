@@ -33,4 +33,7 @@
       <None Remove="resources\bg.png" />
       <EmbeddedResource Include="resources\bg.png" />
     </ItemGroup>
+    <ItemGroup>
+        <AvaloniaResource Include="resources/artwork.ico" />
+    </ItemGroup>
 </Project>

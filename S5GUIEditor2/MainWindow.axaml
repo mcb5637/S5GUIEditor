@@ -9,7 +9,8 @@
         x:DataType="s5GuiEditor2:Model"
         WindowState="Maximized"
         Title="S5GUIEditor"
-        Name="Win">
+        Name="Win"
+        Icon="resources/artwork.ico">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
