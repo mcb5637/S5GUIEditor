@@ -24,16 +24,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Reference Include="bbaLib">
-            <HintPath>lib\bbaLib.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="resources\bg.png" />
       <EmbeddedResource Include="resources\bg.png" />
     </ItemGroup>
     <ItemGroup>
         <AvaloniaResource Include="resources/artwork.ico" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\bbaToolS5\bbaLib\bbaLib.csproj" />
     </ItemGroup>
 </Project>

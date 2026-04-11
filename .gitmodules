@@ -1,0 +1,3 @@
+[submodule "bbaToolS5"]
+	path = bbaToolS5
+	url = https://github.com/mcb5637/bbaToolS5.git
