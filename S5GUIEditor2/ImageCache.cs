@@ -77,11 +77,7 @@ internal class ImageCache
             using var data = SKData.Create(ptr, newDataLen, (_, _) => handle.Free());
             return SKImage.FromPixels(imageInfo, data, stride);
         }
-        catch (IOException)
-        {
-            return null;
-        }
-        catch (ArgumentException e)
+        catch (Exception e)
         {
             Task.Run(async () =>
             {
