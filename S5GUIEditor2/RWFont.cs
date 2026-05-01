@@ -1,8 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Threading;
+using MsBox.Avalonia;
 using SkiaSharp;
 
 namespace S5GUIEditor2;
@@ -16,45 +19,61 @@ internal class RWFont
 
     internal static RWFont? Load(string path, ImageCache c)
     {
-        if (string.IsNullOrEmpty(path))
-            return null;
-        string resolvedPath = c.S!.ResolveS5Path(path);
-        using var iter = File.ReadLines(resolvedPath).GetEnumerator();
-        if (!iter.MoveNext())
-            return null; // metrics
-        if (!iter.MoveNext())
-            return null;
-        string imagePath = Path.GetDirectoryName(path.Replace('\\', '/'))!.Replace('/', '\\') + "\\" + iter.Current;
-        SKImage? img = new[]{".dds", ".png"}.Select(x => c.Get(imagePath + x)).FirstOrDefault(x => x != null);
-        if (img == null)
-            return null;
-        if (!iter.MoveNext())
-            return null; // 0
-        Rect[] rects = new Rect[256];
-        while (iter.MoveNext())
+        try
         {
-            string[] l = iter.Current.Split(['\t', ' '], StringSplitOptions.RemoveEmptyEntries);
-            if (l.Length < 5)
-                continue;
-            
-            int ascii = int.Parse(l[0]);
-            if (ascii >= 256)
-                continue;
+            if (string.IsNullOrEmpty(path))
+                return null;
+            string resolvedPath = c.S!.ResolveS5Path(path);
+            if (!File.Exists(resolvedPath))
+                return null;
+            using var iter = File.ReadLines(resolvedPath).GetEnumerator();
+            if (!iter.MoveNext())
+                return null; // metrics
+            if (!iter.MoveNext())
+                return null;
+            string imagePath = Path.GetDirectoryName(path.Replace('\\', '/'))!.Replace('/', '\\') + "\\" + iter.Current;
+            SKImage? img = new[] { ".dds", ".png" }.Select(x => c.Get(imagePath + x)).FirstOrDefault(x => x != null);
+            if (img == null)
+                return null;
+            if (!iter.MoveNext())
+                return null; // 0
+            Rect[] rects = new Rect[256];
+            while (iter.MoveNext())
+            {
+                string[] l = iter.Current.Split(['\t', ' '], StringSplitOptions.RemoveEmptyEntries);
+                if (l.Length < 5)
+                    continue;
 
-            var x = int.Parse(l[1]) - 1;
-            var y = int.Parse(l[2]);
-            rects[ascii] = new Rect(x / (double)img.Width,
-                y / (double)img.Height,
-                (1+int.Parse(l[3]) - x) / (double)img.Width,
-                (1+int.Parse(l[4]) - y) / (double)img.Height
-            );
+                int ascii = int.Parse(l[0]);
+                if (ascii >= 256)
+                    continue;
+
+                var x = int.Parse(l[1]) - 1;
+                var y = int.Parse(l[2]);
+                rects[ascii] = new Rect(x / (double)img.Width,
+                    y / (double)img.Height,
+                    (1 + int.Parse(l[3]) - x) / (double)img.Width,
+                    (1 + int.Parse(l[4]) - y) / (double)img.Height
+                );
+            }
+
+            return new RWFont()
+            {
+                Image = img,
+                Positions = rects,
+            };
         }
-
-        return new RWFont()
+        catch (Exception e)
         {
-            Image = img,
-            Positions = rects,
-        };
+            Task.Run(async () =>
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await MessageBoxManager.GetMessageBoxStandard("exception loading Font", e.ToString()).ShowAsync();
+                });
+            });
+            return null;
+        }
     }
 
     internal Point Render(SKCanvas canvas, string s, Point origin, Point scale, Color color)

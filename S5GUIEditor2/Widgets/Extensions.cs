@@ -1,3 +1,4 @@
+using System.Globalization;
 using Color = Avalonia.Media.Color;
 using System.Xml.Linq;
 
@@ -9,12 +10,12 @@ internal static class ExtensionsColor
     {
         internal float? TryParseFloat()
         {
-            return float.TryParse(s, out var result) ? result : null;
+            return float.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out var result) ? result : null;
         }
 
         internal byte? TryParseByte()
         {
-            return byte.TryParse(s, out var result) ? result : null;
+            return byte.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) ? result : null;
         }
 
         internal bool? TryParseBool()
@@ -24,7 +25,7 @@ internal static class ExtensionsColor
 
         internal int? TryParseInt()
         {
-            return int.TryParse(s, out var result) ? result : null;
+            return int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result) ? result : null;
         }
     }
 
