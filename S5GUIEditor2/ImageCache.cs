@@ -83,7 +83,7 @@ internal class ImageCache
             {
                 await Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    await MessageBoxManager.GetMessageBoxStandard("exception", e.ToString()).ShowAsync();
+                    await MessageBoxManager.GetMessageBoxStandard("exception loading Image", e.ToString()).ShowAsync();
                 });
             });
             return null;

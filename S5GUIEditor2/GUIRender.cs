@@ -1,13 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
+using Avalonia.Threading;
+using MsBox.Avalonia;
 using S5GUIEditor2.Widgets;
 using SkiaSharp;
 
@@ -62,20 +66,34 @@ internal class GUIRender : Control
     
     public sealed override void Render(DrawingContext context)
     {
-        if (RootWidget == null)
-            return;
-        var at = PointedAt;
-        if (Move != null)
+        try
         {
-            at = Move.Value.Item1.ParentNode;
+            if (RootWidget == null)
+                return;
+            var at = PointedAt;
+            if (Move != null)
+            {
+                at = Move.Value.Item1.ParentNode;
+            }
+
+            context.Custom(new CustomRender()
+            {
+                Bounds = new Rect(0, 0, Bounds.Width, Bounds.Height),
+                RootWidget = RootWidget,
+                SelectedWidgets = SelectedWidgets,
+                PointedAt = at,
+            });
         }
-        context.Custom(new CustomRender()
+        catch (Exception e)
         {
-            Bounds = new Rect(0, 0, Bounds.Width, Bounds.Height),
-            RootWidget = RootWidget,
-            SelectedWidgets = SelectedWidgets,
-            PointedAt = at,
-        });
+            Task.Run(async () =>
+            {
+                await Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await MessageBoxManager.GetMessageBoxStandard("exception Render", e.ToString()).ShowAsync();
+                });
+            });
+        }
     }
 
     private CBaseWidget? GetWidgetAtPos(Point p)
@@ -176,23 +194,38 @@ internal class GUIRender : Control
 
         public void Render(ImmediateDrawingContext context)
         {
-            if (context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) is not ISkiaSharpApiLeaseFeature leaseFeature)
-                return;
-
-            using ISkiaSharpApiLease lease = leaseFeature.Lease();
-            SKCanvas canvas = lease.SkCanvas;
-
-            Scale = new Point((Bounds.Width-2) / RootWidget.PositionAndSize.Width, (Bounds.Height-2) / RootWidget.PositionAndSize.Height);
-            
-            canvas.DrawRect(Bounds.ToSKRect(), new SKPaint()
+            try
             {
-                Color = SKColors.Black,
-                Style = SKPaintStyle.Fill,
-            });
-            canvas.DrawImage(Background, new Point(Bounds.X+1, Bounds.Y+1).ToSKPoint());
-            
-            DoRender(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);
-            DoRenderBorder(canvas, new Point(Bounds.X+1, Bounds.Y+1), RootWidget);
+                if (context.TryGetFeature(typeof(ISkiaSharpApiLeaseFeature)) is not ISkiaSharpApiLeaseFeature
+                    leaseFeature)
+                    return;
+
+                using ISkiaSharpApiLease lease = leaseFeature.Lease();
+                SKCanvas canvas = lease.SkCanvas;
+
+                Scale = new Point((Bounds.Width - 2) / RootWidget.PositionAndSize.Width,
+                    (Bounds.Height - 2) / RootWidget.PositionAndSize.Height);
+
+                canvas.DrawRect(Bounds.ToSKRect(), new SKPaint()
+                {
+                    Color = SKColors.Black,
+                    Style = SKPaintStyle.Fill,
+                });
+                canvas.DrawImage(Background, new Point(Bounds.X + 1, Bounds.Y + 1).ToSKPoint());
+
+                DoRender(canvas, new Point(Bounds.X + 1, Bounds.Y + 1), RootWidget);
+                DoRenderBorder(canvas, new Point(Bounds.X + 1, Bounds.Y + 1), RootWidget);
+            }
+            catch (Exception e)
+            {
+                Task.Run(async () =>
+                {
+                    await Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await MessageBoxManager.GetMessageBoxStandard("exception Draw", e.ToString()).ShowAsync();
+                    });
+                });
+            }
         }
 
         private void DoRender(SKCanvas canvas, Point topLeft, CBaseWidget wid)
