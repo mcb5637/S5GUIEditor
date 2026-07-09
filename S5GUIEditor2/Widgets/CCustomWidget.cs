@@ -349,6 +349,10 @@ internal class CCustomWidget : CBaseWidget
             IntUserVar0 = new CustomWidgetOptionsIntVar(){
                 Description = "int spacing",
             },
+            IntUserVar1 = new CustomWidgetOptionsIntVar(){
+                Description = "int mode 0->vertical (normal), 1->horizontal, 2->vertical 2D",
+                Modes = [new NamedInt("vertical (normal)", 0),  new NamedInt("horizontal", 1), new NamedInt("vertical 2D", 2)]
+            },
             StringUserVar0 = "slider widget (optional)",
             StringUserVar1 = "scrollable widget",
             SaveForExport = true,
