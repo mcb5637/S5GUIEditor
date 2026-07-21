@@ -68,7 +68,7 @@ internal partial class MainWindow : Window
             });
             if (r.Count == 0)
                 return;
-            LoadXml(r[0].Path.AbsolutePath);
+            LoadXml(r[0].Path.ToString());
         }
         catch (Exception ex)
         {
