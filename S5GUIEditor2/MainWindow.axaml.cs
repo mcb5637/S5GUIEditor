@@ -143,7 +143,7 @@ internal partial class MainWindow : Window
             });
             if (r.Count == 0)
                 return;
-            M.Settings.WorkspacePath = r[0].Path.AbsolutePath;
+            M.Settings.WorkspacePath = r[0].Path.GetComponents(UriComponents.Path, UriFormat.Unescaped);
             M.StoreSettings();
         }
         catch (Exception ex)
