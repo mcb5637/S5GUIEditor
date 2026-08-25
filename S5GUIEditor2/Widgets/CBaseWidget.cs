@@ -190,9 +190,9 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         if (ParentNode == null)
             throw new InvalidOperationException("no parent widget found");
         string s = GetLuaCreator(ParentNode.Name, before);
-        s += $"CppLogic.UI.WidgetSetPositionAndSize({escapedname}, {PositionAndSize.X}, {PositionAndSize.Y}, {PositionAndSize.Width}, {PositionAndSize.Height})\n";
+        s += FormattableString.Invariant($"CppLogic.UI.WidgetSetPositionAndSize({escapedname}, {PositionAndSize.X}, {PositionAndSize.Y}, {PositionAndSize.Width}, {PositionAndSize.Height})\n");
         s += $"XGUIEng.ShowWidget({escapedname}, {(IsShown ? "1" : "0")})\n";
-        s += $"CppLogic.UI.WidgetSetBaseData({escapedname}, {ZPriority}, {ForceToHandleMouseEventsFlag.ToString().ToLower()}, {ForceToNeverBeFoundFlag.ToString().ToLower()})\n";
+        s += FormattableString.Invariant($"CppLogic.UI.WidgetSetBaseData({escapedname}, {ZPriority}, {ForceToHandleMouseEventsFlag.ToString().ToLower()}, {ForceToNeverBeFoundFlag.ToString().ToLower()})\n");
         if (Group.Length > 0)
             s += $"CppLogic.UI.WidgetSetGroup({escapedname}, \"{Group}\")\n";
         return s;

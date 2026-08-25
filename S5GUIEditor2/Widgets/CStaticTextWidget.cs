@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
@@ -65,7 +66,7 @@ internal class CStaticTextWidget : CStaticWidget
         s += StringHelper.ToLua(escapedname);
         s += Update.ToLua(escapedname);
         s += $"XGUIEng.SetLinesToPrint({escapedname}, {FirstLineToPrint}, {NumberOfLinesToPrint})\n";
-        s += $"CppLogic.UI.StaticTextWidgetSetLineDistanceFactor({escapedname}, {LineDistanceFactor})\n";
+        s += FormattableString.Invariant($"CppLogic.UI.StaticTextWidgetSetLineDistanceFactor({escapedname}, {LineDistanceFactor})\n");
         return s;
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Xml.Linq;
 using Avalonia.Media;
@@ -145,10 +146,10 @@ internal class CMaterial : INotifyPropertyChanged
     public string ToLua(string escapedname, int i)
     {
         RectangleF r = TextureCoordinates;
-        string s = $"CppLogic.UI.WidgetMaterialSetTextureCoordinates({escapedname}, {i}, {r.X}, {r.Y}, {r.Width}, {r.Height})\n";
+        string s = FormattableString.Invariant($"CppLogic.UI.WidgetMaterialSetTextureCoordinates({escapedname}, {i}, {r.X}, {r.Y}, {r.Width}, {r.Height})\n");
         if (Texture.Length > 0)
-            s += $"XGUIEng.SetMaterialTexture({escapedname}, {i}, \"{Texture.Replace("\\", @"\\")}\")\n";
-        s += $"XGUIEng.SetMaterialColor({escapedname}, {i}, {Color.R}, {Color.G}, {Color.B}, {Color.A})\n";
+            s += FormattableString.Invariant($"XGUIEng.SetMaterialTexture({escapedname}, {i}, \"{Texture.Replace("\\", @"\\")}\")\n");
+        s += FormattableString.Invariant($"XGUIEng.SetMaterialColor({escapedname}, {i}, {Color.R}, {Color.G}, {Color.B}, {Color.A})\n");
         return s;
     }
 }

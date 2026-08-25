@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Linq;
@@ -58,7 +59,7 @@ internal class CWidgetStringHelper : INotifyPropertyChanged
             font = "data\\" + font;
         font = font.Replace("\\", "\\\\");
         string s = $"CppLogic.UI.WidgetSetFont({escapedname}, \"{font}\")\n";
-        s += $"CppLogic.UI.WidgetSetStringFrameDistance({escapedname}, {StringFrameDistance})\n";
+        s += FormattableString.Invariant($"CppLogic.UI.WidgetSetStringFrameDistance({escapedname}, {StringFrameDistance})\n");
         s += String.ToLua(escapedname);
         s += $"XGUIEng.SetTextColor({escapedname}, {Color.R}, {Color.G}, {Color.B}, {Color.A})\n";
         return s; 

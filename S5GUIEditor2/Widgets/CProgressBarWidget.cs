@@ -1,3 +1,4 @@
+using System;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -46,7 +47,7 @@ internal class CProgressBarWidget : CStaticWidget
     {
         string escapedname = $"\"{Name}\"";
         string s = base.GetLuaData(before);
-        s += $"XGUIEng.SetProgressBarValues({escapedname}, {ProgressBarValue}, {ProgressBarLimit})\n";
+        s += FormattableString.Invariant($"XGUIEng.SetProgressBarValues({escapedname}, {ProgressBarValue}, {ProgressBarLimit})\n");
         s += Update.ToLua(escapedname);
         return s;
     }
