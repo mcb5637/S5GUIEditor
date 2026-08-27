@@ -38,8 +38,7 @@ internal class CToolTipHelper
     
     public string ToLua(string escapedname)
     {
-        string twid = TargetWidget.Length == 0 ? "nil" : $"\"{TargetWidget}\"";
-        string s = $"CppLogic.UI.WidgetSetTooltipData({escapedname}, {twid}, {ControlTargetWidgetDisplayState.ToString().ToLower()}, {ToolTipEnabledFlag.ToString().ToLower()})\n";
+        string s = "";
         if (UpdateFunction.LuaCommand.Length > 0 && !UpdateFunction.LuaCommand.StartsWith("--"))
             s += $"CppLogic.UI.WidgetOverrideTooltipFunc({escapedname}, function() {UpdateFunction.LuaCommand} end)\n";
         if (ToolTipString.RawString.Length > 0)
@@ -47,5 +46,11 @@ internal class CToolTipHelper
         else if (ToolTipString.StringTableKey.Length > 0)
             s += $"CppLogic.UI.WidgetSetTooltipString({escapedname}, \"{ToolTipString.StringTableKey}\", true)\n";
         return s;
+    }
+
+    public string ToLuaRef(string escapedname)
+    {
+        string twid = TargetWidget.Length == 0 ? "nil" : $"\"{TargetWidget}\"";
+        return $"CppLogic.UI.WidgetSetTooltipData({escapedname}, {twid}, {ControlTargetWidgetDisplayState.ToString().ToLower()}, {ToolTipEnabledFlag.ToString().ToLower()})\n";
     }
 }

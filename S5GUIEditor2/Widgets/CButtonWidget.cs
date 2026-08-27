@@ -100,6 +100,10 @@ internal class CButtonWidget : CBaseWidget
         s += ToolTipHelper.ToLua(escapedname);
         return s;
     }
+    internal override string GetLuaDataRef(string escapedname)
+    {
+        return ToolTipHelper.ToLuaRef(escapedname);
+    }
 
     internal override CToolTipHelper Tooltip => ToolTipHelper;
 

@@ -178,6 +178,8 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
                 bef = $"\"{n.Name}\"";
             r += w.GetLuaData(bef);
         }
+        foreach (var w in widgets)
+            r += w.GetLuaDataRef($"\"{w.Name}\"");
         return r;
     }
     internal virtual string GetLuaAssert()
@@ -196,6 +198,10 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         if (Group.Length > 0)
             s += $"CppLogic.UI.WidgetSetGroup({escapedname}, \"{Group}\")\n";
         return s;
+    }
+    internal virtual string GetLuaDataRef(string escapedname)
+    {
+        return "";
     }
 
     internal virtual ObservableCollection<CBaseWidget> ChildWidgets => [];

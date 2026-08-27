@@ -65,6 +65,13 @@ internal class CContainerWidget : CBaseWidget
             s += w.GetLuaData("nil");
         return s;
     }
+    internal override string GetLuaDataRef(string escapedname)
+    {
+        string s = "";
+        foreach (var w in WidgetListHandler.SubWidgets)
+            s += w.GetLuaDataRef($"\"{w.Name}\"");
+        return s;
+    }
     
     internal override ObservableCollection<CBaseWidget> ChildWidgets => WidgetListHandler.SubWidgets;
 
