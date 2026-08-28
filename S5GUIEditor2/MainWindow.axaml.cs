@@ -12,6 +12,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using bbaLib;
 using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using S5GUIEditor2.Widgets;
 
 namespace S5GUIEditor2;
@@ -178,6 +179,18 @@ internal partial class MainWindow : Window
                 if (!File.Exists(p))
                     continue;
                 a.ReadBba(p, add);
+            }
+
+            if (Directory.Exists(M.Settings.WorkspacePath))
+            {
+                var r = await MessageBoxManager
+                    .GetMessageBoxStandard("override", "override " + M.Settings.WorkspacePath, ButtonEnum.YesNo)
+                    .ShowAsync();
+                if (r != ButtonResult.Yes)
+                {
+                    await MessageBoxManager.GetMessageBoxStandard("canceled", "canceled").ShowAsync();
+                    return;
+                }
             }
             a.WriteToFolder(M.Settings.WorkspacePath, null, _ => true);
             
