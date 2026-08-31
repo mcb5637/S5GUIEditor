@@ -617,4 +617,12 @@ internal partial class MainWindow : Window
             await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
         }
     }
+
+    private void Validate_Clicked(object? sender, RoutedEventArgs e)
+    {
+        var w = M.ValidateWid;
+        if (w == null)
+            return;
+        M.SetSelected(w);
+    }
 }

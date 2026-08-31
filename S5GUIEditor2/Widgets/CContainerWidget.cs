@@ -81,4 +81,22 @@ internal class CContainerWidget : CBaseWidget
     }
 
     internal override IEnumerable<string> ReferencedFiles => WidgetListHandler.SubWidgets.SelectMany(c => c.ReferencedFiles);
+
+    internal override (string, CBaseWidget)? Validate
+    {
+        get
+        {
+            var r = base.Validate;
+            if (r != null)
+                return r;
+            foreach (var c in WidgetListHandler.SubWidgets)
+            {
+                r = c.Validate;
+                if (r != null)
+                    return r;
+            }
+
+            return null;
+        }
+    }
 }

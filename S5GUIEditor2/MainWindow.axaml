@@ -59,13 +59,21 @@
                         </Grid>
                     </TreeDataTemplate>
                 </TreeView.ItemTemplate>
+                <TreeView.Styles>
+                    <Style Selector="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" x:DataType="widgets:CBaseWidget"/>
+                    </Style>
+                </TreeView.Styles>
             </TreeView>
             <TabControl Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding SelectedTabItem}" Margin="5">
                 <TabItem Header="View">
                     <StackPanel>
-                        <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto">
-                            <CheckBox IsChecked="{Binding UIRenderSelect}"><TextBlock>Select Widgets</TextBlock></CheckBox>
-                            <CheckBox Grid.Column="1" IsChecked="{Binding UIRenderDrag}"><TextBlock>Move Widgets</TextBlock></CheckBox>
+                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto">
+                            <CheckBox IsChecked="{Binding UIRenderSelect}" Margin="5"><TextBlock>Select Widgets</TextBlock></CheckBox>
+                            <CheckBox Grid.Column="1" IsChecked="{Binding UIRenderDrag}" Margin="5"><TextBlock>Move Widgets</TextBlock></CheckBox>
+                            <Button Grid.Column="2" IsVisible="{Binding ValidateFail}" Click="Validate_Clicked" Margin="5" Background="Red">
+                                <TextBlock Text="{Binding ValidateMsg}" Background="Transparent"></TextBlock>
+                            </Button>
                         </Grid>
                         <s5GuiEditor2:GUIRender Width="1026" Height="770" RootWidget="{Binding RootWidget}"
                                                 SelectedWidgets="{Binding SelectedWidgets}" Name="Renderer"

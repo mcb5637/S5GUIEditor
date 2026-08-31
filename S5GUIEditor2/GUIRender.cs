@@ -19,10 +19,10 @@ namespace S5GUIEditor2;
 
 internal class GUIRender : Control
 {
-    public static readonly StyledProperty<CBaseWidget?> RootWidgetProperty = AvaloniaProperty.Register<TextureView, CBaseWidget?>(nameof(RootWidget));
-    public static readonly StyledProperty<ObservableCollection<CBaseWidget>?> SelectedWidgetsProperty = AvaloniaProperty.Register<TextureView, ObservableCollection<CBaseWidget>?>(nameof(SelectedWidgets));
-    public static readonly StyledProperty<bool> MoveWidgetsProperty = AvaloniaProperty.Register<TextureView, bool>(nameof(MoveWidgets));
-    public static readonly StyledProperty<bool> SelectWidgetsProperty = AvaloniaProperty.Register<TextureView, bool>(nameof(SelectWidgets));
+    public static readonly StyledProperty<CBaseWidget?> RootWidgetProperty = AvaloniaProperty.Register<GUIRender, CBaseWidget?>(nameof(RootWidget));
+    public static readonly StyledProperty<ObservableCollection<CBaseWidget>?> SelectedWidgetsProperty = AvaloniaProperty.Register<GUIRender, ObservableCollection<CBaseWidget>?>(nameof(SelectedWidgets));
+    public static readonly StyledProperty<bool> MoveWidgetsProperty = AvaloniaProperty.Register<GUIRender, bool>(nameof(MoveWidgets));
+    public static readonly StyledProperty<bool> SelectWidgetsProperty = AvaloniaProperty.Register<GUIRender, bool>(nameof(SelectWidgets));
     
     internal CBaseWidget? RootWidget {
         get => GetValue(RootWidgetProperty);
@@ -56,6 +56,7 @@ internal class GUIRender : Control
             InvalidateVisual();
         }
     }
+    private Model? M => DataContext as Model;
 
     private static readonly SKImage Background;
 
@@ -130,8 +131,7 @@ internal class GUIRender : Control
             return;
         if (SelectWidgets)
         {
-            SelectedWidgets?.Clear();
-            SelectedWidgets?.Add(n);
+            M?.SetSelected(n);
             InvalidateVisual();
         }
         if (MoveWidgets)

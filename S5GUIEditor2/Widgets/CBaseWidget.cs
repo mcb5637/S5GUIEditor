@@ -45,6 +45,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         {
             field = value;
             OnPropertyChanged(nameof(Name));
+            ReValidate();
         }
     } = "";
 
@@ -58,6 +59,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
             field = value;
             field.PropertyChanged += OnPosSizeChanged;
             OnPropertyChanged(nameof(PositionAndSize));
+            ReValidate();
         }
     } = new();
     internal bool IsShown { get; set; } = true;
@@ -222,6 +224,7 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         OnPropertyChanged(nameof(PosSizeWMax));
         OnPropertyChanged(nameof(PosSizeYMax));
         OnPropertyChanged(nameof(PosSizeHMax));
+        ReValidate();
     }
     
     internal double PosSizeXMax => (ParentNode?.PositionAndSize.Width ?? 1024) - PositionAndSize.Width;
@@ -230,4 +233,32 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     internal double PosSizeHMax => (ParentNode?.PositionAndSize.Height ?? 768) - PositionAndSize.Y;
 
     internal virtual IEnumerable<string> ReferencedFiles => [];
+
+    internal virtual (string, CBaseWidget)? Validate
+    {
+        get
+        {
+            if (PositionAndSize.X > PosSizeXMax || PositionAndSize.Y > PosSizeYMax)
+                return ($"{Name} out of parents bounds", this);
+            return null;
+        }
+    }
+
+    protected void ReValidate()
+    {
+        var w = this;
+        while (w.ParentNode != null)
+            w = w.ParentNode;
+        w.OnPropertyChanged(nameof(Validate));
+    }
+
+    internal bool IsExpanded
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(IsExpanded));
+        }
+    }
 }

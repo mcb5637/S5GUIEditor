@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -13,8 +14,55 @@ internal class Model : INotifyPropertyChanged
 {
     private const string SettingsJson = "settings.json";
     internal Settings Settings { get; }
-    
-    internal ObservableCollection<CBaseWidget> CurrentWidget { get; set; } = [];
+
+    internal ObservableCollection<CBaseWidget> CurrentWidget
+    {
+        get;
+        set
+        {
+            field?.CollectionChanged -= CollectionChanged;
+            field = value;
+            field.CollectionChanged += CollectionChanged;
+            return;
+
+            void CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+            {
+                Validate();
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        if (e.NewItems != null)
+                            foreach (var a in e.NewItems)
+                                (a as CBaseWidget)?.PropertyChanged += PropertyChanged;
+                        break;
+                    case NotifyCollectionChangedAction.Reset:
+                    case NotifyCollectionChangedAction.Remove:
+                        if (e.OldItems != null)
+                            foreach (var a in e.OldItems)
+                                (a as CBaseWidget)?.PropertyChanged -= PropertyChanged;
+                        break;
+                    case NotifyCollectionChangedAction.Replace:
+                        if (e.OldItems != null)
+                            foreach (var a in e.OldItems)
+                                (a as CBaseWidget)?.PropertyChanged -= PropertyChanged;
+                        if (e.NewItems != null)
+                            foreach (var a in e.NewItems)
+                                (a as CBaseWidget)?.PropertyChanged += PropertyChanged;
+                        break;
+                    case NotifyCollectionChangedAction.Move:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            
+            void PropertyChanged(object? o, PropertyChangedEventArgs propertyChangedEventArgs)
+            {
+                if (propertyChangedEventArgs.PropertyName == nameof(CBaseWidget.Validate))
+                    Validate();
+            }
+        }
+    }
 
     internal ObservableCollection<CBaseWidget>? SelectedWidgets { get; set; } = [];
 
@@ -112,6 +160,7 @@ internal class Model : INotifyPropertyChanged
 
     internal Model()
     {
+        CurrentWidget = [];
         Settings = ReadSettings(ExistingFileList);
     }
 
@@ -156,5 +205,33 @@ internal class Model : INotifyPropertyChanged
     private IEnumerable<string> ExistingFileList()
     {
         return CurrentWidget.SelectMany(x => x.ReferencedFiles);
+    }
+
+    private (string, CBaseWidget)? ValidateResult = null;
+
+    private void Validate()
+    {
+        ValidateResult = RootWidget?.Validate;
+        OnPropertyChanged(nameof(ValidateFail));
+        OnPropertyChanged(nameof(ValidateMsg));
+    }
+
+    internal string? ValidateMsg => ValidateResult?.Item1;
+    internal CBaseWidget? ValidateWid => ValidateResult?.Item2;
+    internal bool ValidateFail => ValidateResult != null;
+
+    internal void SetSelected(CBaseWidget? widget)
+    {
+        SelectedWidgets?.Clear();
+        if (widget != null)
+        {
+            SelectedWidgets?.Add(widget);
+            widget.IsExpanded = true;
+            while (widget.ParentNode != null)
+            {
+                widget = widget.ParentNode;
+                widget.IsExpanded = true;
+            }
+        }
     }
 }

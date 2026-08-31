@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -25,5 +26,35 @@ internal class CProjectWidget : CContainerWidget
     protected override string GetLuaCreator(string parent, string befo)
     {
         throw new InvalidOperationException("cannot create root widget");
+    }
+
+    internal override (string, CBaseWidget)? Validate
+    {
+        get
+        {
+            var r = base.Validate;
+            if (r != null)
+                return r;
+
+            Dictionary<string, CBaseWidget> nameLookup = [];
+            
+            return Check(this);
+
+            (string, CBaseWidget)? Check(CBaseWidget w)
+            {
+                if (!nameLookup.TryAdd(w.Name, w))
+                    return ($"{w.Name} exists multiple times", w);
+                if (w is CContainerWidget cw)
+                {
+                    foreach (var c in cw.WidgetListHandler.SubWidgets)
+                    {
+                        var r2 = Check(c);
+                        if (r2 != null)
+                            return r2;
+                    }
+                }
+                return null;
+            }
+        }
     }
 }
