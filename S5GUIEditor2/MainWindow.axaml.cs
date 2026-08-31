@@ -64,12 +64,17 @@ internal partial class MainWindow : Window
             var r = await storage.OpenFilePickerAsync(new()
             {
                 Title = "Load GUI xml",
-                SuggestedStartLocation = await storage.TryGetFolderFromPathAsync(Path.Combine(M.Settings.WorkspacePath, "menu/projects")),
+                SuggestedStartLocation =
+                    await storage.TryGetFolderFromPathAsync(Path.Combine(M.Settings.WorkspacePath, "menu/projects")),
                 FileTypeFilter = FileTypesXml,
             });
             if (r.Count == 0)
                 return;
             LoadXml(r[0].Path.ToString());
+        }
+        catch (FileNotFoundException ex)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("could not find file", ex.ToString()).ShowAsync();
         }
         catch (Exception ex)
         {
@@ -94,9 +99,13 @@ internal partial class MainWindow : Window
                 return;
             XDocument xd = new XDocument();
             xd.Add(M.CurrentWidget.FirstOrDefault()?.ToXml());
-            xd.Save(r.Path.AbsolutePath);
-            Settings.LastLoadedXml = r.Path.AbsolutePath;
+            xd.Save(r.Path.LocalPath);
+            Settings.LastLoadedXml = r.Path.ToString();
             M.StoreSettings();
+        }
+        catch (FileNotFoundException ex)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("could not find file", ex.ToString()).ShowAsync();
         }
         catch (Exception ex)
         {
