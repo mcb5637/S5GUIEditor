@@ -261,4 +261,35 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
             OnPropertyChanged(nameof(IsExpanded));
         }
     }
+
+    internal (double, double) GlobalPosition
+    {
+        get
+        {
+            var x = PositionAndSize.X;
+            var y = PositionAndSize.Y;
+            var p = ParentNode;
+            while (p != null)
+            {
+                x += p.PositionAndSize.X;
+                y += p.PositionAndSize.Y;
+                p = p.ParentNode;
+            }
+            return (x, y);
+        }
+        set
+        {
+            var x = value.Item1;
+            var y = value.Item2;
+            var p = ParentNode;
+            while (p != null)
+            {
+                x -= p.PositionAndSize.X;
+                y -= p.PositionAndSize.Y;
+                p = p.ParentNode;
+            }
+            PositionAndSize.X = x;
+            PositionAndSize.Y = y;
+        }
+    }
 }

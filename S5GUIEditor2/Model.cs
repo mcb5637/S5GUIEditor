@@ -119,6 +119,16 @@ internal class Model : INotifyPropertyChanged
         }
     } = true;
 
+    internal bool UIReparentKeepGlobalPos
+    {
+        get;
+        set
+        {
+            field = value;
+            OnPropertyChanged(nameof(UIReparentKeepGlobalPos));
+        }
+    }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     internal void OnPropertyChanged(string propertyName)

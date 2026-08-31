@@ -68,10 +68,11 @@
             <TabControl Grid.Column="1" Grid.Row="0" SelectedIndex="{Binding SelectedTabItem}" Margin="5">
                 <TabItem Header="View">
                     <StackPanel>
-                        <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto">
+                        <Grid ColumnDefinitions="Auto,Auto,Auto,Auto" RowDefinitions="Auto">
                             <CheckBox IsChecked="{Binding UIRenderSelect}" Margin="5"><TextBlock>Select Widgets</TextBlock></CheckBox>
                             <CheckBox Grid.Column="1" IsChecked="{Binding UIRenderDrag}" Margin="5"><TextBlock>Move Widgets</TextBlock></CheckBox>
-                            <Button Grid.Column="2" IsVisible="{Binding ValidateFail}" Click="Validate_Clicked" Margin="5" Background="Red">
+                            <CheckBox Grid.Column="2" IsChecked="{Binding UIReparentKeepGlobalPos}" Margin="5"><TextBlock>Keep Global Position</TextBlock></CheckBox>
+                            <Button Grid.Column="3" IsVisible="{Binding ValidateFail}" Click="Validate_Clicked" Margin="5" Background="Red">
                                 <TextBlock Text="{Binding ValidateMsg}" Background="Transparent"></TextBlock>
                             </Button>
                         </Grid>

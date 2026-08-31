@@ -551,13 +551,16 @@ internal partial class MainWindow : Window
             var (target, pos, move) = CheckDropTarget(sender, e);
             if (target == null || move == null)
                 return;
-            
+
+            var globalPos = move.GlobalPosition;
             move.ParentNode!.WidgetListHandler.SubWidgets.Remove(move);
             if (pos >= 0)
                 target.WidgetListHandler.SubWidgets.Insert(pos, move);
             else
                 target.WidgetListHandler.SubWidgets.Add(move);
             move.ParentNode = target;
+            if (M.UIReparentKeepGlobalPos)
+                move.GlobalPosition = globalPos;
             Renderer.InvalidateVisual();
         }
         catch (Exception ex)
