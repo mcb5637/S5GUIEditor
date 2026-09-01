@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.IO;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -21,6 +22,7 @@ internal class CFontIDHandler : INotifyPropertyChanged
             field = value;
             OnPropertyChanged(nameof(FontName));
             OnPropertyChanged(nameof(Font));
+            OnPropertyChanged(nameof(Validate));
         }
     } = @"data\menu\fonts\standard12.met";
 
@@ -39,4 +41,6 @@ internal class CFontIDHandler : INotifyPropertyChanged
     }
     
     internal RWFont? Font => Cache.GetFont(FontName);
+    
+    internal virtual bool Validate => FontName != "" && !Path.GetExtension(FontName).Equals(".met", System.StringComparison.InvariantCultureIgnoreCase);
 }

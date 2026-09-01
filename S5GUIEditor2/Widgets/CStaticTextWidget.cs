@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Xml.Linq;
 
@@ -21,7 +22,23 @@ internal class CStaticTextWidget : CStaticWidget
         };
     }
 
-    private CWidgetStringHelper StringHelper { get; set; }
+    private CWidgetStringHelper StringHelper 
+    {
+        get;
+        set
+        {
+            field?.PropertyChanged -= PropChanged;
+            field = value;
+            field.PropertyChanged += PropChanged;
+            return;
+            
+            void PropChanged(object? o, PropertyChangedEventArgs propertyChangedEventArgs)
+            {
+                OnPropertyChanged(nameof(StringHelper));
+                ReValidate();
+            }
+        }
+    }
     private UpdateFunc Update { get; set; } = new();
     internal int FirstLineToPrint { get; set; }
     internal int NumberOfLinesToPrint { get; set; }
@@ -74,4 +91,17 @@ internal class CStaticTextWidget : CStaticWidget
     internal override CWidgetStringHelper TextRender => StringHelper;
 
     internal override IEnumerable<string> ReferencedFiles => [StringHelper.Font.FontName, BackgroundMaterial.Texture];
+
+    internal override (string, CBaseWidget)? Validate
+    {
+        get
+        {
+            var b = base.Validate;
+            if (b != null)
+                return b;
+            if (StringHelper.Validate)
+                return ($"{Name} invalid font extension", this);
+            return null;
+        }
+    }
 }

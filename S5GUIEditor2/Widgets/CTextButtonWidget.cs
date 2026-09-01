@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -19,7 +20,23 @@ internal class CTextButtonWidget : CButtonWidget
         };
     }
 
-    private CWidgetStringHelper StringHelper { get; set; }
+    private CWidgetStringHelper StringHelper
+    {
+        get;
+        set
+        {
+            field?.PropertyChanged -= PropChanged;
+            field = value;
+            field.PropertyChanged += PropChanged;
+            return;
+            
+            void PropChanged(object? o, PropertyChangedEventArgs propertyChangedEventArgs)
+            {
+                OnPropertyChanged(nameof(StringHelper));
+                ReValidate();
+            }
+        }
+    }
     internal bool CppLogicCenterText { get; set; } = true;
     private UpdateFunc Update { get; set; } = new();
 
@@ -72,4 +89,17 @@ internal class CTextButtonWidget : CButtonWidget
         MaterialsDisabled.Texture,
         MaterialsHighlighted.Texture,
     ];
+
+    internal override (string, CBaseWidget)? Validate
+    {
+        get
+        {
+            var b = base.Validate;
+            if (b != null)
+                return b;
+            if (StringHelper.Validate)
+                return ($"{Name} invalid font extension", this);
+            return null;
+        }
+    }
 }

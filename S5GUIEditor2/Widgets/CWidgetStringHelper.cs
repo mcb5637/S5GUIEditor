@@ -15,7 +15,19 @@ internal class CWidgetStringHelper : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    internal required CFontIDHandler Font { get; init; }
+    internal required CFontIDHandler Font
+    {
+        get;
+        init
+        {
+            field = value;
+            field.PropertyChanged += (_, __) =>
+            {
+                OnPropertyChanged(nameof(Font));
+                OnPropertyChanged(nameof(Validate));
+            };
+        }
+    }
     internal CSingleStringHandler String { get; private init; } = new();
     internal float StringFrameDistance { get; set; }
 
@@ -64,4 +76,6 @@ internal class CWidgetStringHelper : INotifyPropertyChanged
         s += $"XGUIEng.SetTextColor({escapedname}, {Color.R}, {Color.G}, {Color.B}, {Color.A})\n";
         return s; 
     }
+
+    internal bool Validate => Font.Validate;
 }
