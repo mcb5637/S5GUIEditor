@@ -50,11 +50,11 @@ internal class CStaticWidget : CBaseWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateStaticWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(string before)
+    internal override string GetLuaData(IList<CBaseWidget> existing, string escapedName,
+        CBaseWidget? prev)
     {
-        string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(before);
-        s += BackgroundMaterial.ToLua(escapedname, 0);
+        string s = base.GetLuaData(existing, escapedName, prev);
+        s += BackgroundMaterial.ToLua(escapedName, 0);
         return s;
     }
 

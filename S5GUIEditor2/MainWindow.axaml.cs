@@ -495,6 +495,41 @@ internal partial class MainWindow : Window
         }
     }
 
+    private async void WidgetExportLuaRelative(object? sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var l = M.SelectedWidgets;
+            if (l == null || l.Count == 0 || Clipboard == null)
+                return;
+            
+            var storage = StorageProvider;
+            var r = await storage.OpenFilePickerAsync(new()
+            {
+                Title = "Load base GUI xml",
+                SuggestedStartLocation =
+                    await storage.TryGetFolderFromPathAsync(Path.Combine(M.Settings.WorkspacePath, "menu/projects")),
+                FileTypeFilter = FileTypesXml,
+            });
+            if (r.Count == 0)
+                return;
+            XDocument xd = XDocument.Load(r[0].Path.ToString());
+            CProjectWidget w = new();
+            w.FromXml(xd.Root, C);
+            
+            await Clipboard.SetTextAsync(CBaseWidget.GetLua(l, [.. w.IterateAll()]));
+        }
+        catch (FileNotFoundException ex)
+        {
+            await MessageBoxManager.GetMessageBoxStandard("could not find file", ex.ToString()).ShowAsync();
+        }
+        catch (Exception ex)
+        {
+            Debugger.Break();
+            await MessageBoxManager.GetMessageBoxStandard("exception", ex.ToString()).ShowAsync();
+        }
+    }
+
     private void Widget_SortChildren(object? sender, RoutedEventArgs e)
     {
         if (M.EditWidget is not CContainerWidget w)

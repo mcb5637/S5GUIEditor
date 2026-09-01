@@ -169,36 +169,60 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
     {
         throw new InvalidOperationException("cannot create base widget");
     }
-    internal static string GetLua(IList<CBaseWidget> widgets)
+
+    internal static string GetLua(IList<CBaseWidget> widgets, IList<CBaseWidget>? existing = null)
     {
-        string r = widgets.Aggregate("", (current, w) => current + w.GetLuaAssert());
+        existing ??= [];
+        string r = widgets.Aggregate("", (current, w) => current + w.GetLuaAssert(existing));
         foreach (var w in widgets)
         {
             string bef = "nil";
             var n = w.GetNextInParent(widgets.Contains);
             if (n != null)
                 bef = $"\"{n.Name}\"";
-            r += w.GetLuaData(bef);
+            r += w.GetLuaDataEx(bef, existing);
         }
         foreach (var w in widgets)
             r += w.GetLuaDataRef($"\"{w.Name}\"");
         return r;
     }
-    internal virtual string GetLuaAssert()
+    internal virtual string GetLuaAssert(IList<CBaseWidget> existing)
     {
+        if (existing.Any((w) => w.Name == Name))
+           return $"assert(XGUIEng.GetWidgetID(\"{Name}\")~=0, \"{Name} does not exist\")\n";
         return $"assert(XGUIEng.GetWidgetID(\"{Name}\")==0, \"{Name} already exists\")\n";
     }
-    internal virtual string GetLuaData(string before)
+
+    internal string GetLuaDataEx(string before, IList<CBaseWidget> existing)
     {
-        string escapedname = $"\"{Name}\"";
+        string escapedName = $"\"{Name}\"";
         if (ParentNode == null)
             throw new InvalidOperationException("no parent widget found");
-        string s = GetLuaCreator(ParentNode.Name, before);
-        s += FormattableString.Invariant($"CppLogic.UI.WidgetSetPositionAndSize({escapedname}, {PositionAndSize.X}, {PositionAndSize.Y}, {PositionAndSize.Width}, {PositionAndSize.Height})\n");
-        s += $"XGUIEng.ShowWidget({escapedname}, {(IsShown ? "1" : "0")})\n";
-        s += FormattableString.Invariant($"CppLogic.UI.WidgetSetBaseData({escapedname}, {ZPriority}, {ForceToHandleMouseEventsFlag.ToString().ToLower()}, {ForceToNeverBeFoundFlag.ToString().ToLower()})\n");
+        string s = "";
+        var ex = existing.FirstOrDefault(w => w.Name == Name);
+        if (ex != null && ex.GetClass() != GetClass())
+        {
+            s += $"CppLogic.UI.RemoveWidget({escapedName}\n";
+            ex = null;
+        }
+        if (ex == null)
+            s += GetLuaCreator(ParentNode.Name, before);
+        if (ex != null)
+        {
+            if (ex.ParentNode?.Name != ParentNode.Name)
+                s += $"CppLogic.UI.ReparentWidget({escapedName}, \"{ParentNode.Name}\", {before})\n";
+            else
+                s += $"CppLogic.UI.ReorderWidgets({escapedName}, {before})\n";
+        }
+        return s + GetLuaData(existing, escapedName, ex);
+    }
+    internal virtual string GetLuaData(IList<CBaseWidget> existing, string escapedName, CBaseWidget? prev)
+    {
+        var s = FormattableString.Invariant($"CppLogic.UI.WidgetSetPositionAndSize({escapedName}, {PositionAndSize.X}, {PositionAndSize.Y}, {PositionAndSize.Width}, {PositionAndSize.Height})\n");
+        s += $"XGUIEng.ShowWidget({escapedName}, {(IsShown ? "1" : "0")})\n";
+        s += FormattableString.Invariant($"CppLogic.UI.WidgetSetBaseData({escapedName}, {ZPriority}, {ForceToHandleMouseEventsFlag.ToString().ToLower()}, {ForceToNeverBeFoundFlag.ToString().ToLower()})\n");
         if (Group.Length > 0)
-            s += $"CppLogic.UI.WidgetSetGroup({escapedname}, \"{Group}\")\n";
+            s += $"CppLogic.UI.WidgetSetGroup({escapedName}, \"{Group}\")\n";
         return s;
     }
     internal virtual string GetLuaDataRef(string escapedname)
@@ -291,5 +315,10 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
             PositionAndSize.X = x;
             PositionAndSize.Y = y;
         }
+    }
+
+    internal virtual IEnumerable<CBaseWidget> IterateAll()
+    {
+        yield return this;
     }
 }

@@ -51,18 +51,19 @@ internal class CContainerWidget : CBaseWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateContainerWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaAssert()
+    internal override string GetLuaAssert(IList<CBaseWidget> existing)
     {
-        string r = base.GetLuaAssert();
+        string r = base.GetLuaAssert(existing);
         foreach (var w in WidgetListHandler.SubWidgets)
-            r += w.GetLuaAssert();
+            r += w.GetLuaAssert(existing);
         return r;
     }
-    internal override string GetLuaData(string before)
+    internal override string GetLuaData(IList<CBaseWidget> existing, string escapedName,
+        CBaseWidget? prev)
     {
-        string s = base.GetLuaData(before);
+        string s = base.GetLuaData(existing, escapedName, prev);
         foreach (var w in WidgetListHandler.SubWidgets)
-            s += w.GetLuaData("nil");
+            s += w.GetLuaDataEx("nil", existing); // TODO before, reorder
         return s;
     }
     internal override string GetLuaDataRef(string escapedname)
@@ -98,5 +99,13 @@ internal class CContainerWidget : CBaseWidget
 
             return null;
         }
+    }
+
+    internal override IEnumerable<CBaseWidget> IterateAll()
+    {
+        yield return this;
+        foreach (var w in WidgetListHandler.SubWidgets)
+            foreach (var r in w.IterateAll())
+                yield return r;
     }
 }

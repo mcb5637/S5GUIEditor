@@ -51,13 +51,13 @@ internal class CTextButtonWidget : CButtonWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateTextButtonWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(string before)
+    internal override string GetLuaData(IList<CBaseWidget> existing, string escapedName,
+        CBaseWidget? prev)
     {
-        string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(before);
-        s += StringHelper.ToLua(escapedname);
+        string s = base.GetLuaData(existing, escapedName, prev);
+        s += StringHelper.ToLua(escapedName);
         s += $"CppLogic.UI.TextButtonSetCenterText(\"{Name}\", {CppLogicCenterText.ToString().ToLower()})\n";
-        s += Update.ToLua(escapedname);
+        s += Update.ToLua(escapedName);
         return s;
     }
 

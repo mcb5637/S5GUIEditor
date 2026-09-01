@@ -43,6 +43,7 @@
                                         <MenuItem Header="Paste" IsVisible="{Binding IsContainer}" Click="Widget_Paste"></MenuItem>
                                         <MenuItem Header="Delete" Click="Widget_Delete"></MenuItem>
                                         <MenuItem Header="Export Lua" Click="Widget_ExportLua"></MenuItem>
+                                        <MenuItem Header="Export Lua Relative" Click="WidgetExportLuaRelative"></MenuItem>
                                         <MenuItem Header="Sort children by ZPriority" Click="Widget_SortChildren" IsVisible="{Binding IsContainer}"></MenuItem>
                                         <Separator IsVisible="{Binding IsContainer}"></Separator>
                                         <MenuItem Header="New Container Widget" IsVisible="{Binding IsContainer}" Click="Widget_NewContainer"></MenuItem>

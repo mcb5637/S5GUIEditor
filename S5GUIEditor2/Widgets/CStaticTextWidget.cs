@@ -59,14 +59,14 @@ internal class CStaticTextWidget : CStaticWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateStaticTextWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(string before)
+    internal override string GetLuaData(IList<CBaseWidget> existing, string escapedName,
+        CBaseWidget? prev)
     {
-        string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(before);
-        s += StringHelper.ToLua(escapedname);
-        s += Update.ToLua(escapedname);
-        s += $"XGUIEng.SetLinesToPrint({escapedname}, {FirstLineToPrint}, {NumberOfLinesToPrint})\n";
-        s += FormattableString.Invariant($"CppLogic.UI.StaticTextWidgetSetLineDistanceFactor({escapedname}, {LineDistanceFactor})\n");
+        string s = base.GetLuaData(existing, escapedName, prev);
+        s += StringHelper.ToLua(escapedName);
+        s += Update.ToLua(escapedName);
+        s += $"XGUIEng.SetLinesToPrint({escapedName}, {FirstLineToPrint}, {NumberOfLinesToPrint})\n";
+        s += FormattableString.Invariant($"CppLogic.UI.StaticTextWidgetSetLineDistanceFactor({escapedName}, {LineDistanceFactor})\n");
         return s;
     }
 

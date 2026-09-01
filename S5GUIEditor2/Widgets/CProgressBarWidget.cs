@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace S5GUIEditor2.Widgets;
@@ -43,12 +44,12 @@ internal class CProgressBarWidget : CStaticWidget
     {
         return $"CppLogic.UI.ContainerWidgetCreateProgressBarWidgetChild(\"{parent}\", \"{Name}\", {befo})\n";
     }
-    internal override string GetLuaData(string before)
+    internal override string GetLuaData(IList<CBaseWidget> existing, string escapedName,
+        CBaseWidget? prev)
     {
-        string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(before);
-        s += FormattableString.Invariant($"XGUIEng.SetProgressBarValues({escapedname}, {ProgressBarValue}, {ProgressBarLimit})\n");
-        s += Update.ToLua(escapedname);
+        string s = base.GetLuaData(existing, escapedName, prev);
+        s += FormattableString.Invariant($"XGUIEng.SetProgressBarValues({escapedName}, {ProgressBarValue}, {ProgressBarLimit})\n");
+        s += Update.ToLua(escapedName);
         return s;
     }
 

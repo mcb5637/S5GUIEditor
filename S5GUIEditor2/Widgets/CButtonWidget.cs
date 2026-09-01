@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -80,24 +81,24 @@ internal class CButtonWidget : CBaseWidget
     {
         throw new InvalidOperationException("cannot create base button widget");
     }
-    internal override string GetLuaData(string before)
+    internal override string GetLuaData(IList<CBaseWidget> existing, string escapedName,
+        CBaseWidget? prev)
     {
-        string escapedname = $"\"{Name}\"";
-        string s = base.GetLuaData(before);
-        s += $"XGUIEng.DisableButton({escapedname}, {(ButtonHelper.DisabledFlag ? "1" : "0")})\n";
-        s += $"XGUIEng.HighLightButton({escapedname}, {(ButtonHelper.HighLightedFlag ? "1" : "0")})\n";
+        string s = base.GetLuaData(existing, escapedName, prev);
+        s += $"XGUIEng.DisableButton({escapedName}, {(ButtonHelper.DisabledFlag ? "1" : "0")})\n";
+        s += $"XGUIEng.HighLightButton({escapedName}, {(ButtonHelper.HighLightedFlag ? "1" : "0")})\n";
         if (ButtonHelper.ActionFunction.LuaCommand.Length > 0 && !ButtonHelper.ActionFunction.LuaCommand.StartsWith("--"))
-            s += $"CppLogic.UI.ButtonOverrideActionFunc({escapedname}, function() {ButtonHelper.ActionFunction.LuaCommand} end)\n";
+            s += $"CppLogic.UI.ButtonOverrideActionFunc({escapedName}, function() {ButtonHelper.ActionFunction.LuaCommand} end)\n";
         if (ButtonHelper.ShortCutString.RawString.Length > 0)
-            s += $"CppLogic.UI.ButtonSetShortcutString({escapedname}, \"{ButtonHelper.ShortCutString.RawString}\", false)\n";
+            s += $"CppLogic.UI.ButtonSetShortcutString({escapedName}, \"{ButtonHelper.ShortCutString.RawString}\", false)\n";
         else if (ButtonHelper.ShortCutString.StringTableKey.Length > 0)
-            s += $"CppLogic.UI.ButtonSetShortcutString({escapedname}, \"{ButtonHelper.ShortCutString.StringTableKey}\", true)\n";
-        s += MaterialsNormal.ToLua(escapedname, 0);
-        s += MaterialsHover.ToLua(escapedname, 1);
-        s += MaterialsPressed.ToLua(escapedname, 2);
-        s += MaterialsDisabled.ToLua(escapedname, 3);
-        s += MaterialsHighlighted.ToLua(escapedname, 4);
-        s += ToolTipHelper.ToLua(escapedname);
+            s += $"CppLogic.UI.ButtonSetShortcutString({escapedName}, \"{ButtonHelper.ShortCutString.StringTableKey}\", true)\n";
+        s += MaterialsNormal.ToLua(escapedName, 0);
+        s += MaterialsHover.ToLua(escapedName, 1);
+        s += MaterialsPressed.ToLua(escapedName, 2);
+        s += MaterialsDisabled.ToLua(escapedName, 3);
+        s += MaterialsHighlighted.ToLua(escapedName, 4);
+        s += ToolTipHelper.ToLua(escapedName);
         return s;
     }
     internal override string GetLuaDataRef(string escapedname)
