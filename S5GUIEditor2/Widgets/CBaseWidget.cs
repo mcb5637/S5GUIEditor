@@ -184,6 +184,28 @@ internal abstract class CBaseWidget : INotifyPropertyChanged
         }
         foreach (var w in widgets)
             r += w.GetLuaDataRef($"\"{w.Name}\"");
+        if (existing.Count > 0)
+        {
+            IList<CBaseWidget> allExports = [..widgets.SelectMany((w) => w.IterateAll())];
+            foreach (var w in widgets)
+            {
+                var e = existing.FirstOrDefault(x => x.Name == w.Name);
+                if (e != null)
+                    IterDelete(e);
+            }
+
+            void IterDelete(CBaseWidget w)
+            {
+                if (w is CContainerWidget cw)
+                {
+                    foreach (var c in cw.WidgetListHandler.SubWidgets)
+                        IterDelete(c);
+                }
+
+                if (allExports.All(x => x.Name != w.Name))
+                    r += $"CppLogic.UI.RemoveWidget(\"{w.Name}\")\n";
+            }
+        }
         return r;
     }
     internal virtual string GetLuaAssert(IList<CBaseWidget> existing)
