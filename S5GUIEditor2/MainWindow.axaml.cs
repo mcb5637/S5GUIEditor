@@ -29,7 +29,15 @@ internal partial class MainWindow : Window
         Menu_New(null, null);
         DataContext = M;
         if (Settings.LastLoadedXml != null)
-            LoadXml(Settings.LastLoadedXml);
+        {
+            try
+            {
+                LoadXml(Settings.LastLoadedXml);
+            }
+            catch (IOException)
+            {
+            }
+        }
     }
 
     private readonly Model M;
@@ -153,7 +161,7 @@ internal partial class MainWindow : Window
             });
             if (r.Count == 0)
                 return;
-            M.Settings.WorkspacePath = r[0].Path.GetComponents(UriComponents.Path, UriFormat.Unescaped);
+            M.Settings.WorkspacePath = r[0].Path.LocalPath;
             M.StoreSettings();
         }
         catch (Exception ex)
@@ -176,7 +184,7 @@ internal partial class MainWindow : Window
                 });
                 if (r.Count == 0)
                     return;
-                s5Path = r[0].Path.AbsolutePath;
+                s5Path = r[0].Path.LocalPath;
             }
 
             using BbaArchive a = new();
@@ -656,7 +664,7 @@ internal partial class MainWindow : Window
             });
             if (r.Count == 0)
                 return;
-            M.EditText?.Font.FontName = M.Settings.ToS5Path(r[0].Path.AbsolutePath);
+            M.EditText?.Font.FontName = M.Settings.ToS5Path(r[0].Path.LocalPath);
         }
         catch (Exception ex)
         {

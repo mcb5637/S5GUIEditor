@@ -40,7 +40,7 @@ public partial class MaterialControl : UserControl
             });
             if (r.Count == 0)
                 return;
-            (DataContext as CMaterial)?.Texture = window.Settings.ToS5Path(r[0].Path.AbsolutePath);
+            (DataContext as CMaterial)?.Texture = window.Settings.ToS5Path(r[0].Path.LocalPath);
         }
         catch (Exception ex)
         {
