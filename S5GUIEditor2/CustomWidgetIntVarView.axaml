@@ -27,6 +27,10 @@
                       IsVisible="{Binding Config.HasFlag2}" Margin="5">
                 <TextBlock Text="{Binding Flag2Name}"></TextBlock>
             </CheckBox>
+            <CheckBox Grid.Column="3" Grid.Row="0" IsChecked="{Binding Flag3}"
+                      IsVisible="{Binding Config.HasFlag3}" Margin="5">
+                <TextBlock Text="{Binding Flag3Name}"></TextBlock>
+            </CheckBox>
         </Grid>
         
         <TextBlock Text="{Binding Config.Description}"></TextBlock>

@@ -49,9 +49,15 @@ internal class IntUserVarConfig : INotifyPropertyChanged
         get => Value.GetFlag(Config.Flags.Skip(1).FirstOrDefault()?.Value ?? 2);
         set => Value.SetFlag(Config.Flags.Skip(1).FirstOrDefault()?.Value ?? 2, value);
     }
+    internal bool Flag3
+    {
+        get => Value.GetFlag(Config.Flags.Skip(2).FirstOrDefault()?.Value ?? 4);
+        set => Value.SetFlag(Config.Flags.Skip(2).FirstOrDefault()?.Value ?? 4, value);
+    }
 
     internal string Flag1Name => Config.Flags.FirstOrDefault()?.Name ?? "";
     internal string Flag2Name => Config.Flags.Skip(1).FirstOrDefault()?.Name ?? "";
+    internal string Flag3Name => Config.Flags.Skip(2).FirstOrDefault()?.Name ?? "";
 }
 
 internal class CCustomWidget : CBaseWidget
@@ -234,6 +240,7 @@ internal class CCustomWidget : CBaseWidget
         internal bool IsModes => Modes.Count > 0;
         internal bool IsFlags => Flags.Length > 0;
         internal bool HasFlag2 => Flags.Length > 1;
+        internal bool HasFlag3 => Flags.Length > 2;
     }
     
     internal class CustomWidgetOptions
@@ -367,8 +374,8 @@ internal class CCustomWidget : CBaseWidget
                     new NamedInt("double", 3), new NamedInt("uint", 4), new NamedInt("udouble", 5)]
             },
             IntUserVar1 = new CustomWidgetOptionsIntVar(){
-                Description = "flags 1->fire cancel event, 2->fire validate event",
-                Flags = [new NamedInt("fire cancel event", 0), new NamedInt("fire validate event", 1)]
+                Description = "flags 1->fire cancel event, 2->fire validate event, 4->centered",
+                Flags = [new NamedInt("fire cancel event", 0), new NamedInt("fire validate event", 1), new NamedInt("centered", 2)]
             },
             IntUserVar2 = new CustomWidgetOptionsIntVar(){
                 Description = "argb text color (white, if a==0)",
